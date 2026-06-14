@@ -2,20 +2,20 @@
 
 ## AI Responsibilites
 
--- Generate Career Roadmaps
--- Convert Goals into Learning Tasks
--- Provide Study Recommendations
--- Analyze Progress
--- Suggest Learning Strategies
+- Generate Career Roadmaps
+- Convert Goals into Learning Tasks
+- Provide Study Recommendations
+- Analyze Progress
+- Suggest Learning Strategies
 
 # Non AI Responsiblites
 
--- User Authentication
--- Goal Management
--- Task Management
--- Schedule Generation
--- Progress Tracking
--- Dashboard Analytics
+- User Authentication
+- Goal Management
+- Task Management
+- Schedule Generation
+- Progress Tracking
+- Dashboard Analytics
 
 # Design Principle
 

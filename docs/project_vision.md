@@ -14,9 +14,9 @@ EduFlow AI provides an intelligent planning system that automatically generates 
 
 ## Target Users
 
--- College Students
--- Placement Aspirants
--- Self Learners
+- College Students
+- Placement Aspirants
+- Self Learners
 
 ## Core Objective
 

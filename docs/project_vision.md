@@ -21,5 +21,3 @@ EduFlow AI provides an intelligent planning system that automatically generates 
 ## Core Objective
 
 Help Students answer:
-
-### What should I study today??

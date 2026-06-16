@@ -14,6 +14,7 @@
 
 ## Phase 2 features ( future features)
 
+- Sign in with Google, LinkedIn
 - Career Roadmap Generation
 - AI Task Generation
 - AI Study Coach

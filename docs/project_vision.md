@@ -20,9 +20,9 @@ EduFlow AI provides a structured and intelligent approach to study planning. Stu
 
 ## Core Objective
 
--- Help students organize academic goals and tasks.
--- Generate personalized study schedules automatically
--- Improve time management and productivity.
--- Track learning progress and goal completion.
--- Reduce planning effort through intelligent scheduling.
---Provide career and learning guidance through AI-Powered features.
+- Help students organize academic goals and tasks.
+- Generate personalized study schedules automatically
+- Improve time management and productivity.
+- Track learning progress and goal completion.
+- Reduce planning effort through intelligent scheduling.
+- Provide career and learning guidance through AI-Powered features.

@@ -1,0 +1,150 @@
+/* ==========================================================================
+   Call To Action (CTA) Stylesheet
+   ========================================================================== */
+
+.cta_section {
+    background-color: var(--bg-color);
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Outer CTA Card container */
+.cta_card {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #6366F1 100%);
+    border-radius: 20px;
+    padding: 70px 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(79, 70, 229, 0.2);
+    animation: fade-in-up 0.8s ease-out;
+}
+
+/* Recreating Figma curved background shapes using CSS pseudo-elements */
+.cta_card::before {
+    content: "";
+    position: absolute;
+    bottom: -160px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130%;
+    height: 380px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.cta_card::after {
+    content: "";
+    position: absolute;
+    top: -140px;
+    right: -100px;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Content wrapper sitting above shapes */
+.cta_content {
+    position: relative;
+    z-index: 2;
+    max-width: 650px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Typography styles */
+.cta_heading {
+    font-size: clamp(1.85rem, 4.5vw, 2.5rem);
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 16px;
+    line-height: 1.25;
+}
+
+.cta_subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 36px;
+    line-height: 1.6;
+    max-width: 580px;
+}
+
+/* Button position wrapping adjustments */
+.cta_button_container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.cta_btn_link {
+    text-decoration: none;
+    display: inline-block;
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes fade-in-up {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/* Tablet Viewports (max-width: 991.98px) */
+@media (max-width: 991.98px) {
+    .cta_section {
+        padding: 80px 0;
+    }
+
+    .cta_card {
+        padding: 60px 24px;
+    }
+}
+
+/* Mobile Viewports (max-width: 767.98px) */
+@media (max-width: 767.98px) {
+    .cta_section {
+        padding: 60px 0;
+    }
+
+    .cta_card {
+        padding: 40px 16px;
+        border-radius: 16px;
+    }
+
+    /* Scaling curves for smaller sizes */
+    .cta_card::before {
+        bottom: -140px;
+        height: 280px;
+        width: 160%;
+    }
+
+    /* Make button stretch to ~90% on mobile screens */
+    .cta_btn_link {
+        width: 90%;
+    }
+
+    .cta_btn_link .cta_btn {
+        width: 100%;
+        min-width: 0;
+        text-align: center;
+        padding: 14px 20px;
+    }
+}

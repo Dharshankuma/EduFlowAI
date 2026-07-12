@@ -1,0 +1,276 @@
+/* ===========================
+   Navbar System
+   ========================== */
+
+:root {
+    --nav-bg: #ffffff;
+}
+
+.landing_navbar {
+    background: var(--bg-color);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.landing_navbar .container {
+    position: relative;
+}
+
+.navbar_wrapper {
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* ===========================
+   Logo Styling
+   ========================== */
+
+.navbar_logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.logo_box {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    border-radius: 10px;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.logo_box img {
+    max-width: 100%;
+    height: auto;
+}
+
+.logo_text {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* ===========================
+   Desktop Navigation Menu
+   ========================== */
+
+.navbar_menu {
+    display: flex;
+    align-items: center;
+    gap: 45px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.navbar_menu a {
+    position: relative;
+    color: var(--text-teritory);
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.navbar_menu a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0;
+    height: 2px;
+    background: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+.navbar_menu a:hover {
+    color: var(--primary-color);
+}
+
+.navbar_menu a:hover::after {
+    width: 100%;
+}
+
+/* ===========================
+   Desktop Action Buttons
+   ========================== */
+
+.navbar_actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.login_btn {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.login_btn:hover {
+    color: var(--primary-hover);
+}
+
+
+/* ===========================
+   Mobile Menu Button
+   ========================== */
+
+.menu_btn {
+    display: none;
+    border: none;
+    background: transparent;
+    font-size: 28px;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.2s ease;
+}
+
+.menu_btn:hover {
+    color: var(--primary-color);
+}
+
+/* ===========================
+   Custom Mobile Dropdown Menu
+   ========================== */
+
+.mobile_dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 12px;
+    right: 12px;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md, 12px);
+    box-shadow: var(--shadow-md, 0 8px 20px rgba(0, 0, 0, 0.08));
+    padding: 24px;
+    z-index: 1000;
+
+    /* Animation States */
+    opacity: 0;
+    transform: translateY(-15px);
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile_dropdown.show {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.mobile_dropdown_menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.mobile_dropdown_menu a {
+    display: block;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+    transition: color 0.2s ease, padding-left 0.2s ease;
+}
+
+.mobile_dropdown_menu li:last-child a {
+    border-bottom: none;
+}
+
+.mobile_dropdown_menu a:hover {
+    color: var(--primary-color);
+    padding-left: 4px;
+}
+
+.mobile_dropdown_actions {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mobile_dropdown_actions .login_btn {
+    text-align: center;
+    padding: 12px;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.mobile_dropdown_actions .login_btn:hover {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.mobile_dropdown_actions .get-started-btn {
+    text-align: center;
+    padding: 12px;
+    background: var(--primary-color);
+    color: #ffffff;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.mobile_dropdown_actions .get-started-btn:hover {
+    background: var(--primary-hover);
+}
+
+/* ===========================
+   Responsive Queries
+   ========================== */
+
+@media (max-width: 992px) {
+
+    .navbar_menu,
+    .navbar_actions {
+        display: none;
+    }
+
+    .menu_btn {
+        display: block;
+    }
+}
+
+@media (min-width: 992px) {
+    .mobile_dropdown {
+        display: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .logo_text {
+        font-size: 20px;
+    }
+
+    .logo_box {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+}

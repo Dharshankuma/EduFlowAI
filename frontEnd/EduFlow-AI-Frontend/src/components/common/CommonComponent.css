@@ -1,0 +1,36 @@
+.type_1_btn {
+    background: var(--primary-color);
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.3s ease;
+    border: var(--primary-color) !important;
+}
+
+.type_1_btn:hover {
+    background: var(--primary-hover);
+    box-shadow: var(--shadow-md);
+}
+
+/* CTA Button Variant (White background, primary text) */
+.cta_btn {
+    background-color: var(--surface-color);
+    color: var(--primary-color);
+    padding: 14px 32px;
+    min-width: 280px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    border: none !important;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cta_btn:hover {
+    background-color: #f1f5f9; /* slightly darker white */
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(79, 70, 229, 0.25);
+}

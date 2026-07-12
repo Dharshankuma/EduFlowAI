@@ -1,0 +1,326 @@
+/* ==========================================================================
+   How It Works Section Stylesheet
+   ========================================================================== */
+
+.how_it_works_section {
+    background-color: var(--bg-color);
+    padding: 100px 0;
+    position: relative;
+}
+
+/* Header styling */
+.how_it_works_header {
+    margin-bottom: 60px;
+}
+
+.how_it_works_title {
+    font-size: clamp(2rem, 4.5vw, 2.5rem);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.how_it_works_subtitle {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+/* Timeline container */
+.timeline_wrapper {
+    position: relative;
+    margin-top: 40px;
+}
+
+/* Horizontal line on Desktop */
+.timeline_line {
+    position: absolute;
+    top: 24px; /* Center of the 48px circle */
+    left: calc(100% / 10);
+    right: calc(100% / 10);
+    height: 2px;
+    background-color: var(--border-color);
+    z-index: 1;
+}
+
+/* Row wrapper */
+.timeline_row {
+    position: relative;
+    z-index: 2;
+}
+
+/* Individual timeline item layout */
+.timeline_item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.timeline_circle_container {
+    margin-bottom: 20px;
+    background-color: var(--bg-color); /* Match bg to hide connector behind circle */
+    padding: 0 16px;
+    z-index: 2;
+}
+
+/* Circle design */
+.timeline_circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-color);
+    background-color: var(--surface-color);
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect */
+.timeline_circle:hover {
+    transform: scale(1.08);
+    box-shadow: var(--shadow, 0 4px 12px rgba(0, 0, 0, 0.05));
+}
+
+/* Sparkles icon inside highlighted circle */
+.timeline_circle i {
+    font-size: 20px;
+}
+
+/* Highlighted state styling (Step 4) */
+.timeline_circle.active {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.highlighted_step .step_title {
+    color: var(--primary-color);
+}
+
+/* Step Typography */
+.step_title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    transition: color 0.3s ease;
+}
+
+.step_description {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* ==========================================================================
+   Insights at a Glance Styles
+   ========================================================================== */
+
+.insights_wrapper {
+    margin-top: 100px;
+    padding-top: 80px;
+    border-top: 2px dashed rgba(79, 70, 229, 0.15); /* dashed dividing line */
+}
+
+.insights_title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+}
+
+.insights_description {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    max-width: 480px;
+    margin-bottom: 32px;
+}
+
+.insights_list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.insight_list_item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.insight_icon_wrapper {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.icon_teal {
+    background-color: rgba(6, 182, 212, 0.1);
+    color: var(--secondary-color, #06B6D4);
+}
+
+.icon_purple {
+    background-color: rgba(79, 70, 229, 0.1);
+    color: var(--primary-color);
+}
+
+.insight_list_text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Metric Cards */
+.insight_card {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 32px 24px;
+    text-align: center;
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.05));
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 220px;
+}
+
+.insight_card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08));
+}
+
+.circle_wrapper {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.insight_card_label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Custom SVG progress ring styles */
+.progress_ring {
+    /* No outer transformations to keep text upright */
+}
+
+.progress_ring_circle {
+    transform: rotate(-90deg);
+    transform-origin: center;
+}
+
+.progress_ring_text {
+    font-size: 15px;
+    font-weight: 700;
+    fill: var(--text-primary);
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/* Tablet Viewports (max-width: 991.98px) */
+@media (max-width: 991.98px) {
+    .how_it_works_section {
+        padding: 80px 0;
+    }
+
+    .insights_wrapper {
+        margin-top: 80px;
+        padding-top: 60px;
+    }
+
+    .insights_title {
+        font-size: 1.8rem;
+    }
+
+    /* Hide horizontal line on tablet since columns wrap */
+    .timeline_line {
+        display: none;
+    }
+
+    .timeline_circle_container {
+        padding: 0; /* Remove padding since line is hidden */
+    }
+
+    .timeline_step_col {
+        margin-bottom: 12px;
+    }
+}
+
+/* Mobile Viewports (max-width: 767.98px) */
+@media (max-width: 767.98px) {
+    .how_it_works_section {
+        padding: 60px 0;
+    }
+
+    /* Convert connector line to vertical */
+    .timeline_line {
+        display: block;
+        left: 36px; /* Align with center of circles (12px padding + 24px radius) */
+        top: 24px;
+        bottom: 24px;
+        width: 2px;
+        height: auto;
+    }
+
+    .timeline_row {
+        flex-direction: column;
+    }
+
+    .timeline_item {
+        flex-direction: row;
+        align-items: flex-start;
+        text-align: left;
+        gap: 20px;
+    }
+
+    .timeline_circle_container {
+        margin-bottom: 0;
+        background-color: transparent;
+    }
+
+    .timeline_text {
+        padding-top: 8px;
+    }
+
+    .insights_wrapper {
+        margin-top: 60px;
+        padding-top: 40px;
+    }
+
+    .insight_card_col {
+        display: flex;
+        justify-content: center;
+    }
+
+    .insight_card {
+        width: 100%;
+        max-width: 240px;
+        min-height: 200px;
+    }
+}

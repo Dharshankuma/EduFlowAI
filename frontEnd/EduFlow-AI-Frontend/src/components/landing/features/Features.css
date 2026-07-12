@@ -1,0 +1,328 @@
+/* ==========================================================================
+   Features Section Stylesheet
+   ========================================================================== */
+
+.features_section {
+    background-color: #F2F3FF;
+    padding: 80px 0;
+    position: relative;
+}
+
+/* Header Section */
+.features_header {
+    margin-bottom: 48px;
+}
+
+.features_title {
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.features_subtitle {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+/* Feature Cards Grid */
+.feature_card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 280px;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.05));
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.feature_card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08));
+}
+
+.card_top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    width: 100%;
+}
+
+/* Icons styling */
+.feature_icon_box {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+/* Card Typography */
+.feature_card_title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.feature_card_description {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Preview Area: Smart Planner
+   ========================================================================== */
+
+.planner_preview {
+    background-color: rgba(79, 70, 229, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+    /* Push to the bottom of the card */
+    margin-top: 24px;
+}
+
+.planner_task {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.planner_task:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+}
+
+.task_left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.task_dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.dot_purple {
+    background-color: var(--primary-color);
+}
+
+.dot_teal {
+    background-color: var(--secondary-color, #06B6D4);
+}
+
+.task_name {
+    color: var(--text-primary);
+}
+
+.task_time {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+}
+
+/* ==========================================================================
+   Preview Area: AI Coach (Head Silhouette)
+   ========================================================================== */
+
+.ai_coach_decor {
+    position: absolute;
+    top: 0;
+    right: 0;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.ai_head_outline {
+    width: 64px;
+    height: 64px;
+    border: 3.5px solid var(--border-color);
+    border-radius: 50% 50% 12% 50%;
+    position: relative;
+}
+
+.ai_head_outline::before {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 20px;
+    border-top: 3.5px solid var(--border-color);
+    border-right: 3.5px solid var(--border-color);
+    border-radius: 0 8px 8px 0;
+    top: 16px;
+    right: -8px;
+    background-color: var(--surface-color);
+    /* Overlap face inner border */
+}
+
+.ai_head_outline::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 14px;
+    width: 3.5px;
+    height: 12px;
+    background-color: var(--border-color);
+    box-shadow: 18px 0 0 var(--border-color);
+}
+
+.ai_gear {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 22px;
+    height: 22px;
+    border: 3.5px solid var(--border-color);
+    border-radius: 50%;
+    animation: gear-spin 12s linear infinite;
+    box-sizing: border-box;
+}
+
+.ai_gear_tooth {
+    position: absolute;
+    width: 4.5px;
+    height: 4.5px;
+    background-color: var(--border-color);
+    top: 50%;
+    left: 50%;
+    margin-top: -2.25px;
+    margin-left: -2.25px;
+    border-radius: 1px;
+}
+
+.tooth_1 {
+    transform: rotate(0deg) translate(9px);
+}
+
+.tooth_2 {
+    transform: rotate(45deg) translate(9px);
+}
+
+.tooth_3 {
+    transform: rotate(90deg) translate(9px);
+}
+
+.tooth_4 {
+    transform: rotate(135deg) translate(9px);
+}
+
+.tooth_5 {
+    transform: rotate(180deg) translate(9px);
+}
+
+.tooth_6 {
+    transform: rotate(225deg) translate(9px);
+}
+
+.tooth_7 {
+    transform: rotate(270deg) translate(9px);
+}
+
+.tooth_8 {
+    transform: rotate(315deg) translate(9px);
+}
+
+@keyframes gear-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==========================================================================
+   Preview Area: Progress Chart
+   ========================================================================== */
+
+.chart_preview {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+    height: 80px;
+    margin-top: auto;
+    /* Push to the bottom of the card */
+    margin-top: 24px;
+}
+
+.chart_bar {
+    flex: 1;
+    border-radius: 4px 4px 0 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature_card:hover .chart_bar {
+    transform: scaleY(1.05);
+}
+
+.bar_1 {
+    height: 30%;
+    background-color: rgba(79, 70, 229, 0.2);
+}
+
+.bar_2 {
+    height: 45%;
+    background-color: rgba(79, 70, 229, 0.4);
+}
+
+.bar_3 {
+    height: 75%;
+    background-color: rgba(79, 70, 229, 0.6);
+}
+
+.bar_4 {
+    height: 60%;
+    background-color: var(--primary-hover);
+}
+
+.bar_5 {
+    height: 90%;
+    background-color: var(--primary-color);
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+@media (max-width: 991.98px) {
+    .features_section {
+        padding: 60px 0;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .feature_card {
+        min-height: auto;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .features_section {
+        padding: 40px 0;
+    }
+}

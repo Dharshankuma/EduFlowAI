@@ -1,0 +1,308 @@
+/* ==========================================================================
+   About Section Stylesheet
+   ========================================================================== */
+
+.about_section {
+    background-color: var(--bg-color);
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Announcement Badge */
+.about_badge {
+    display: inline-flex;
+    align-items: center;
+    background-color: rgba(79, 70, 229, 0.08);
+    border: 1px solid var(--primary-color);
+    padding: 6px 16px;
+    border-radius: 50px;
+    margin-bottom: 24px;
+}
+
+.about_badge .badge_text {
+    color: var(--primary-color);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+/* Heading */
+.about_heading {
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.about_heading .highlight_text {
+    color: var(--primary-color);
+}
+
+/* Description */
+.about_description {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.65;
+    margin-bottom: 36px;
+}
+
+/* Mission & Vision Cards */
+.about_info_card {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    height: 100%;
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(0, 0, 0, 0.05));
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about_info_card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08));
+}
+
+.about_card_icon {
+    font-size: 24px;
+    color: var(--primary-color);
+    margin-bottom: 16px;
+}
+
+.about_card_title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.about_card_desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Right Column Visual Grid & Floating Cards
+   ========================================================================== */
+
+.about_visual_container {
+    position: relative;
+    width: 100%;
+    height: 440px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Decorative background blur shapes */
+.about_blur_circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.12;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.blur_purple {
+    width: 300px;
+    height: 300px;
+    background-color: var(--primary-color);
+    top: 10%;
+    left: 10%;
+}
+
+.blur_blue {
+    width: 250px;
+    height: 250px;
+    background-color: var(--secondary-color, #06B6D4);
+    bottom: 10%;
+    right: 10%;
+}
+
+/* Floating Info Cards styling */
+.stat_card {
+    position: absolute;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 240px;
+    box-shadow: var(--shadow, 0 8px 24px rgba(0, 0, 0, 0.06));
+    z-index: 2;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat_card:hover {
+    transform: translateY(-6px) scale(1.02) !important; /* Override keyframe transform on hover */
+    box-shadow: var(--shadow-md, 0 12px 30px rgba(0, 0, 0, 0.1));
+    z-index: 10;
+}
+
+.stat_icon_box {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.icon_purple {
+    background-color: rgba(79, 70, 229, 0.08);
+    color: var(--primary-color);
+}
+
+.icon_teal {
+    background-color: rgba(13, 148, 136, 0.08);
+    color: #0D9488;
+}
+
+.icon_blue {
+    background-color: rgba(6, 182, 212, 0.08);
+    color: var(--secondary-color, #06B6D4);
+}
+
+.stat_content {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat_number {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.stat_label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Absolute Positioning & Floating Animations for Stat Cards */
+.float_card_1 {
+    top: 10%;
+    left: 5%;
+    animation: float-1 6s ease-in-out infinite;
+}
+
+.float_card_2 {
+    top: 40%;
+    right: 5%;
+    animation: float-2 7s ease-in-out infinite;
+}
+
+.float_card_3 {
+    bottom: 10%;
+    left: 15%;
+    animation: float-3 6.5s ease-in-out infinite;
+}
+
+/* CSS Keyframe Animations */
+@keyframes float-1 {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+@keyframes float-2 {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+@keyframes float-3 {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* ==========================================================================
+   Responsive Breakpoints
+   ========================================================================== */
+
+/* Tablet Viewports (max-width: 991.98px) */
+@media (max-width: 991.98px) {
+    .about_section {
+        padding: 80px 0;
+    }
+
+    .about_visual_container {
+        height: 380px;
+    }
+
+    .stat_card {
+        min-width: 220px;
+        padding: 16px 20px;
+    }
+
+    .float_card_1 {
+        left: 0;
+    }
+
+    .float_card_2 {
+        right: 0;
+    }
+
+    .float_card_3 {
+        left: 10%;
+    }
+}
+
+/* Mobile Viewports (max-width: 767.98px) */
+@media (max-width: 767.98px) {
+    .about_section {
+        padding: 60px 0;
+        text-align: center;
+    }
+
+    .about_content_col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .about_info_card {
+        text-align: center;
+    }
+
+    .about_visual_col {
+        margin-top: 40px;
+    }
+
+    /* Convert absolute layout to vertical flex stack on mobile */
+    .about_visual_container {
+        height: auto;
+        flex-direction: column;
+        gap: 16px;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .stat_card {
+        position: relative;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        width: 100%;
+        max-width: 320px;
+        animation: none !important; /* Disable floating animation on mobile vertical stack */
+        text-align: left;
+    }
+
+    .about_blur_circle {
+        display: none;
+    }
+}

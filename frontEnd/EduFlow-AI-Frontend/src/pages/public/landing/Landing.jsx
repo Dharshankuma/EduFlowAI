@@ -10,13 +10,11 @@ import { Footer } from '../../../components/landing/footer/Footer'
 export const Landing = () => {
     return (
         <>
-            <Navbar />
             <Hero />
-            <About /> 
+            <About />
             <Features />
             <HowItWorks />
             <CTA />
-            <Footer />
         </>
     )
 }

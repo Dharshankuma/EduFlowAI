@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import './CommonComponent.css';
 
 export const InputComponent = ({
     label,
@@ -14,49 +15,26 @@ export const InputComponent = ({
     helpText,
     className,
     icon,
-    hasGroup,
     actionButton
 }) => {
 
-    const inputclass = `form-control ${error ? 'type1_textbox_error' : ''} ${className}`.trim();
+    const inputClass = `form-control ${error ? 'type1_textbox_error' : ''} ${className || ''}`.trim();
+    const hasIcon = !!(icon || actionButton);
 
     return (
         <div className='mb-3'>
             {label && (
-                <label className='form-label'>
+                <label className='form-label' htmlFor={name}>
                     {label}
                     {required && (
-                        <span className='text-danger ms-1'>*</span>
+                        <span className='mandatory_text_color'>*</span>
                     )}
                 </label>
             )}
 
-            {hasGroup ? (
-                <div className="input-group">
-
-                    {icon && (
-                        <span className="input-group-text">
-                            {icon}
-                        </span>
-                    )}
-
-                    <input
-                        type={type}
-                        name={name}
-                        className={inputClass}
-                        placeholder={placeholder}
-                        value={value}
-                        onChange={onChange}
-                        onBlur={onBlur}
-                        required={required}
-                        disabled={disabled}
-                    />
-
-                    {actionButton}
-
-                </div>
-            ) : (
+            <div className={`input-wrapper ${hasIcon ? 'has-icon' : ''}`}>
                 <input
+                    id={name}
                     type={type}
                     name={name}
                     className={inputClass}
@@ -67,7 +45,21 @@ export const InputComponent = ({
                     required={required}
                     disabled={disabled}
                 />
+
+                {actionButton ? (
+                    actionButton
+                ) : (
+                    icon && (
+                        <span className="input-icon">
+                            {icon}
+                        </span>
+                    )
+                )}
+            </div>
+
+            {helpText && (
+                <div className="form-text mt-1">{helpText}</div>
             )}
         </div>
-    )
-}
+    );
+};

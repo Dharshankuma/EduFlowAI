@@ -1,0 +1,547 @@
+/* ==========================================================================
+   EDUFACT-AI REGISTER PAGE DESIGN SYSTEM & LAYOUT CSS
+   ========================================================================== */
+
+/* Overrides the boxed layout of #root container specifically for auth routes */
+body.auth-page #root {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-inline: none !important;
+    margin: 0 !important;
+    text-align: left !important;
+    padding: 0 !important;
+}
+
+/* Page Container styling */
+.register-page-container {
+    background-color: var(--surface-color);
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* ==========================================================================
+   LEFT PANEL - REDESIGNED PREMIUM SaaS AUTH ILLUSTRATION
+   ========================================================================== */
+.left-panel {
+    background: radial-gradient(circle at 15% 15%, rgba(243, 244, 255, 0.8) 0%, rgba(238, 242, 254, 0.8) 50%, var(--bg-color) 100%);
+    border-right: 1px solid var(--border-color);
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+    overflow: hidden; /* Hide glowing overflows */
+}
+
+/* Group container coupling illustration and copy */
+.left-panel-content-group {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 460px;
+    z-index: 2;
+}
+
+/* Illustration Relative Container */
+.illustration-container {
+    height: 400px;
+    margin-bottom: 0.5rem;
+    pointer-events: none; /* Let pointer events bypass decorative areas */
+}
+
+.illustration-img {
+    max-height: 380px; /* Increased size by ~30% */
+    width: auto;
+    max-width: 90%;
+    object-fit: contain;
+    position: relative;
+    z-index: 3;
+}
+
+/* Floating animation */
+.floating-illustration {
+    animation: floatAnimation 6s ease-in-out infinite;
+    will-change: transform;
+}
+
+@keyframes floatAnimation {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-12px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+/* Background Decorative Glows */
+.glow-circle {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.glow-blue {
+    background: var(--primary-color);
+    width: 260px;
+    height: 260px;
+    left: 10%;
+    top: 15%;
+    animation: driftBlue 12s ease-in-out infinite alternate;
+}
+
+.glow-purple {
+    background: #A855F7;
+    width: 220px;
+    height: 220px;
+    right: 10%;
+    bottom: 20%;
+    animation: driftPurple 15s ease-in-out infinite alternate;
+}
+
+.glow-cyan {
+    background: var(--secondary-color);
+    width: 180px;
+    height: 180px;
+    left: 25%;
+    bottom: 10%;
+    animation: driftCyan 10s ease-in-out infinite alternate;
+}
+
+@keyframes driftBlue {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(25px, 20px) scale(1.15); }
+}
+
+@keyframes driftPurple {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-20px, 30px) scale(1.08); }
+}
+
+@keyframes driftCyan {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(20px, -20px) scale(1.2); }
+}
+
+/* Floating Decorative Dots */
+.decor-dot {
+    position: absolute;
+    border-radius: 50%;
+    z-index: 2;
+    opacity: 0.55;
+    pointer-events: none;
+    animation: floatDot 8s ease-in-out infinite alternate;
+}
+
+.dot-1 {
+    width: 8px;
+    height: 8px;
+    background: var(--primary-color);
+    left: 15%;
+    top: 25%;
+}
+
+.dot-2 {
+    width: 12px;
+    height: 12px;
+    background: var(--secondary-color);
+    right: 12%;
+    top: 35%;
+    animation-duration: 11s;
+}
+
+.dot-3 {
+    width: 6px;
+    height: 6px;
+    background: var(--success-color);
+    left: 35%;
+    bottom: 20%;
+    animation-duration: 7s;
+}
+
+@keyframes floatDot {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-16px); }
+}
+
+/* Marketing Copy Styles */
+.marketing-content-wrapper {
+    margin-top: 0.5rem;
+}
+
+.marketing-heading {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--primary-color);
+    letter-spacing: -1px;
+    margin-bottom: 0.75rem;
+}
+
+.marketing-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    max-width: 440px;
+    margin-bottom: 0;
+}
+
+/* Left Footer Link Styles */
+.left-panel-footer {
+    width: 100%;
+}
+
+.footer-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+
+.footer-dot {
+    margin: 0 10px;
+    color: var(--border-color);
+    font-weight: bold;
+}
+
+.footer-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+    color: var(--primary-color);
+}
+
+/* ==========================================================================
+   RIGHT PANEL - REGISTER FORM & ACTIONS
+   ========================================================================== */
+.right-panel {
+    background-color: var(--surface-color);
+    min-height: 100vh;
+}
+
+/* Centered Form Wrapper with Max Width */
+.form-container {
+    max-width: 420px;
+    width: 100%;
+}
+
+/* Logo Layout */
+.logo-wrapper {
+    text-decoration: none;
+}
+
+.logo-img {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    letter-spacing: -0.5px;
+}
+
+/* Welcome Headers */
+.welcome-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.5px;
+}
+
+.welcome-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+
+/* Form Styles and Inputs Overrides */
+.login-form {
+    margin-top: 1.5rem;
+}
+
+.login-form .form-group {
+    position: relative;
+}
+
+.login-form .form-label, 
+.login-form .label-header {
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+/* Input boxes override matching Login styling */
+.login-form .form-control {
+    background-color: var(--bg-color);
+    border: 1px solid var(--text-box-color);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    height: 48px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-form .form-control:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+    outline: none;
+}
+
+.login-form .form-control::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.5;
+}
+
+.form-field-error-message {
+    font-size: 0.8rem;
+    color: var(--danger-color) !important;
+    font-weight: 500;
+}
+
+/* Reusable Checkbox customized styling */
+.login-form .form-check {
+    display: flex;
+    align-items: center;
+    padding-left: 0 !important;
+    margin-bottom: 0;
+}
+
+.login-form .form-check-input {
+    float: none !important;
+    margin-left: 0 !important;
+    margin-top: 0 !important;
+    margin-right: 0 !important;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--border-color) !important;
+    border-radius: 4px !important;
+    cursor: pointer;
+    background-color: var(--bg-color);
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    flex-shrink: 0;
+}
+
+.login-form .form-check-input:checked {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.login-form .form-check-input:focus {
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.login-form .form-check-input.is-invalid {
+    border-color: var(--danger-color) !important;
+}
+
+.login-form .form-check-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    cursor: pointer;
+    line-height: 1.2;
+    display: inline-block;
+    margin-bottom: 0;
+}
+
+/* Links spacing and typography */
+.forgot-link, 
+.signup-link {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--primary-color);
+    transition: color 0.2s ease;
+}
+
+.forgot-link:hover, 
+.signup-link:hover {
+    color: var(--primary-hover);
+    text-decoration: underline !important;
+}
+
+.prompt-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   BUTTONS STYLING
+   ========================================================================== */
+
+/* Sign In / Create Account submit button styling */
+.signin-submit-btn {
+    width: 100%;
+    height: 48px;
+    background: var(--primary-color) !important;
+    color: var(--surface-color) !important;
+    border: none !important;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transform: translateY(0);
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.signin-submit-btn:hover {
+    background-color: var(--primary-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.signin-submit-btn:active {
+    transform: translateY(0);
+}
+
+.signin-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Google Sign-in Button (Secondary Variant) */
+.google-signin-btn {
+    width: 100%;
+    height: 48px;
+    background: var(--surface-color) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateY(0);
+    transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.google-signin-btn:hover {
+    background-color: var(--bg-color) !important;
+    border-color: var(--text-secondary) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.google-signin-btn:active {
+    transform: translateY(0);
+}
+
+.google-signin-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.google-icon-svg {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* ==========================================================================
+   DIVIDER STYLING (OR)
+   ========================================================================== */
+.divider-container {
+    margin: 1.5rem 0;
+}
+
+.divider-line {
+    height: 1px;
+    background-color: var(--border-color);
+}
+
+.divider-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-light, #94A3B8);
+    letter-spacing: 1px;
+}
+
+/* ==========================================================================
+   ANIMATIONS & TRANSITIONS
+   ========================================================================== */
+.fade-in-element {
+    animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN MEDIA QUERIES
+   ========================================================================== */
+
+/* Tablet & Smaller Screens (< 992px) */
+@media (max-width: 991.98px) {
+    .right-panel {
+        padding: 3rem !important;
+    }
+}
+
+/* Mobile Views (< 768px) */
+@media (max-width: 767.98px) {
+    .right-panel {
+        padding: 2rem !important;
+        min-height: 100vh;
+    }
+
+    .form-container {
+        max-width: 420px;
+        margin: 0 auto;
+    }
+
+    .logo-wrapper {
+        justify-content: center;
+        margin-bottom: 2.5rem !important;
+    }
+
+    .welcome-title {
+        font-size: 1.75rem;
+        text-align: center;
+    }
+
+    .welcome-subtitle {
+        text-align: center;
+    }
+
+    .login-form {
+        width: 100%;
+        max-width: 420px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .signup-prompt {
+        text-align: center;
+    }
+}

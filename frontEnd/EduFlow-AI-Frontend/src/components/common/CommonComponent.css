@@ -30,7 +30,80 @@
 }
 
 .cta_btn:hover {
-    background-color: #f1f5f9; /* slightly darker white */
+    background-color: #f1f5f9;
+    /* slightly darker white */
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(79, 70, 229, 0.25);
-}
+}
+
+.form-field-error-message {
+    font-size: 0.8rem;
+    color: var(--danger-color) !important;
+    font-weight: 500;
+}
+
+.type1_textbox_error {
+    border-color: var(--danger-color) !important;
+    /* box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1) !important; */
+}
+
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+    display: block;
+}
+
+.input-wrapper.has-icon .form-control {
+    padding-right: 48px !important;
+}
+
+
+.input-icon,
+.input-wrapper .input-icon-btn,
+.input-wrapper .password-toggle-btn {
+    position: absolute !important;
+    right: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: var(--text-secondary);
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: auto !important;
+    width: auto !important;
+    cursor: pointer;
+    z-index: 2;
+    font-size: 1.1rem;
+    transition: color 0.2s ease;
+}
+
+.input-icon:hover,
+.input-wrapper .input-icon-btn:hover,
+.input-wrapper .password-toggle-btn:hover {
+    color: var(--primary-color) !important;
+}
+
+
+.input-icon:focus,
+.input-wrapper .input-icon-btn:focus,
+.input-wrapper .password-toggle-btn:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.input-wrapper .form-control:disabled~.input-icon,
+.input-wrapper .form-control:disabled~.input-icon-btn,
+.input-wrapper .form-control:disabled~.password-toggle-btn {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.mandatory_text_color {
+    color: red;
+    font-weight: 600;
+}

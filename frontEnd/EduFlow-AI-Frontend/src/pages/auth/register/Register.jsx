@@ -98,9 +98,9 @@ export const Register = () => {
         }
 
         // Terms Agreement Validation
-        if (!formData.agreeToTerms) {
-            newErrors.agreeToTerms = 'You must agree to the Terms of Service and Privacy Policy';
-        }
+        // if (!formData.agreeToTerms) {
+        //     newErrors.agreeToTerms = 'You must agree to the Terms of Service and Privacy Policy';
+        // }
 
         return newErrors;
     };

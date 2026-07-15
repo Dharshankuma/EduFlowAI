@@ -5,7 +5,7 @@ import { Login } from "../pages/auth/login/Login";
 import { Register } from "../pages/auth/register/Register";
 import { Dashboard } from "../pages/app/dashboard/Dashboard";
 import PublicLayout from "../layouts/PublicLayout";
-
+import AppLayout from "../layouts/AppLayout";
 
 const AppRoutes = () => {
     return (
@@ -27,7 +27,17 @@ const AppRoutes = () => {
                 <Route path="/register" element={<Register />} />
 
                 {/* app routes */}
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route element={<AppLayout />}>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    {/* Placeholder routes for future authenticated views */}
+                    <Route path="/goals" element={<div className="p-3"><h2>Goals Page</h2><p>Phase 2 Feature</p></div>} />
+                    <Route path="/tasks" element={<div className="p-3"><h2>Tasks Page</h2><p>Phase 2 Feature</p></div>} />
+                    <Route path="/calendar" element={<div className="p-3"><h2>Calendar Page</h2><p>Phase 2 Feature</p></div>} />
+                    <Route path="/ai-planner" element={<div className="p-3"><h2>AI Planner Page</h2><p>Phase 2 Feature</p></div>} />
+                    <Route path="/analytics" element={<div className="p-3"><h2>Analytics Page</h2><p>Phase 2 Feature</p></div>} />
+                    <Route path="/profile" element={<div className="p-3"><h2>Profile Page</h2><p>Phase 2 Feature</p></div>} />
+                    <Route path="/settings" element={<div className="p-3"><h2>Settings Page</h2><p>Phase 2 Feature</p></div>} />
+                </Route>
             </Routes>
         </BrowserRouter>
     )

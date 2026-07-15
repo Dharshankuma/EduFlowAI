@@ -1,0 +1,51 @@
+/* SectionTitle CSS */
+
+.section-title-component {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 24px;
+    text-align: left;
+    width: 100%;
+}
+
+.section-title-component.text-center {
+    text-align: center;
+    align-items: center;
+}
+
+.section-title-subtitle {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+    line-height: 1;
+}
+
+.section-title-heading {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.section-title-description {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 8px 0 0 0;
+    max-width: 650px;
+    line-height: 1.5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+    .section-title-heading {
+        font-size: 1.35rem;
+    }
+    .section-title-description {
+        font-size: 0.85rem;
+    }
+}

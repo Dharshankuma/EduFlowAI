@@ -1,0 +1,48 @@
+/* StatusBadge CSS */
+
+.status-badge-el {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 50px;
+    white-space: nowrap;
+    text-align: center;
+    width: fit-content;
+    line-height: 1;
+}
+
+/* Completed & Success: Green theme */
+.status-badge-completed,
+.status-badge-success {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: var(--success-color);
+}
+
+/* Pending & Warning: Yellow/Orange theme */
+.status-badge-pending,
+.status-badge-warning {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--warning-color);
+}
+
+/* In Progress: Cyan/Secondary theme */
+.status-badge-in-progress {
+    background-color: rgba(6, 182, 212, 0.1);
+    color: var(--secondary-color);
+}
+
+/* Overdue & Error: Red theme */
+.status-badge-overdue,
+.status-badge-error {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+}
+
+/* Neutral: Default gray / border theme */
+.status-badge-neutral {
+    background-color: rgba(100, 116, 139, 0.1);
+    color: var(--text-secondary);
+}

@@ -1,0 +1,16 @@
+/* AvailabilitySummary.css */
+
+.availability-summary-section {
+    width: 100%;
+    margin-top: 24px;
+    box-sizing: border-box;
+}
+
+.availability-summary-section .row > div {
+    display: flex;
+}
+
+.availability-summary-section .stat-card {
+    flex-grow: 1;
+    width: 100%;
+}

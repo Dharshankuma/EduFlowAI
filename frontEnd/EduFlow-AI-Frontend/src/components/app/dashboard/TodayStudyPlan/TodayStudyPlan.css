@@ -1,0 +1,256 @@
+/* TodayStudyPlan CSS */
+
+.today-study-plan-card {
+    background-color: var(--primary-color) !important;
+    color: #ffffff;
+    border: none !important;
+    text-align: left;
+    overflow: hidden;
+}
+
+.plan-header {
+    color: #ffffff;
+}
+
+.plan-badge-icon {
+    font-size: 1.5rem;
+    color: #FBBF24; /* golden yellow */
+    display: flex;
+    align-items: center;
+}
+
+.plan-heading {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.plan-description {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.5;
+    max-width: 680px;
+}
+
+/* Summary Metrics Layout */
+.summary-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;
+}
+
+/* Action Buttons Layout */
+.action-buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+}
+
+/* Primary Button Override: white background, primary text */
+.today-plan-btn-primary {
+    background-color: #ffffff !important;
+    color: var(--primary-color) !important;
+    border: none !important;
+    min-width: 150px;
+    padding: 12px 24px;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.today-plan-btn-primary:hover {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.today-plan-btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Secondary Button Layout: translucent background, white text */
+.today-plan-btn-secondary {
+    background-color: rgba(6, 182, 212, 0.8) !important; /* var(--secondary-color) translucent */
+    color: #ffffff !important;
+    border: none !important;
+    padding: 12px 24px;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.today-plan-btn-secondary:hover {
+    background-color: var(--secondary-color) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+.today-plan-btn-secondary:active {
+    transform: translateY(0);
+}
+
+/* Daily Brief Segment Styling */
+.daily-brief-segment {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.brief-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.brief-header-icon {
+    font-size: 1.15rem;
+    color: #FBBF24;
+}
+
+.brief-section-subtitle {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #FBBF24;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.recommendations-list {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.5;
+}
+
+.recommendations-list li {
+    margin-bottom: 4px;
+}
+
+.brief-section-text {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Daily Brief Progress */
+.brief-progress-panel {
+    width: 100%;
+}
+
+.brief-progress-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.75);
+    letter-spacing: 0.5px;
+}
+
+.brief-estimate-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #FBBF24;
+}
+
+/* Override ProgressBar track background when nested in Hero Card */
+.brief-progress-panel .progress-bar-track {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.detailed-recommendation-link {
+    color: #ffffff;
+    font-size: 0.825rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s ease;
+    width: fit-content;
+}
+
+.detailed-recommendation-link:hover {
+    color: #FBBF24;
+}
+
+/* Right Column Illustration Card (Floating Container) */
+.illustration-card-container {
+    background-color: #ffffff;
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 320px;
+    width: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.illustration-card-container:hover {
+    transform: translateY(-6px) rotate(1deg);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.illustration-img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+/* =================================================
+   RESPONSIVE OVERRIDES
+   ================================================= */
+
+@media (max-width: 991px) {
+    .illustration-card-container {
+        margin-top: 24px;
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 767px) {
+    .plan-heading {
+        font-size: 1.5rem;
+    }
+    
+    .plan-description {
+        font-size: 0.875rem;
+    }
+    
+    .summary-cards-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    /* Buttons become full width on mobile viewports */
+    .action-buttons-container {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .action-buttons-container > div {
+        width: 100%;
+    }
+    
+    .action-buttons-container button {
+        width: 100% !important;
+        justify-content: center;
+    }
+    
+    .detailed-recommendation-link {
+        margin-top: 16px;
+    }
+}

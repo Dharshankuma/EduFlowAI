@@ -1,0 +1,89 @@
+/* PersonalInformation CSS */
+
+.personal-info-card {
+    width: 100%;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+.personal-info-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.personal-info-body {
+    width: 100%;
+}
+
+.profile-select-input {
+    padding: 12px;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.profile-select-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+}
+
+.profile-form-actions {
+    margin-top: 16px;
+    display: flex;
+}
+
+.profile-save-btn {
+    background-color: var(--primary-color) !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 12px 24px !important;
+    font-weight: 600;
+    border-radius: var(--radius-sm) !important;
+    min-width: 140px !important;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+}
+
+.profile-save-btn:hover {
+    background-color: var(--primary-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.profile-cancel-btn {
+    background-color: var(--bg-color) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 12px 24px !important;
+    font-weight: 600;
+    border-radius: var(--radius-sm) !important;
+    min-width: 100px !important;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.profile-cancel-btn:hover {
+    background-color: var(--border-color) !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 575px) {
+    .profile-form-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .profile-save-btn,
+    .profile-cancel-btn {
+        width: 100% !important;
+    }
+}

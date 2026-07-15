@@ -1,0 +1,25 @@
+/* Statistics CSS */
+
+.statistics-section {
+    width: 100%;
+    margin-top: 24px;
+    margin-bottom: 24px;
+    box-sizing: border-box;
+}
+
+/* Force child elements to stretch to equal height */
+.statistics-section .row > div {
+    display: flex;
+}
+
+.statistics-section .stat-card {
+    flex-grow: 1;
+}
+
+/* Mobile grid optimization */
+@media (max-width: 767px) {
+    .statistics-section {
+        margin-top: 16px;
+        margin-bottom: 16px;
+    }
+}

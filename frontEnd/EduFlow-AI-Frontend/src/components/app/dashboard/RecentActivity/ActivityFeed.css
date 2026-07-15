@@ -1,0 +1,9 @@
+/* ActivityFeed CSS */
+
+.activity-feed-component {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
+}

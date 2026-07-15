@@ -1,0 +1,77 @@
+/* StudyPreference.css */
+
+.study-preferences-card {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.preferences-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    text-align: left;
+}
+
+.preferences-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.preferences-select {
+    padding: 12px;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color 0.2s ease;
+    width: 100%;
+}
+
+.preferences-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+}
+
+.preference-radio-wrapper {
+    flex: 1 1 calc(50% - 12px);
+    min-width: 120px;
+}
+
+.preference-radio-label {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border-color);
+    background-color: var(--surface-color);
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.9rem;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.preference-radio-label:hover {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+}
+
+/* Checked state override */
+.btn-check:checked + .preference-radio-label {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: #ffffff !important;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Form label bold indicator helper */
+.font-semibold {
+    font-weight: 600;
+    color: var(--text-primary);
+}

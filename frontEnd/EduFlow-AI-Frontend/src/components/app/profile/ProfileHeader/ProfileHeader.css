@@ -1,0 +1,152 @@
+/* ProfileHeader CSS */
+
+.profile-header-card {
+    border: 1px solid var(--border-color);
+    background-color: var(--surface-color);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.profile-avatar-wrapper {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    flex-shrink: 0;
+}
+
+.profile-avatar-img {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--border-color);
+}
+
+.profile-avatar-placeholder {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background-color: var(--bg-color);
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid var(--border-color);
+}
+
+/* Edit overlay pen icon */
+.avatar-edit-badge {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border: 2px solid var(--surface-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+}
+
+.avatar-edit-badge:hover {
+    background-color: var(--primary-hover);
+    transform: scale(1.1);
+}
+
+.profile-meta-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-user-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.profile-info-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.profile-info-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.info-icon {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+.profile-info-separator {
+    color: var(--border-color);
+    user-select: none;
+}
+
+/* Upload button layout styling overrides */
+.profile-upload-btn {
+    background-color: var(--primary-color) !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 12px 24px !important;
+    font-weight: 600;
+    border-radius: var(--radius-sm) !important;
+    min-width: 180px !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+}
+
+.profile-upload-btn:hover {
+    background-color: var(--primary-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.profile-upload-btn:active {
+    transform: translateY(0);
+}
+
+/* Mobile adjustments */
+@media (max-width: 575px) {
+    .profile-avatar-wrapper {
+        width: 90px;
+        height: 90px;
+    }
+    
+    .profile-avatar-img,
+    .profile-avatar-placeholder {
+        width: 90px;
+        height: 90px;
+    }
+    
+    .profile-user-name {
+        font-size: 1.25rem;
+    }
+    
+    .profile-info-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .profile-upload-btn {
+        width: 100% !important;
+    }
+}

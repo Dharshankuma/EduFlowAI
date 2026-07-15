@@ -1,0 +1,128 @@
+/* ScheduleItem CSS */
+
+.schedule-item-el {
+    display: flex;
+    position: relative;
+    padding: 16px 20px;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.25s ease;
+    gap: 16px;
+    align-items: flex-start;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Hover highlights */
+.schedule-item-el:hover {
+    background-color: var(--bg-color);
+}
+
+.schedule-item-timeline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 20px;
+    flex-shrink: 0;
+    align-self: stretch;
+}
+
+.timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    background-color: var(--surface-color);
+    z-index: 2;
+    margin-top: 6px; /* align with first line of text */
+    transition: all 0.25s ease;
+    box-sizing: border-box;
+}
+
+/* Active / Current Dot: Solid primary color with soft pulse outer ring */
+.timeline-dot.active {
+    border-color: var(--primary-color);
+    background-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
+}
+
+.timeline-line {
+    position: absolute;
+    top: 18px; /* starts below dot */
+    bottom: -16px; /* extends to overlap next item spacing */
+    width: 2px;
+    background-color: var(--border-color);
+    z-index: 1;
+}
+
+.schedule-item-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    text-align: left;
+}
+
+.schedule-item-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    line-height: 1.2;
+}
+
+.schedule-item-time {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.schedule-item-separator {
+    color: var(--text-secondary);
+}
+
+.schedule-item-subject {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.schedule-item-topic {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 4px 0 0 0;
+    line-height: 1.4;
+}
+
+.schedule-item-badge-wrapper {
+    flex-shrink: 0;
+    align-self: center;
+}
+
+/* Highlight style for the active task */
+.current-item {
+    background-color: rgba(79, 70, 229, 0.03);
+}
+
+.current-item:hover {
+    background-color: rgba(79, 70, 229, 0.06);
+}
+
+/* Tablet & Mobile responsive overrides */
+@media (max-width: 767px) {
+    .schedule-item-el {
+        padding: 12px 10px;
+        gap: 12px;
+    }
+    
+    .schedule-item-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+    
+    .schedule-item-separator {
+        display: none;
+    }
+    
+    .schedule-item-topic {
+        font-size: 0.8rem;
+    }
+}

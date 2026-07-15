@@ -1,0 +1,21 @@
+/* RecentActivity CSS */
+
+.recent-activity-card {
+    height: 100%;
+    width: 100%;
+    text-align: left;
+}
+
+.recent-activity-body {
+    width: 100%;
+    margin-top: 8px;
+    box-sizing: border-box;
+}
+
+.no-activity-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 32px 16px;
+    margin: 0;
+}

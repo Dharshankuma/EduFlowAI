@@ -1,0 +1,141 @@
+/* ActivityItem CSS */
+
+.activity-item-wrapper {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 16px;
+}
+
+.activity-item-wrapper:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+    border-color: rgba(79, 70, 229, 0.15); /* var(--primary-color) translucent */
+}
+
+.activity-item-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.activity-icon-container {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* Color palettes based on activity types */
+.activity-icon-container.goal {
+    background-color: rgba(6, 182, 212, 0.1); /* Cyan */
+    color: var(--secondary-color);
+}
+
+.activity-icon-container.task {
+    background-color: rgba(34, 197, 94, 0.1); /* Green */
+    color: var(--success-color);
+}
+
+.activity-icon-container.planner {
+    background-color: rgba(245, 158, 11, 0.1); /* Orange */
+    color: var(--warning-color);
+}
+
+.activity-icon-container.session {
+    background-color: rgba(79, 70, 229, 0.1); /* Primary/Purple */
+    color: var(--primary-color);
+}
+
+.activity-icon-container.calendar {
+    background-color: rgba(6, 182, 212, 0.1);
+    color: var(--secondary-color);
+}
+
+.activity-icon-container.progress {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: var(--success-color);
+}
+
+.activity-icon-container.ai {
+    background-color: rgba(79, 70, 229, 0.15);
+    color: var(--primary-color);
+    animation: ai-pulse 2s infinite ease-in-out;
+}
+
+.activity-icon-container.neutral {
+    background-color: rgba(100, 116, 139, 0.1);
+    color: var(--text-secondary);
+}
+
+@keyframes ai-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.activity-details {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    overflow: hidden;
+}
+
+.activity-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.activity-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 4px 0 0 0;
+    line-height: 1.3;
+}
+
+.activity-time {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    margin-top: 6px;
+    display: block;
+}
+
+.activity-item-right {
+    flex-shrink: 0;
+    align-self: center;
+}
+
+/* Tablet & Mobile responsive overrides */
+@media (max-width: 767px) {
+    .activity-item-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px;
+    }
+    
+    .activity-item-right {
+        width: 100%;
+        margin-top: 4px;
+        border-top: 1px solid var(--border-color);
+        padding-top: 8px;
+        display: flex;
+        justify-content: flex-end;
+    }
+}

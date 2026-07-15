@@ -1,0 +1,47 @@
+/* FocusSession CSS */
+
+.focus-session-card {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+}
+
+.focus-session-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.focus-subject-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 16px;
+    width: 100%;
+}
+
+.focus-subject-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1;
+}
+
+.focus-subject-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 6px 0 0 0;
+    line-height: 1.2;
+}
+
+/* Tablet & Mobile responsive overrides */
+@media (max-width: 1024px) {
+    .focus-subject-details {
+        margin-top: 8px;
+    }
+}

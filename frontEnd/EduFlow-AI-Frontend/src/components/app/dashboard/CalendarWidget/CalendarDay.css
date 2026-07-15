@@ -1,0 +1,79 @@
+/* CalendarDay CSS */
+
+.calendar-day-cell {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0;
+    box-sizing: border-box;
+    margin: 2px auto;
+    outline: none;
+}
+
+/* Hover highlights */
+.calendar-day-cell:hover:not(.is-disabled):not(.is-selected) {
+    background-color: var(--bg-color);
+    color: var(--primary-color);
+}
+
+/* Outside active month days: muted color */
+.outside-month {
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+/* Today: Filled primary circle ring */
+.is-today {
+    border: 2px solid var(--primary-color);
+    font-weight: 700;
+}
+
+/* Selected: Filled primary color, white text */
+.is-selected {
+    background-color: var(--primary-color) !important;
+    color: #ffffff !important;
+    font-weight: 700;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Task indications: custom bg tint + colored dot underneath */
+.calendar-day-cell.has-task {
+    background-color: rgba(6, 182, 212, 0.08); /* var(--secondary-color) tint */
+    color: var(--text-primary);
+}
+
+.calendar-day-cell.has-task:not(.is-selected):not(.outside-month) {
+    color: var(--text-primary);
+}
+
+.task-dot-indicator {
+    width: 4px;
+    height: 4px;
+    background-color: var(--secondary-color);
+    border-radius: 50%;
+    position: absolute;
+    bottom: 3px;
+}
+
+/* Adjust dot visibility inside selected cells */
+.is-selected .task-dot-indicator {
+    background-color: #ffffff;
+}
+
+/* Disabled */
+.is-disabled {
+    cursor: not-allowed;
+    opacity: 0.25;
+}

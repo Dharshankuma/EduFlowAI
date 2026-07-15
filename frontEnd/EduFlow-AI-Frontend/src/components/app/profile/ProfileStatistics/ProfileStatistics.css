@@ -1,0 +1,17 @@
+/* ProfileStatistics CSS */
+
+.profile-statistics-section {
+    width: 100%;
+    margin-bottom: 24px;
+    box-sizing: border-box;
+}
+
+/* Ensure adjacent cards stretch to match column heights */
+.profile-statistics-section .row > div {
+    display: flex;
+}
+
+.profile-statistics-section .stat-card {
+    flex-grow: 1;
+    width: 100%;
+}

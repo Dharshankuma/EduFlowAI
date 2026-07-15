@@ -1,0 +1,21 @@
+/* UpcomingTasks CSS */
+
+.upcoming-tasks-card {
+    height: 100%;
+    width: 100%;
+    text-align: left;
+}
+
+.upcoming-tasks-body {
+    width: 100%;
+    margin-top: 8px;
+    box-sizing: border-box;
+}
+
+.no-tasks-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 32px 16px;
+    margin: 0;
+}

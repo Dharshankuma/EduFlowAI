@@ -1,0 +1,106 @@
+/* StudyAvailability.css */
+
+.study-availability-container-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.study-availability-card {
+    width: 100%;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+.study-availability-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.study-availability-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    margin-bottom: 0;
+}
+
+/* Info banner panel */
+.info-message-banner {
+    background-color: rgba(79, 70, 229, 0.05); /* very light primary */
+    border: 1px solid rgba(79, 70, 229, 0.1);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+}
+
+.info-banner-icon {
+    font-size: 1.15rem;
+    color: var(--primary-color);
+    flex-shrink: 0;
+}
+
+.info-banner-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* Actions footer */
+.availability-page-actions {
+    margin-top: 16px;
+    width: 100%;
+}
+
+.save-availability-btn {
+    background-color: var(--primary-color) !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 12px 24px !important;
+    font-weight: 600;
+    border-radius: var(--radius-sm) !important;
+    min-width: 160px !important;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+}
+
+.save-availability-btn:hover {
+    background-color: var(--primary-hover) !important;
+    box-shadow: var(--shadow-md);
+}
+
+.save-availability-btn:active {
+    transform: scale(0.98);
+}
+
+.reset-availability-btn {
+    background-color: var(--bg-color) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+    padding: 12px 24px !important;
+    font-weight: 600;
+    border-radius: var(--radius-sm) !important;
+    min-width: 100px !important;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reset-availability-btn:hover {
+    background-color: var(--border-color) !important;
+}
+
+/* Mobile responsive full width controls */
+@media (max-width: 575px) {
+    .availability-page-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .save-availability-btn,
+    .reset-availability-btn {
+        width: 100% !important;
+    }
+}

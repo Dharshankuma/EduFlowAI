@@ -1,0 +1,116 @@
+/* AvailabilityDay.css */
+
+.availability-day-row {
+    border: 1px solid var(--border-color);
+    background-color: var(--surface-color);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.availability-day-row.is-disabled {
+    opacity: 0.6;
+    background-color: var(--bg-color);
+}
+
+.day-name-label {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    min-width: 90px;
+}
+
+.switch-status-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    min-width: 80px;
+    text-align: left;
+}
+
+.availability-day-row.is-enabled .switch-status-label {
+    color: var(--success-color);
+}
+
+.availability-switch {
+    cursor: pointer;
+    width: 38px;
+    height: 20px;
+}
+
+.availability-time-input {
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    background-color: var(--surface-color);
+    font-size: 0.9rem;
+    transition: border-color 0.15s ease-in-out;
+}
+
+.availability-time-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+}
+
+.availability-hours-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    gap: 2px;
+}
+
+.hours-label {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.hours-value-text {
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+/* Mobile stacked styles */
+@media (max-width: 767px) {
+    .availability-day-row {
+        padding: 16px;
+    }
+    
+    .day-name-label {
+        font-size: 1.1rem;
+    }
+    
+    .time-input-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        text-align: left;
+    }
+    
+    .time-field-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+    }
+    
+    .availability-hours-indicator {
+        margin-top: 8px;
+    }
+}
+
+@media (min-width: 768px) {
+    .availability-hours-indicator {
+        align-items: flex-end;
+        text-align: right;
+    }
+}

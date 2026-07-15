@@ -38,15 +38,15 @@ export const AppLayout = () => {
     return (
         <div className="app-layout">
             <Sidebar />
-            
-            <MobileSidebar 
-                isOpen={isMobileSidebarOpen} 
-                onClose={closeMobileSidebar} 
+
+            <MobileSidebar
+                isOpen={isMobileSidebarOpen}
+                onClose={closeMobileSidebar}
             />
-            
+
             <div className="app-wrapper">
                 <Topbar onToggleSidebar={toggleMobileSidebar} />
-                
+
                 <main className="app-content">
                     <Outlet />
                 </main>

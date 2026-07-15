@@ -225,3 +225,8 @@ REFERENCES dbo.USERS(USERID)
 );
 
 
+ALTER TABLE UserAvailability
+ADD StartTime TIME NULL;
+
+ALTER TABLE UserAvailability
+ADD EndTime TIME NULL;

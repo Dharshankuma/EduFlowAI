@@ -37,7 +37,8 @@
 /* Horizontal line on Desktop */
 .timeline_line {
     position: absolute;
-    top: 24px; /* Center of the 48px circle */
+    top: 24px;
+    /* Center of the 48px circle */
     left: calc(100% / 10);
     right: calc(100% / 10);
     height: 2px;
@@ -63,7 +64,8 @@
 
 .timeline_circle_container {
     margin-bottom: 20px;
-    background-color: var(--bg-color); /* Match bg to hide connector behind circle */
+    background-color: var(--bg-color);
+    /* Match bg to hide connector behind circle */
     padding: 0 16px;
     z-index: 2;
 }
@@ -129,7 +131,8 @@
 .insights_wrapper {
     margin-top: 100px;
     padding-top: 80px;
-    border-top: 2px dashed rgba(79, 70, 229, 0.15); /* dashed dividing line */
+    border-top: 2px dashed rgba(79, 70, 229, 0.15);
+    /* dashed dividing line */
 }
 
 .insights_title {
@@ -223,10 +226,7 @@
     line-height: 1.4;
 }
 
-/* Custom SVG progress ring styles */
-.progress_ring {
-    /* No outer transformations to keep text upright */
-}
+
 
 .progress_ring_circle {
     transform: rotate(-90deg);
@@ -264,7 +264,8 @@
     }
 
     .timeline_circle_container {
-        padding: 0; /* Remove padding since line is hidden */
+        padding: 0;
+        /* Remove padding since line is hidden */
     }
 
     .timeline_step_col {
@@ -281,7 +282,8 @@
     /* Convert connector line to vertical */
     .timeline_line {
         display: block;
-        left: 36px; /* Align with center of circles (12px padding + 24px radius) */
+        left: 36px;
+        /* Align with center of circles (12px padding + 24px radius) */
         top: 24px;
         bottom: 24px;
         width: 2px;

@@ -1,0 +1,31 @@
+/* Dashboard Page Layout CSS */
+
+.dashboard-page-container {
+    padding: 24px;
+    background-color: var(--bg-color);
+    min-height: 100vh;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.dashboard-section {
+    margin-bottom: 24px;
+}
+
+/* Stacks grid columns inside responsive areas */
+.dashboard-grid-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Mobile & Tablet responsiveness */
+@media (max-width: 991px) {
+    .dashboard-page-container {
+        padding: 16px;
+    }
+    
+    .dashboard-grid-column {
+        gap: 16px;
+    }
+}

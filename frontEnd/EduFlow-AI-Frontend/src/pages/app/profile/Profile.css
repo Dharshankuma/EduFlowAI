@@ -1,0 +1,32 @@
+/* Profile Page CSS */
+
+.profile-page-container {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.profile-section {
+    width: 100%;
+}
+
+.profile-grid-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Tablet adjustments */
+@media (max-width: 991px) {
+    .profile-page-container {
+        padding: 16px;
+        gap: 16px;
+    }
+    
+    .profile-grid-column {
+        gap: 16px;
+    }
+}

@@ -1,0 +1,65 @@
+/* Settings Page CSS */
+
+.settings-page-container {
+    padding: 32px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.settings-page-header {
+    margin-bottom: 28px;
+}
+
+.settings-page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.settings-page-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.settings-sections-stack {
+    gap: 32px; /* Equal spacing between sections */
+}
+
+.settings-section-wrapper {
+    width: 100%;
+}
+
+/* Tablet responsive overrides */
+@media (max-width: 991px) {
+    .settings-page-container {
+        padding: 24px;
+    }
+    
+    .settings-page-title {
+        font-size: 1.6rem;
+    }
+    
+    .settings-sections-stack {
+        gap: 24px;
+    }
+}
+
+/* Mobile responsive overrides */
+@media (max-width: 575px) {
+    .settings-page-container {
+        padding: 16px;
+    }
+    
+    .settings-page-title {
+        font-size: 1.4rem;
+    }
+    
+    .settings-page-subtitle {
+        font-size: 0.85rem;
+    }
+    
+    .settings-sections-stack {
+        gap: 16px; /* Equal spacing and stacking on mobile */
+    }
+}

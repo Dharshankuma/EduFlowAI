@@ -1,16 +1,34 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import React, { useEffect } from "react";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom"
 
 import { Landing } from "../pages/public/landing/Landing";
 import { Login } from "../pages/auth/login/Login";
 import { Register } from "../pages/auth/register/Register";
 import { Dashboard } from "../pages/app/dashboard/Dashboard";
 import { Profile } from "../pages/app/profile/Profile";
+import { Settings } from "../pages/app/settings/Settings";
 import PublicLayout from "../layouts/PublicLayout";
 import AppLayout from "../layouts/AppLayout";
+
+const ScrollToTop = () => {
+    const { pathname } = useLocation();
+
+    useEffect(() => {
+        const appContent = document.querySelector('.app-content');
+        if (appContent) {
+            appContent.scrollTop = 0;
+        } else {
+            window.scrollTo(0, 0);
+        }
+    }, [pathname]);
+
+    return null;
+};
 
 const AppRoutes = () => {
     return (
         <BrowserRouter>
+            <ScrollToTop />
             <Routes>
 
                 {/* public routes */}
@@ -37,7 +55,7 @@ const AppRoutes = () => {
                     <Route path="/ai-planner" element={<div className="p-3"><h2>AI Planner Page</h2><p>Phase 2 Feature</p></div>} />
                     <Route path="/analytics" element={<div className="p-3"><h2>Analytics Page</h2><p>Phase 2 Feature</p></div>} />
                     <Route path="/profile" element={<Profile />} />
-                    <Route path="/settings" element={<div className="p-3"><h2>Settings Page</h2><p>Phase 2 Feature</p></div>} />
+                    <Route path="/settings" element={<Settings />} />
                 </Route>
             </Routes>
         </BrowserRouter>

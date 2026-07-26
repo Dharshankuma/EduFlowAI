@@ -1,0 +1,84 @@
+/* NotificationSettings CSS */
+
+.notification-settings-card {
+    text-align: left;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.notification-settings-header {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.notification-icon-container {
+    width: 44px;
+    height: 44px;
+    background-color: rgba(79, 70, 229, 0.1); /* light translucent primary background */
+    color: var(--primary-color);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.notification-settings-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.notification-settings-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.notification-items-list {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Tablet responsive overrides */
+@media (max-width: 991px) {
+    .notification-settings-card {
+        padding: 24px !important;
+    }
+    
+    .notification-icon-container {
+        width: 40px;
+        height: 40px;
+        font-size: 1.15rem;
+    }
+    
+    .notification-settings-title {
+        font-size: 1.1rem;
+    }
+}
+
+/* Mobile responsive overrides */
+@media (max-width: 575px) {
+    .notification-settings-card {
+        padding: 16px !important;
+    }
+    
+    .notification-settings-header {
+        gap: 10px !important;
+        padding-bottom: 12px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .notification-icon-container {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .notification-settings-title {
+        font-size: 1rem;
+    }
+    
+    .notification-settings-subtitle {
+        font-size: 0.78rem;
+    }
+}

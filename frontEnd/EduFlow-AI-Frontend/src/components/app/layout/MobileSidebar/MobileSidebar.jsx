@@ -9,9 +9,9 @@ export const MobileSidebar = ({ isOpen, onClose }) => {
     const mainNavItems = [
         { path: '/dashboard', label: 'Dashboard', icon: 'bi-grid-fill' },
         { path: '/goals', label: 'Goals', icon: 'bi-bullseye' },
-        { path: '/tasks', label: 'Tasks', icon: 'bi-check2-square' },
+
         { path: '/calendar', label: 'Calendar', icon: 'bi-calendar3' },
-        { path: '/ai-planner', label: 'AI Planner', icon: 'bi-lightning-charge-fill' },
+
         { path: '/analytics', label: 'Analytics', icon: 'bi-bar-chart-line-fill' },
     ];
 
@@ -32,12 +32,12 @@ export const MobileSidebar = ({ isOpen, onClose }) => {
     return (
         <div className={`mobile-sidebar-container ${isOpen ? 'open' : ''}`}>
             {/* Backdrop overlay */}
-            <div 
-                className="mobile-sidebar-overlay" 
-                onClick={onClose} 
+            <div
+                className="mobile-sidebar-overlay"
+                onClick={onClose}
                 aria-hidden="true"
             />
-            
+
             {/* Drawer */}
             <div className="mobile-sidebar-drawer" role="dialog" aria-modal="true" aria-label="Navigation Menu">
                 <div className="mobile-sidebar-header">
@@ -45,17 +45,17 @@ export const MobileSidebar = ({ isOpen, onClose }) => {
                         <img src={logoImage} alt="EduFlow AI Logo" className="mobile-sidebar-logo" />
                         <span className="mobile-sidebar-brand-name">EduFlow AI</span>
                     </div>
-                    <button 
-                        className="mobile-sidebar-close-btn" 
+                    <button
+                        className="mobile-sidebar-close-btn"
                         onClick={onClose}
                         aria-label="Close menu"
                     >
                         <i className="bi bi-x"></i>
                     </button>
                 </div>
-                
+
                 <hr className="mobile-sidebar-divider" />
-                
+
                 <nav className="mobile-sidebar-nav">
                     <div className="mobile-nav-section main-nav">
                         {mainNavItems.map((item) => (
@@ -98,8 +98,8 @@ export const MobileSidebar = ({ isOpen, onClose }) => {
                         <span className="user-name">Dharshan</span>
                         <span className="user-badge">Premium Student</span>
                     </div>
-                    <button 
-                        className="logout-btn" 
+                    <button
+                        className="logout-btn"
                         onClick={handleLogout}
                         aria-label="Logout"
                         title="Logout"

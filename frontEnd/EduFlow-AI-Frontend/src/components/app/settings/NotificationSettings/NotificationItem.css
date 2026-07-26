@@ -1,0 +1,67 @@
+/* NotificationItem CSS */
+
+.notification-item {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+.notification-item-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.notification-item-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* Custom Switch Customization */
+.notification-switch {
+    cursor: pointer;
+    width: 44px !important;
+    height: 22px !important;
+    border-radius: 12px !important;
+    background-color: var(--text-box-color);
+    border: 1px solid var(--text-box-color);
+    transition: background-position 0.25s ease-in-out, background-color 0.25s ease-in-out, border-color 0.25s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.notification-switch:checked {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.notification-switch:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2) !important;
+}
+
+/* Tablet responsive overrides */
+@media (max-width: 991px) {
+    .notification-item {
+        padding-top: 14px !important;
+        padding-bottom: 14px !important;
+    }
+}
+
+/* Mobile responsive overrides */
+@media (max-width: 575px) {
+    .notification-item {
+        padding-top: 12px !important;
+        padding-bottom: 12px !important;
+    }
+    
+    .notification-item-title {
+        font-size: 0.95rem;
+    }
+    
+    .notification-item-desc {
+        font-size: 0.8rem;
+    }
+}

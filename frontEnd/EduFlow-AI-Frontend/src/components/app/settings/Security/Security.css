@@ -1,0 +1,152 @@
+/* Security CSS */
+
+.security-settings-card {
+    text-align: left;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.security-settings-header {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.security-icon-container {
+    width: 44px;
+    height: 44px;
+    background-color: rgba(79, 70, 229, 0.1);
+    color: var(--primary-color);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.security-settings-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.security-settings-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Two-Factor Authentication Card */
+.two-factor-auth-card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-color);
+    width: 100%;
+}
+
+.two-factor-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    background-color: var(--bg-color);
+    color: var(--text-secondary);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+}
+
+.two-factor-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.two-factor-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.35;
+}
+
+/* Toggle switch customization */
+.security-switch {
+    cursor: pointer;
+    width: 44px !important;
+    height: 22px !important;
+    border-radius: 12px !important;
+    background-color: var(--text-box-color);
+    border: 1px solid var(--text-box-color);
+    transition: background-position 0.25s ease-in-out, background-color 0.25s ease-in-out, border-color 0.25s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.security-switch:checked {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.security-switch:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2) !important;
+}
+
+/* Tablet responsive overrides */
+@media (max-width: 991px) {
+    .security-settings-card {
+        padding: 24px !important;
+    }
+    
+    .security-icon-container {
+        width: 40px;
+        height: 40px;
+        font-size: 1.15rem;
+    }
+    
+    .security-settings-title {
+        font-size: 1.1rem;
+    }
+}
+
+/* Mobile responsive overrides */
+@media (max-width: 575px) {
+    .security-settings-card {
+        padding: 16px !important;
+    }
+    
+    .security-settings-header {
+        gap: 10px !important;
+        padding-bottom: 12px !important;
+        margin-bottom: 16px !important;
+    }
+    
+    .security-icon-container {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .security-settings-title {
+        font-size: 1rem;
+    }
+    
+    .security-settings-subtitle {
+        font-size: 0.78rem;
+    }
+    
+    .two-factor-auth-card {
+        padding: 12px !important;
+    }
+    
+    .two-factor-icon-wrapper {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+    
+    .two-factor-title {
+        font-size: 0.9rem;
+    }
+    
+    .two-factor-desc {
+        font-size: 0.75rem;
+    }
+}

@@ -1,0 +1,83 @@
+/* DangerZone CSS */
+
+.danger-zone-container {
+    border-top: 1px solid var(--border-color) !important;
+}
+
+.danger-zone-section-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--danger-color);
+}
+
+.danger-zone-card {
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: var(--radius-md);
+    background-color: rgba(239, 68, 68, 0.04);
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+}
+
+.danger-zone-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+    border-color: var(--danger-color);
+}
+
+.danger-zone-card:active {
+    transform: scale(0.99);
+}
+
+.danger-zone-icon-container {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.danger-zone-card:hover .danger-zone-icon-container {
+    background-color: var(--danger-color);
+    color: #ffffff;
+}
+
+.danger-zone-text {
+    flex-grow: 1;
+}
+
+.danger-zone-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--danger-color);
+    margin: 0;
+}
+
+.danger-zone-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.35;
+}
+
+.danger-zone-chevron {
+    color: rgba(239, 68, 68, 0.5);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.danger-zone-card:hover .danger-zone-chevron {
+    color: var(--danger-color);
+    transform: translateX(2px);
+}

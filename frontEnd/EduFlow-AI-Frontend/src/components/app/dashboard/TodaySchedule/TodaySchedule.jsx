@@ -9,7 +9,7 @@ export const TodaySchedule = ({ scheduleItems = [], onEditSchedule }) => {
         <DashboardCard className="today-schedule-card" hover={false} shadow={true} padding="24px">
             <CardHeader
                 title="Today's Schedule"
-                actionText="Edit Schedule"
+                actionText="View in calender"
                 onActionClick={onEditSchedule}
             />
             <div className="today-schedule-body">

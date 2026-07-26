@@ -9,9 +9,9 @@ export const Sidebar = () => {
     const mainNavItems = [
         { path: '/dashboard', label: 'Dashboard', icon: 'bi-grid-fill' },
         { path: '/goals', label: 'Goals', icon: 'bi-bullseye' },
-        { path: '/tasks', label: 'Tasks', icon: 'bi-check2-square' },
+
         { path: '/calendar', label: 'Calendar', icon: 'bi-calendar3' },
-        { path: '/ai-planner', label: 'AI Planner', icon: 'bi-lightning-charge-fill' },
+
         { path: '/analytics', label: 'Analytics', icon: 'bi-bar-chart-line-fill' },
     ];
 
@@ -31,9 +31,9 @@ export const Sidebar = () => {
                 <img src={logoImage} alt="EduFlow AI Logo" className="sidebar-logo" />
                 <span className="sidebar-brand-name">EduFlow AI</span>
             </div>
-            
+
             <hr className="sidebar-divider" />
-            
+
             <nav className="sidebar-nav">
                 <div className="nav-section main-nav">
                     {mainNavItems.map((item) => (
@@ -74,8 +74,8 @@ export const Sidebar = () => {
                     <span className="user-name">Dharshan</span>
                     <span className="user-badge">Premium Student</span>
                 </div>
-                <button 
-                    className="logout-btn" 
+                <button
+                    className="logout-btn"
                     onClick={handleLogout}
                     aria-label="Logout"
                     title="Logout"

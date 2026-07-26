@@ -7,6 +7,7 @@ import { Register } from "../pages/auth/register/Register";
 import { Dashboard } from "../pages/app/dashboard/Dashboard";
 import { Profile } from "../pages/app/profile/Profile";
 import { Settings } from "../pages/app/settings/Settings";
+import { Goals } from "../pages/app/goals/Goals/Goals";
 import PublicLayout from "../layouts/PublicLayout";
 import AppLayout from "../layouts/AppLayout";
 
@@ -49,7 +50,7 @@ const AppRoutes = () => {
                 <Route element={<AppLayout />}>
                     <Route path="/dashboard" element={<Dashboard />} />
                     {/* Placeholder routes for future authenticated views */}
-                    <Route path="/goals" element={<div className="p-3"><h2>Goals Page</h2><p>Phase 2 Feature</p></div>} />
+                    <Route path="/goals" element={<Goals />} />
                     <Route path="/tasks" element={<div className="p-3"><h2>Tasks Page</h2><p>Phase 2 Feature</p></div>} />
                     <Route path="/calendar" element={<div className="p-3"><h2>Calendar Page</h2><p>Phase 2 Feature</p></div>} />
                     <Route path="/ai-planner" element={<div className="p-3"><h2>AI Planner Page</h2><p>Phase 2 Feature</p></div>} />

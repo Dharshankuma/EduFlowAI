@@ -1,0 +1,90 @@
+/* GoalStatistics CSS */
+
+.goal-stat-card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-color);
+    width: 100%;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.goal-stat-icon-wrapper {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    transition: transform 0.2s ease;
+}
+
+.goal-stat-card:hover .goal-stat-icon-wrapper {
+    transform: scale(1.08);
+}
+
+.goal-stat-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+}
+
+.goal-stat-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+}
+
+.goal-stat-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.35;
+}
+
+/* Icon themes mapped to Figma */
+.theme-total .goal-stat-icon-wrapper {
+    background-color: rgba(79, 70, 229, 0.1);
+    color: var(--primary-color);
+}
+
+.theme-active .goal-stat-icon-wrapper {
+    background-color: rgba(6, 182, 212, 0.1);
+    color: var(--secondary-color);
+}
+
+.theme-completed .goal-stat-icon-wrapper {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: var(--success-color);
+}
+
+.theme-urgent .goal-stat-icon-wrapper {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+}
+
+/* Tablet Spacing Adjustment */
+@media (max-width: 991px) {
+    .goal-stat-card {
+        padding: 20px !important;
+    }
+    
+    .goal-stat-value {
+        font-size: 1.9rem;
+    }
+}
+
+/* Mobile Spacing Adjustment */
+@media (max-width: 575px) {
+    .goal-stat-card {
+        padding: 16px !important;
+    }
+    
+    .goal-stat-value {
+        font-size: 1.75rem;
+    }
+}

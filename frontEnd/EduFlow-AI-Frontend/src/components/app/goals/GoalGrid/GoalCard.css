@@ -1,0 +1,224 @@
+/* GoalCard CSS */
+
+.goal-card-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.goal-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.35;
+}
+
+/* Badges Base styling */
+.goal-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 50px;
+    white-space: nowrap;
+    text-transform: uppercase;
+}
+
+/* Category Badge color variants */
+.category-placement {
+    background-color: rgba(6, 182, 212, 0.1);
+    color: var(--secondary-color);
+}
+
+.category-academic {
+    background-color: rgba(79, 70, 229, 0.1);
+    color: var(--primary-color);
+}
+
+.category-skill-up {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: var(--success-color);
+}
+
+.category-certification {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--warning-color);
+}
+
+/* Priority Badge color variants */
+.priority-high {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+}
+
+.priority-medium {
+    background-color: rgba(6, 182, 212, 0.1);
+    color: var(--secondary-color);
+}
+
+.priority-low {
+    background-color: rgba(100, 116, 139, 0.1);
+    color: var(--text-secondary);
+}
+
+/* Task Summary block */
+.goal-task-summary {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+}
+
+.task-summary-col {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-basis: 0;
+}
+
+.task-summary-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--text-light);
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+
+.task-summary-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.task-summary-value.val-completed {
+    color: var(--success-color);
+}
+
+.task-summary-value.val-remaining {
+    color: var(--danger-color);
+}
+
+.task-summary-divider {
+    width: 1px;
+    height: 24px;
+    background-color: var(--border-color);
+}
+
+/* Target Date Styling */
+.goal-icon-muted {
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.goal-date-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Next Session Banner */
+.next-session-banner {
+    background-color: rgba(79, 70, 229, 0.04);
+    border: 1px solid rgba(79, 70, 229, 0.08);
+}
+
+.next-session-icon-wrapper {
+    width: 32px;
+    height: 32px;
+    background-color: rgba(79, 70, 229, 0.1);
+    color: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.next-session-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.next-session-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    letter-spacing: 0.3px;
+}
+
+.next-session-value {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* Goal Card Footer & Action Buttons */
+.goal-card-footer {
+    border-top: 1px solid var(--border-color);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-dot-active {
+    background-color: var(--success-color);
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.status-dot-on-hold {
+    background-color: var(--warning-color);
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+}
+
+.status-dot-completed {
+    background-color: var(--secondary-color);
+    box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+}
+
+.status-dot-archived {
+    background-color: var(--text-light);
+}
+
+.status-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.goal-action-buttons {
+    display: flex;
+    align-items: center;
+}
+
+.goal-action-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: none;
+    color: var(--text-light);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.goal-action-btn:hover {
+    background-color: var(--bg-color);
+    color: var(--primary-color);
+}
+
+.goal-action-btn.btn-delete:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+}
+
+.goal-action-btn:active {
+    transform: scale(0.95);
+}

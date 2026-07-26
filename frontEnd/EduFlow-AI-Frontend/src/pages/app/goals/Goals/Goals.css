@@ -1,0 +1,81 @@
+/* Goals Page Layout CSS */
+
+.goals-page-container {
+    padding: 32px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.goals-page-header {
+    margin-bottom: 28px;
+}
+
+.goals-page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.goals-page-desc {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.goals-header-create-btn {
+    height: 42px;
+    background-color: var(--primary-color) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 8px 20px !important;
+    border-radius: var(--radius-sm) !important;
+    border: none !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.goals-header-create-btn:hover {
+    background-color: var(--primary-hover) !important;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.goals-layout-stack {
+    gap: 28px; /* Consistent spacing between statistics, toolbar, and grids */
+}
+
+/* Tablet responsive overrides */
+@media (max-width: 991px) {
+    .goals-page-container {
+        padding: 24px;
+    }
+    
+    .goals-page-title {
+        font-size: 1.6rem;
+    }
+    
+    .goals-layout-stack {
+        gap: 24px;
+    }
+}
+
+/* Mobile responsive overrides */
+@media (max-width: 575px) {
+    .goals-page-container {
+        padding: 16px;
+    }
+    
+    .goals-page-title {
+        font-size: 1.4rem;
+    }
+    
+    .goals-page-desc {
+        font-size: 0.85rem;
+    }
+    
+    .goals-layout-stack {
+        gap: 16px; /* Equal spacing and stacking on mobile */
+    }
+}

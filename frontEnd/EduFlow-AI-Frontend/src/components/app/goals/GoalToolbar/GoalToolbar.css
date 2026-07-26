@@ -1,0 +1,112 @@
+/* GoalToolbar CSS */
+
+.goal-toolbar-card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--surface-color);
+    width: 100%;
+}
+
+/* Reset vertical margin from common InputComponent */
+.goal-toolbar-card .mb-3 {
+    margin-bottom: 0 !important;
+}
+
+.goal-toolbar-search {
+    max-width: 320px;
+    width: 100%;
+}
+
+.goal-filter-select {
+    height: 42px;
+    padding: 8px 36px 8px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    background-color: var(--surface-color);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    width: 100%;
+}
+
+.goal-filter-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+    outline: none;
+}
+
+.goal-filter-select:hover {
+    border-color: var(--primary-color);
+}
+
+/* Create Button wrapper & button customization */
+.goal-create-btn {
+    height: 42px;
+    background-color: var(--primary-color) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 8px 20px !important;
+    border-radius: var(--radius-sm) !important;
+    border: none !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+    width: 100%;
+    cursor: pointer;
+}
+
+.goal-create-btn:hover {
+    background-color: var(--primary-hover) !important;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.goal-create-btn:active {
+    transform: translateY(0);
+}
+
+/* Responsive Rules */
+
+/* Tablet & Smaller Layout */
+@media (max-width: 991px) {
+    .goal-toolbar-container {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    
+    .goal-toolbar-search {
+        max-width: 100%;
+    }
+    
+    .goal-toolbar-actions {
+        flex-wrap: wrap;
+    }
+    
+    .goal-select-wrapper,
+    .goal-create-btn-wrapper {
+        flex-grow: 1;
+        flex-basis: 40%;
+    }
+}
+
+/* Mobile Screen Layout */
+@media (max-width: 575px) {
+    .goal-toolbar-card {
+        padding: 16px !important;
+    }
+    
+    .goal-toolbar-actions {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    
+    .goal-select-wrapper,
+    .goal-filter-select,
+    .goal-create-btn-wrapper {
+        width: 100%;
+        flex-basis: auto;
+    }
+}

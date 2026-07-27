@@ -1,8 +1,8 @@
 import React from 'react';
 import DashboardCard from '../../../common/DashboardCard/DashboardCard';
-import { InputComponent } from '../../../common/InputComponent';
-import { SelectComponent } from '../../../common/SelectComponent';
-import { ButtonComponent } from '../../../common/ButtonComponent';
+import { InputComponent } from '../../../common/CommonComponents/InputComponent';
+import { SelectComponent } from '../../../common/CommonComponents/SelectComponent';
+import { ButtonComponent } from '../../../common/CommonComponents/ButtonComponent';
 import './GoalToolbar.css';
 
 const STATUS_OPTIONS = [

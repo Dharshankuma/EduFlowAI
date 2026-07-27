@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ButtonComponent } from '../../common/ButtonComponent';
+import { ButtonComponent } from '../../common/CommonComponents/ButtonComponent';
 import './CTA.css';
 
 export const CTA = () => {

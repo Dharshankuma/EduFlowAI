@@ -4,8 +4,9 @@ import GoalToolbar from '../../../../components/app/goals/GoalToolbar/GoalToolba
 import GoalGrid from '../../../../components/app/goals/GoalGrid/GoalGrid';
 import GoalEmptyState from '../../../../components/app/goals/GoalEmptyState/GoalEmptyState';
 import GoalPagination from '../../../../components/app/goals/GoalPagination/GoalPagination';
-import { ButtonComponent } from '../../../../components/common/ButtonComponent';
+import { ButtonComponent } from '../../../../components/common/CommonComponents/ButtonComponent';
 import './Goals.css';
+import { useNavigate } from 'react-router-dom';
 
 // Mock statistics data
 const MOCK_STATISTICS = [
@@ -59,6 +60,8 @@ const MOCK_GOALS = [
 ];
 
 export const Goals = () => {
+
+    const navigate = useNavigate();
     // State management
     const [goals, setGoals] = useState(MOCK_GOALS);
     const [statistics] = useState(MOCK_STATISTICS);
@@ -91,17 +94,16 @@ export const Goals = () => {
         setSelectedSort(e.target.value);
         console.log(`Selected sort criteria: ${e.target.value}`);
     };
-
     const handleCreateGoal = () => {
-        console.log('Trigger create goal modal flow');
+        navigate('/goals/create');
     };
 
     const handleViewGoal = (id) => {
-        console.log(`View goal detail action triggered (ID: ${id})`);
+        navigate(`/goals/${id}`);
     };
 
     const handleEditGoal = (id) => {
-        console.log(`Edit goal details action triggered (ID: ${id})`);
+        navigate(`/goals/${id}/edit`);
     };
 
     const handleDeleteGoal = (id) => {

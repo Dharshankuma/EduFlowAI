@@ -1,6 +1,6 @@
 import React from 'react';
 import DashboardCard from '../../../common/DashboardCard/DashboardCard';
-import { ButtonComponent } from '../../../common/ButtonComponent';
+import { ButtonComponent } from '../../../common/CommonComponents/ButtonComponent';
 import './GoalEmptyState.css';
 
 export const GoalEmptyState = ({ onCreateGoal }) => {

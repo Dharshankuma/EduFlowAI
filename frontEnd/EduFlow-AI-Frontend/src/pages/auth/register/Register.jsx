@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { InputComponent } from '../../../components/common/InputComponent';
-import { ButtonComponent } from '../../../components/common/ButtonComponent';
-import { CheckboxComponent } from '../../../components/common/CheckboxComponent';
+import { InputComponent } from '../../../components/common/CommonComponents/InputComponent';
+import { ButtonComponent } from '../../../components/common/CommonComponents/ButtonComponent';
+import { CheckboxComponent } from '../../../components/common/CommonComponents/CheckboxComponent';
 import { PasswordRequirements } from './PasswordRequirements';
 import loginImage from '../../../assets/images/login_image.png';
 import logo from '../../../assets/images/EduFlow_AI_Logo.png';

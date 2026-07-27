@@ -8,6 +8,8 @@ import { Dashboard } from "../pages/app/dashboard/Dashboard";
 import { Profile } from "../pages/app/profile/Profile";
 import { Settings } from "../pages/app/settings/Settings";
 import { Goals } from "../pages/app/goals/Goals/Goals";
+import { CreateGoal } from "../pages/app/goals/CreateGoal/CreateGoal";
+import { GoalDetails } from "../pages/app/goals/GoalDetails/GoalDetails";
 import PublicLayout from "../layouts/PublicLayout";
 import AppLayout from "../layouts/AppLayout";
 
@@ -51,6 +53,9 @@ const AppRoutes = () => {
                     <Route path="/dashboard" element={<Dashboard />} />
                     {/* Placeholder routes for future authenticated views */}
                     <Route path="/goals" element={<Goals />} />
+                    <Route path="/goals/create" element={<CreateGoal />} />
+                    <Route path="/goals/:goalId" element={<GoalDetails />} />
+                    <Route path="/goals/:goalId/edit" element={<GoalDetails />} />
                     <Route path="/tasks" element={<div className="p-3"><h2>Tasks Page</h2><p>Phase 2 Feature</p></div>} />
                     <Route path="/calendar" element={<div className="p-3"><h2>Calendar Page</h2><p>Phase 2 Feature</p></div>} />
                     <Route path="/ai-planner" element={<div className="p-3"><h2>AI Planner Page</h2><p>Phase 2 Feature</p></div>} />

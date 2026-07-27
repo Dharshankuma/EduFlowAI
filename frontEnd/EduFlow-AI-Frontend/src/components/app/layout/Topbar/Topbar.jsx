@@ -1,5 +1,5 @@
 import React from 'react';
-import { InputComponent } from '../../../common/InputComponent';
+import { InputComponent } from '../../../common/CommonComponents/InputComponent';
 import './Topbar.css';
 
 export const Topbar = ({ onToggleSidebar }) => {

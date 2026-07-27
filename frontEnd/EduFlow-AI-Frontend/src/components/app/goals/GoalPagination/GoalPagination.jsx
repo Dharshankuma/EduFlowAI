@@ -1,7 +1,7 @@
 import React from 'react';
 import DashboardCard from '../../../common/DashboardCard/DashboardCard';
-import { SelectComponent } from '../../../common/SelectComponent';
-import { ButtonComponent } from '../../../common/ButtonComponent';
+import { SelectComponent } from '../../../common/CommonComponents/SelectComponent';
+import { ButtonComponent } from '../../../common/CommonComponents/ButtonComponent';
 import './GoalPagination.css';
 
 const PAGE_SIZE_OPTIONS = [

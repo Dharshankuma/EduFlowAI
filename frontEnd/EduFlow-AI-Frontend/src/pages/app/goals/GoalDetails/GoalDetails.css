@@ -1,0 +1,13 @@
+/* GoalDetails.css */
+
+.goal-details-page-wrapper {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Mobile responsive margins adjust */
+@media (max-width: 575px) {
+    .goal-details-page-wrapper {
+        padding: 16px 8px !important;
+    }
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 import DashboardCard from '../../../common/DashboardCard/DashboardCard';
-import { ButtonComponent } from '../../../common/ButtonComponent';
+import { ButtonComponent } from '../../../common/CommonComponents/ButtonComponent';
 import './ProfileHeader.css';
 
 export const ProfileHeader = ({ user = {}, onUpload }) => {
@@ -15,7 +15,7 @@ export const ProfileHeader = ({ user = {}, onUpload }) => {
         <DashboardCard className="profile-header-card" hover={false} shadow={true} padding="32px">
             <div className="container-fluid p-0">
                 <div className="row g-4 align-items-center">
-                    
+
                     {/* Left Column: Avatar and User Details */}
                     <div className="col-12 col-md-8 d-flex flex-column flex-sm-row align-items-center align-items-sm-start gap-4">
                         {/* Circular Avatar Container with Overlay Pencil Icon */}
@@ -27,8 +27,8 @@ export const ProfileHeader = ({ user = {}, onUpload }) => {
                                     {userName.charAt(0).toUpperCase()}
                                 </div>
                             )}
-                            <button 
-                                className="avatar-edit-badge" 
+                            <button
+                                className="avatar-edit-badge"
                                 onClick={onUpload}
                                 aria-label="Upload profile picture"
                                 type="button"
@@ -36,7 +36,7 @@ export const ProfileHeader = ({ user = {}, onUpload }) => {
                                 <i className="bi bi-pencil-fill"></i>
                             </button>
                         </div>
-                        
+
                         {/* User Metadata stack */}
                         <div className="profile-meta-details text-center text-sm-start">
                             <h2 className="profile-user-name">{userName}</h2>
@@ -53,7 +53,7 @@ export const ProfileHeader = ({ user = {}, onUpload }) => {
                             </div>
                         </div>
                     </div>
-                    
+
                     {/* Right Column: Upload Profile Button */}
                     <div className="col-12 col-md-4 d-flex justify-content-md-end justify-content-center">
                         <ButtonComponent
@@ -67,7 +67,7 @@ export const ProfileHeader = ({ user = {}, onUpload }) => {
                             onclick={onUpload}
                         />
                     </div>
-                    
+
                 </div>
             </div>
         </DashboardCard>

@@ -1,7 +1,7 @@
 import React from 'react';
 import DashboardCard from '../../../common/DashboardCard/DashboardCard';
-import { InputComponent } from '../../../common/InputComponent';
-import { ButtonComponent } from '../../../common/ButtonComponent';
+import { InputComponent } from '../../../common/CommonComponents/InputComponent';
+import { ButtonComponent } from '../../../common/CommonComponents/ButtonComponent';
 import './PersonalInformation.css';
 
 export const PersonalInformation = ({

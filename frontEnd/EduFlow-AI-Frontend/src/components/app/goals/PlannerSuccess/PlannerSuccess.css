@@ -1,0 +1,245 @@
+/* PlannerSuccess.css */
+
+.planner-success-wrapper {
+    max-width: 840px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* 1. Success Card Container */
+.planner-success-card {
+    background-color: var(--surface-color);
+    border-radius: var(--radius-lg) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+/* Success Badge Pill in top right */
+.schedule-success-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #065F46;
+    background-color: rgba(34, 197, 94, 0.12);
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
+    user-select: none;
+}
+
+/* Pulse indicator dot */
+.success-pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--success-color);
+    border-radius: 50%;
+    display: inline-block;
+    animation: success-dot-pulse 1.8s infinite;
+}
+
+@keyframes success-dot-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+/* 2. Success Illustration */
+.success-illustration-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 180px;
+}
+
+.success-illustration-svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 3. Success Message */
+.success-message-title {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.success-message-desc {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    max-width: 620px;
+}
+
+/* 4. Summary Statistics */
+.stat-summary-box {
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--radius-md) !important;
+    text-align: center;
+    background-color: var(--surface-color);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.stat-summary-box:hover {
+    transform: translateY(-2px);
+    border-color: rgba(79, 70, 229, 0.2) !important;
+    box-shadow: var(--shadow-sm);
+}
+
+.stat-summary-icon {
+    font-size: 1.35rem;
+    color: var(--primary-color);
+    line-height: 1;
+}
+
+.stat-summary-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-light);
+    letter-spacing: 0.05em;
+}
+
+.stat-summary-value {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+/* 5. Success Checklist Horizontal container */
+.success-checklist-section {
+    background-color: #F8FAFC;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+}
+
+.checklist-badge-item {
+    padding: 2px 4px;
+}
+
+.checklist-success-icon {
+    color: var(--success-color);
+    font-size: 1.1rem;
+}
+
+.checklist-badge-text {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+/* Gap-x and Gap-y styling for checklist items wrap */
+.planner-success-card .gap-x-4 {
+    column-gap: 24px !important;
+}
+
+.planner-success-card .gap-y-2 {
+    row-gap: 8px !important;
+}
+
+/* 6. Action Buttons Column overrides */
+.success-action-buttons-section {
+    border-top: 1px solid var(--border-color);
+}
+
+/* Tall Card-like buttons contents */
+.action-card-btn {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 16px 20px !important;
+    border-radius: var(--radius-sm) !important;
+    box-sizing: border-box;
+    text-align: center !important;
+    cursor: pointer;
+}
+
+.action-card-btn-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    line-height: 1;
+}
+
+.action-card-btn-subtitle {
+    font-size: 0.8rem;
+    display: block;
+    margin-top: 4px;
+}
+
+/* Primary Button Styling */
+.action-card-btn-primary {
+    background-color: var(--primary-color) !important;
+    color: #ffffff !important;
+    border: none !important;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.action-card-btn-primary:hover {
+    background-color: var(--primary-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.action-card-btn-primary .action-card-btn-subtitle {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Secondary Button Styling */
+.action-card-btn-secondary {
+    background-color: var(--surface-color) !important;
+    color: var(--text-primary) !important;
+    border: 1.5px solid var(--border-color) !important;
+    transition: all 0.2s ease;
+}
+
+.action-card-btn-secondary:hover {
+    border-color: var(--text-secondary) !important;
+    background-color: var(--bg-color) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.action-card-btn-secondary .action-card-btn-subtitle {
+    color: var(--text-secondary);
+}
+
+/* 7. Responsive Overrides */
+
+@media (max-width: 575px) {
+    .planner-success-card {
+        padding: 28px 20px !important;
+    }
+
+    .success-message-title {
+        font-size: 1.5rem;
+    }
+
+    .success-message-desc {
+        font-size: 0.9rem;
+    }
+
+    /* Wrap stats boxes fully in 2x2 grid or stack on mobile */
+    .summary-statistics-section .col-6 {
+        width: 50%;
+    }
+
+    /* Checklist stacking on mobile */
+    .success-checklist-section .d-flex {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+        padding-left: 10px;
+    }
+
+    .action-card-btn {
+        padding: 14px 16px !important;
+    }
+
+    .action-card-btn-title {
+        font-size: 0.95rem;
+    }
+
+    .action-card-btn-subtitle {
+        font-size: 0.78rem;
+    }
+}

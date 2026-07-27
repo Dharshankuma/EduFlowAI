@@ -1,0 +1,58 @@
+/* CreateGoal.css */
+
+.create-goal-workflow-page-container {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.max-width-card {
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.workflow-main-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 6px 0;
+}
+
+.workflow-main-desc {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.workflow-step-content-box {
+    margin-top: 24px;
+    width: 100%;
+}
+
+/* Tablet overrides */
+@media (max-width: 991px) {
+    .workflow-main-title {
+        font-size: 1.6rem;
+    }
+}
+
+/* Mobile overrides */
+@media (max-width: 575px) {
+    .create-goal-workflow-page-container {
+        padding: 16px 8px !important;
+    }
+
+    .workflow-main-title {
+        font-size: 1.4rem;
+        text-align: center;
+    }
+
+    .workflow-main-desc {
+        font-size: 0.85rem;
+        text-align: center;
+    }
+
+    .workflow-title-block {
+        text-align: center !important;
+    }
+}

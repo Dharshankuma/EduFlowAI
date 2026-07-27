@@ -1,0 +1,301 @@
+/* TaskCreationMethod.css */
+
+.task-creation-method-wizard-card {
+    background-color: var(--surface-color);
+    border-radius: var(--radius-lg) !important;
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* 1. Header Styles */
+.wizard-progress-header {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.step-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.step-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 6px 0;
+}
+
+.step-description {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.wizard-header-right {
+    min-width: 250px;
+}
+
+.wizard-progress-bar-track {
+    height: 8px;
+    background-color: #E2E8F0;
+    border-radius: 4px;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.wizard-progress-bar-fill {
+    height: 100%;
+    background-color: var(--primary-color);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+}
+
+.wizard-progress-percentage {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    white-space: nowrap;
+}
+
+/* 2. Subtitle Section */
+.method-selection-intro {
+    margin-top: 16px;
+}
+
+.intro-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+}
+
+.intro-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* 3. Option Cards Styles */
+.method-option-card {
+    height: 100%;
+    border: 2px solid var(--border-color) !important;
+    border-radius: var(--radius-md) !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: var(--surface-color);
+    position: relative;
+    cursor: pointer;
+}
+
+.method-option-card.selected {
+    border-color: var(--primary-color) !important;
+    box-shadow: var(--shadow-md) !important;
+    background-color: rgba(79, 70, 229, 0.01);
+}
+
+.method-option-card.manual-option:hover:not(.selected) {
+    border-color: rgba(79, 70, 229, 0.3) !important;
+}
+
+/* Icon Box Styles */
+.option-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background-color: rgba(79, 70, 229, 0.08);
+    color: var(--primary-color);
+}
+
+.option-icon-box.ai-icon {
+    background-color: rgba(6, 182, 212, 0.08);
+    color: var(--secondary-color);
+    padding: 0 8px;
+    width: auto;
+    font-weight: 700;
+}
+
+.rk-logo-combo {
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    letter-spacing: 0.05em;
+}
+
+/* Selected indicator styling */
+.option-selected-indicator {
+    width: 24px;
+    height: 24px;
+    background-color: var(--border-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.method-option-card.selected .option-selected-indicator {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.method-option-card:not(.selected) .option-selected-indicator {
+    opacity: 0;
+}
+
+/* Coming soon badge styling */
+.coming-soon-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--success-color);
+    background-color: rgba(34, 197, 94, 0.1);
+    padding: 6px 12px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+/* Titles and description inside options card */
+.option-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.option-desc {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Disabled Option Card overrides */
+.method-option-card.disabled-card {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background-color: rgba(248, 250, 252, 0.5);
+}
+
+.disabled-btn {
+    background-color: #E2E8F0 !important;
+    border: none !important;
+    color: var(--text-light) !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 12px 24px !important;
+    border-radius: var(--radius-sm) !important;
+    cursor: not-allowed;
+}
+
+/* 4. Footer Styles */
+.wizard-footer {
+    border-top: 1px solid var(--border-color);
+    margin-top: 32px;
+}
+
+.wizard-footer-center {
+    max-width: 50%;
+}
+
+.footer-info-icon {
+    color: var(--primary-color);
+    font-size: 1.1rem;
+    margin-top: 2px;
+}
+
+.footer-info-text {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.45;
+}
+
+/* Cancel / Back and Continue custom overrides */
+.goal-wizard-back-btn {
+    background: transparent !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-secondary) !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 10px 20px !important;
+    border-radius: var(--radius-sm) !important;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.goal-wizard-back-btn:hover {
+    color: var(--text-primary) !important;
+    background-color: rgba(0, 0, 0, 0.02) !important;
+    border-color: var(--text-secondary) !important;
+}
+
+.goal-wizard-continue-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    padding: 12px 24px !important;
+    border-radius: var(--radius-sm) !important;
+    cursor: pointer;
+}
+
+/* 5. Responsive Overrides */
+
+/* Mobile responsiveness */
+@media (max-width: 575px) {
+    .task-creation-method-wizard-card {
+        padding: 24px 20px !important;
+    }
+
+    .wizard-progress-header {
+        align-items: stretch !important;
+        gap: 16px;
+    }
+
+    .wizard-header-right {
+        min-width: unset;
+        width: 100%;
+    }
+
+    .wizard-footer {
+        flex-direction: column-reverse !important;
+        align-items: stretch !important;
+        gap: 20px;
+    }
+
+    .wizard-footer-center {
+        max-width: 100%;
+        order: 1;
+    }
+
+    .wizard-footer-left {
+        order: 2;
+        width: 100%;
+    }
+
+    .wizard-footer-right {
+        order: 3;
+        width: 100%;
+    }
+
+    .goal-wizard-back-btn button,
+    .goal-wizard-continue-btn {
+        width: 100% !important;
+        text-align: center;
+        display: flex !important;
+        justify-content: center;
+    }
+}

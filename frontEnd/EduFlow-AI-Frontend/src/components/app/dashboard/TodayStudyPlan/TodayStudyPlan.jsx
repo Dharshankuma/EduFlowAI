@@ -2,7 +2,7 @@ import React from 'react';
 import DashboardCard from '../../../common/DashboardCard/DashboardCard';
 import SectionTitle from '../../../common/SectionTitle/SectionTitle';
 import ProgressBar from '../../../common/ProgressBar/ProgressBar';
-import { ButtonComponent } from '../../../common/ButtonComponent';
+import { ButtonComponent } from '../../../common/CommonComponents/ButtonComponent';
 import SummaryCard from './SummaryCard';
 import illustrationImg from '../../../../assets/images/login_image.png';
 import './TodayStudyPlan.css';

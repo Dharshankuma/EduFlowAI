@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import logo from '../../../assets/images/EduFlow_AI_Logo.png'
 import { Link } from 'react-router-dom';
 import './Navbar.css';
-import { ButtonComponent } from '../../common/ButtonComponent';
+import { ButtonComponent } from '../../common/CommonComponents/ButtonComponent';
 
 export const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);

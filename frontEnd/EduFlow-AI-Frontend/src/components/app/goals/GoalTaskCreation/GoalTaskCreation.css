@@ -1,0 +1,494 @@
+/* GoalTaskCreation.css */
+
+.goal-task-creation-feature {
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* 1. Back Navigation */
+.back-navigation {
+    width: 100%;
+}
+
+.back-link-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.back-link-btn:hover {
+    color: var(--primary-color);
+}
+
+/* 2. Goal Header */
+.goal-task-creation-header {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.goal-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.25;
+}
+
+.goal-target-date-info {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.goal-target-date-info i {
+    color: var(--text-light);
+}
+
+/* Badges styling */
+.badge-item {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    display: inline-block;
+}
+
+.category-badge {
+    background-color: rgba(79, 70, 229, 0.1);
+    color: var(--primary-color);
+}
+
+.priority-badge {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+}
+
+.status-badge {
+    background-color: rgba(6, 182, 212, 0.1);
+    color: var(--secondary-color);
+}
+
+/* SVG Progress Circle wrapper */
+.progress-circle-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-circle-text {
+    position: absolute;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+/* 3. Goal Information Card Layout */
+.card-section-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-light);
+    letter-spacing: 0.08em;
+    display: block;
+}
+
+.info-section-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.goal-info-description {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.meta-info-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    margin-bottom: 2px;
+    font-weight: 600;
+}
+
+.meta-info-val {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* 4. Statistics Card Layout */
+.stat-value-box {
+    background-color: #F8FAFC;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 14px 10px;
+    text-align: center;
+}
+
+.stat-box-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-light);
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+}
+
+.stat-box-number {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.stat-box-total {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+/* Weekly Progress Chart */
+.weekly-activity-chart-wrapper {
+    width: 100%;
+}
+
+.chart-title-label {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.chart-bar-container {
+    height: 100px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 4px;
+}
+
+.chart-bar-wrapper {
+    flex: 1;
+}
+
+.chart-bar-fill {
+    width: 16px;
+    border-radius: 4px 4px 0 0;
+    background-color: #E2E8F0;
+    transition: background-color 0.25s ease, transform 0.2s ease;
+    cursor: pointer;
+}
+
+/* Highlight Thursday */
+.chart-bar-wrapper:nth-child(4) .chart-bar-fill {
+    background-color: var(--primary-color) !important;
+}
+
+.chart-bar-fill:hover {
+    background-color: var(--primary-hover) !important;
+    transform: scaleY(1.08);
+}
+
+.chart-bar-day {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-light);
+}
+
+/* 5. Tasks Management Table Card */
+.task-management-card {
+    background-color: var(--surface-color);
+    border-radius: var(--radius-lg) !important;
+}
+
+.task-card-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+/* Header action buttons styling */
+.task-action-btn-cancel {
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-secondary) !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 8px 16px !important;
+    border-radius: var(--radius-sm) !important;
+    cursor: pointer;
+}
+
+.task-action-btn-cancel:hover {
+    color: var(--text-primary) !important;
+    background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+.task-action-btn-save {
+    font-size: 0.9rem !important;
+    padding: 8px 20px !important;
+    font-weight: 600 !important;
+    border-radius: var(--radius-sm) !important;
+}
+
+/* Responsive Table styling */
+.task-table {
+    margin-top: 8px;
+    border-collapse: collapse;
+}
+
+.task-table th {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-light);
+    letter-spacing: 0.05em;
+    padding: 12px 16px;
+    border-bottom: 2px solid var(--border-color);
+    text-transform: uppercase;
+    text-align: left;
+}
+
+.task-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    text-align: left;
+}
+
+/* Compact Cell Inputs Overrides */
+.task-table td.task-table-field-cell {
+    padding: 8px 6px;
+}
+
+.task-table-field-cell .mb-3 {
+    margin-bottom: 0 !important;
+}
+
+.task-table-field-cell input,
+.task-table-field-cell select {
+    border-radius: var(--radius-sm) !important;
+    padding: 6px 10px !important;
+    height: 38px !important;
+    font-size: 0.9rem !important;
+    border: 1px solid var(--border-color) !important;
+    background-color: var(--surface-color) !important;
+    transition: border-color 0.2s ease;
+    width: 100%;
+}
+
+.task-table-field-cell input:focus,
+.task-table-field-cell select:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1) !important;
+    outline: none !important;
+}
+
+/* Disabled/Read-only cells styles override */
+.task-table-field-cell input:disabled,
+.task-table-field-cell select:disabled {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    color: var(--text-primary) !important;
+    cursor: default;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Sizing constraints for specific columns */
+.hours-cell {
+    width: 80px;
+}
+
+.date-cell {
+    width: 160px;
+}
+
+.priority-cell {
+    width: 140px;
+}
+
+.status-cell {
+    width: 140px;
+}
+
+/* Priority text colors */
+.priority-text {
+    font-weight: 600;
+}
+
+.priority-high {
+    color: var(--danger-color);
+}
+
+.priority-medium {
+    color: #0D9488; /* Teal */
+}
+
+.priority-low {
+    color: var(--text-secondary);
+}
+
+/* Status badges inside rows */
+.status-badge-inline {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 12px;
+    letter-spacing: 0.02em;
+    display: inline-block;
+}
+
+.status-completed,
+.status-status-completed {
+    background-color: rgba(34, 197, 94, 0.12);
+    color: #065F46;
+}
+
+.status-in-progress,
+.status-status-in-progress {
+    background-color: rgba(6, 182, 212, 0.12);
+    color: #0369A1;
+}
+
+.status-pending,
+.status-status-pending {
+    background-color: rgba(148, 163, 184, 0.12);
+    color: #475569;
+}
+
+/* Add Row row action styling */
+.add-row-btn {
+    background: transparent;
+    border: none;
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.add-row-btn:hover {
+    color: var(--primary-hover);
+}
+
+/* 6. Generate Study Schedule Card */
+.generate-schedule-card {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.04) 0%, rgba(6, 182, 212, 0.04) 100%) !important;
+    border: 1px solid rgba(79, 70, 229, 0.12) !important;
+    border-radius: var(--radius-lg) !important;
+}
+
+.schedule-header-icon-box {
+    width: 48px;
+    height: 48px;
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+}
+
+.schedule-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.schedule-desc {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.checklist-icon {
+    color: var(--success-color);
+    font-size: 1rem;
+}
+
+.checklist-item span {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.generate-btn {
+    padding: 12px 28px !important;
+    font-weight: 600 !important;
+    border-radius: var(--radius-sm) !important;
+}
+
+.schedule-help-text {
+    font-size: 0.8rem;
+}
+
+/* 7. Tablet and Mobile responsive overrides */
+
+@media (max-width: 991px) {
+    .goal-task-creation-header {
+        align-items: stretch !important;
+        gap: 16px;
+    }
+
+    .header-right {
+        justify-content: flex-start !important;
+    }
+}
+
+@media (max-width: 575px) {
+    .goal-task-creation-header {
+        margin-bottom: 24px;
+    }
+
+    .goal-title {
+        font-size: 1.6rem;
+    }
+
+    .weekly-activity-chart-wrapper {
+        margin-top: 16px;
+    }
+
+    .task-card-header {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 16px;
+    }
+
+    .task-card-actions {
+        width: 100%;
+    }
+
+    .task-card-actions > div {
+        flex: 1;
+    }
+
+    .task-action-btn-cancel,
+    .task-action-btn-save {
+        width: 100% !important;
+        justify-content: center;
+        display: flex;
+    }
+
+    .checklist-grid > div {
+        margin-bottom: 8px;
+    }
+
+    .generate-btn {
+        width: 100% !important;
+        display: flex;
+        justify-content: center;
+    }
+}

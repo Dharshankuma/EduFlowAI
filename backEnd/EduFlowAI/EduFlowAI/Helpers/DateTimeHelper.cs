@@ -1,6 +1,10 @@
 ﻿namespace EduFlowAI.Helpers
 {
-    public class DateTimeHelper
+    public static class DateTimeHelper
     {
+        public static DateTime GetDateTimeNow()
+        {
+            return DateTime.Now;
+        }
     }
 }

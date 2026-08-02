@@ -27,6 +27,11 @@ namespace EduFlowAI.Repositories.Authentication
             return user;
         }
 
+        public async Task UpdateUserLogin(User user)
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+        }
         public async Task SaveRefreshTokenAsync(Refreshtoken refresh)
         {
             await _context.Refreshtokens.AddAsync(refresh);
@@ -64,6 +69,31 @@ namespace EduFlowAI.Repositories.Authentication
             }
 
             return token;
+        }
+
+        public async Task CreateUserEmailVerificationAsync(Emailverification email)
+        {
+            await _context.Emailverifications.AddAsync(email);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Emailverification> GetUserEmailVerificationAsync(string token)
+        {
+            var emailDetails = await _context.Emailverifications.Include(x => x.User).FirstOrDefaultAsync(x => x.Token == token);
+
+            return emailDetails;
+        }
+        
+        public async Task<Emailverification> GetEmailVerificationByUserId(int userId)
+        {
+            var emailDetails = await _context.Emailverifications.Include(x => x.User).FirstOrDefaultAsync(x => x.Userid == userId);
+            return emailDetails;
+        }
+
+        public async Task UpdateEmailVerificationAsync(Emailverification email)
+        {
+            _context.Emailverifications.Update(email);
+            await _context.SaveChangesAsync();
         }
     }
 }

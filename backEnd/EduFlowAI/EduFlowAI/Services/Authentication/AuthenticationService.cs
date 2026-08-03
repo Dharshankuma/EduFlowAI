@@ -6,6 +6,7 @@ using EduFlowAI.Models;
 using EduFlowAI.Repositories.Authentication;
 using EduFlowAI.Services.EmailService;
 using EduFlowAI.Services.EmailTemplatesService;
+using EduFlowAI.Services.EmailTemplatesService.Authentication;
 using FluentValidation.Validators;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -16,10 +17,10 @@ namespace EduFlowAI.Services.Authentication
         private readonly IAuthenticationRepository _repo;
         private readonly JWTHelper _helper;
         private readonly IEmailService _email;
-        private readonly IEmailTemplateService _template;
+        private readonly IAuthenticationEmailTemplateService _template;
         private const string LinkUrl = "http://localhost:5173/";
 
-        public AuthenticationService(IAuthenticationRepository repo, JWTHelper helper,IEmailService email,IEmailTemplateService template)
+        public AuthenticationService(IAuthenticationRepository repo, JWTHelper helper,IEmailService email, IAuthenticationEmailTemplateService template)
         {
             _repo = repo;
             _helper = helper;
@@ -42,7 +43,9 @@ namespace EduFlowAI.Services.Authentication
                 Emailid = objdto.EmailId,
                 Passwordhash = passwordHash,
                 Autuhprovider = objdto.authProvider,
-                Emailverified = false
+                Emailverified = false,
+                Createdat = DateTimeHelper.GetDateTimeNow(),
+                
             };
 
             await _repo.CreateUserAsync(newUser,cancellation);
@@ -85,7 +88,7 @@ namespace EduFlowAI.Services.Authentication
 
             if (userDetails == null)
             {
-                throw new UnauthorizedException("Invalid Email or Password");
+                throw new UnauthorizedException("Invalid Email or User Doesn't exist");
             }
 
             var isPasswordValid = PasswordHelper.VerifyPassword(objdto.Password, userDetails.Passwordhash);
@@ -108,7 +111,7 @@ namespace EduFlowAI.Services.Authentication
             }
 
             var accessToken = _helper.GenerateAccessToken(userDetails);
-            var refreshToken = _helper.GenerateRefreshToken();
+            var refreshToken = CommonHelper.GenerateFixedGuidString(32);
 
             //updating the user last login date and time for every login
             userDetails.Lastloginat = DateTimeHelper.GetDateTimeNow();
@@ -207,7 +210,7 @@ namespace EduFlowAI.Services.Authentication
 
             if(userDetails.Passwordresettokenexpiry < DateTimeHelper.GetDateTimeNow())
             {
-                throw new UnauthorizedException("The password reset token has expired. Please request a new password reset."); ")
+                throw new UnauthorizedException("The password reset token has expired. Please request a new password reset.");
             }
 
             if (reset.NewPassword != reset.ConfirmPassword)

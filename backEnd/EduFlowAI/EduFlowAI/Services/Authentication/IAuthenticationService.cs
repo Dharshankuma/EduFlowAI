@@ -11,7 +11,7 @@ namespace EduFlowAI.Services.Authentication
         Task LogOutUser(string refreshToken, CancellationToken cancellation);
         Task<LoginResponseDTO> RefreshTokenAsync(string refreshToken, CancellationToken cancellation);
         Task ForgetPasswordAsync(string email, CancellationToken cancellation);
-        Task ChangePasswordAsync(ResetPasswordRequestDTO reset, CancellationToken cancellation)
+        Task ChangePasswordAsync(ResetPasswordRequestDTO reset, CancellationToken cancellation);
 
     }
 }

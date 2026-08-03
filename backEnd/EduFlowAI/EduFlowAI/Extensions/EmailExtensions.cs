@@ -1,7 +1,7 @@
 ﻿
 using Azure.Communication.Email;
 using EduFlowAI.Configurations;
-using EduFlowAI.Services.Email;
+using EduFlowAI.Services.EmailService;
 using Microsoft.Extensions.Options;
 using System.Runtime.CompilerServices;
 

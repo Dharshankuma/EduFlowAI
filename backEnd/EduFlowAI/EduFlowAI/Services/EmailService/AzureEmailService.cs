@@ -2,6 +2,7 @@
 using Azure.Communication.Email;
 using EduFlowAI.Configurations;
 using EduFlowAI.DTO.Email;
+using Microsoft.Extensions.Options;
 
 namespace EduFlowAI.Services.EmailService
 {
@@ -10,10 +11,10 @@ namespace EduFlowAI.Services.EmailService
         private readonly EmailClient _client;
         private readonly AzureEmailSettings _settings;
         
-        public AzureEmailService(EmailClient client,AzureEmailSettings settings)
+        public AzureEmailService(EmailClient client, IOptions<AzureEmailSettings> settings)
         {
             _client = client;
-            _settings = settings;
+            _settings = settings.Value;
         }
 
         public async Task SendMailAsync(EmailDTO email,CancellationToken cancellation)
@@ -29,7 +30,7 @@ namespace EduFlowAI.Services.EmailService
             });
 
             var message = new EmailMessage(
-                _settings.SenderName,
+                _settings.SenderAddress,
                 recipeint,
                 emailContent
             );

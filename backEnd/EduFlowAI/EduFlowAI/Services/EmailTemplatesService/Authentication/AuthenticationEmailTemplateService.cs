@@ -3,7 +3,7 @@ using EduFlowAI.Services.EmailTemplatesService;
 
 namespace EduFlowAI.Services.EmailTemplatesService.Authentication
 {
-    public sealed class AuthenticationEmailTemplateService : IEmailTemplateService
+    public sealed class AuthenticationEmailTemplateService : IAuthenticationEmailTemplateService
     {
         private readonly IWebHostEnvironment _environment;
         private const string LinkUrl = "http://localhost:5173/";
@@ -12,11 +12,9 @@ namespace EduFlowAI.Services.EmailTemplatesService.Authentication
             _environment = environment;
         }
 
-
-
         public async Task<EmailDTO> GetVerificationEmailTemplateAsync(string email,string verificationLink)
         {
-            var templatePath = Path.Combine(_environment.ContentRootPath, "Templates", "EmailTemplates", "VerifyEmailTemplate.html");
+            var templatePath = Path.Combine(_environment.ContentRootPath, "Services","Templates", "EmailTemplates", "VerifyEmailTemplate.html");
 
             var html = await File.ReadAllTextAsync(templatePath);
 

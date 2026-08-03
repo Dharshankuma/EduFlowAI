@@ -2,5 +2,6 @@
 {
     public class ForgetPasswordRequestDTO
     {
+        public string EmailId { get; set;  } = string.Empty;
     }
 }

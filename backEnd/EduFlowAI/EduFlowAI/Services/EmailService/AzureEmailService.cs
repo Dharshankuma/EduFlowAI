@@ -3,7 +3,7 @@ using Azure.Communication.Email;
 using EduFlowAI.Configurations;
 using EduFlowAI.DTO.Email;
 
-namespace EduFlowAI.Services.Email
+namespace EduFlowAI.Services.EmailService
 {
     public sealed class AzureEmailService : IEmailService
     {
@@ -16,7 +16,7 @@ namespace EduFlowAI.Services.Email
             _settings = settings;
         }
 
-        public async Task SendMailAsync(EmailDTO email)
+        public async Task SendMailAsync(EmailDTO email,CancellationToken cancellation)
         {
             var emailContent = new EmailContent(email.Subject)
             {
@@ -34,7 +34,7 @@ namespace EduFlowAI.Services.Email
                 emailContent
             );
 
-            await _client.SendAsync(WaitUntil.Completed, message);
+            await _client.SendAsync(WaitUntil.Completed, message,cancellation);
         }
     }
 }

@@ -161,7 +161,7 @@
 }
 
 .timeline-hour-slot {
-    height: 100px;
+    height: 130px;
     border-bottom: 1px dotted var(--border-color);
     display: flex;
     align-items: flex-start;

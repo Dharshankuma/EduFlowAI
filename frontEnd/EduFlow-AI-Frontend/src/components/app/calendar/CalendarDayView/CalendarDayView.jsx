@@ -132,7 +132,7 @@ export const CalendarDayView = ({
     // 2. Compute absolute placement style for event cards on desktop
     const getEventStyle = (event) => {
         const { start, end } = parseTimeRange(event.time);
-        const slotHeight = 100; // matching CSS slot height in px
+        const slotHeight = 130; // matching CSS slot height in px
         
         // 8px margin padding offsets to keep badges clean inside horizontal grids
         const top = (start - timelineStartHour) * slotHeight + 8;

@@ -594,36 +594,6 @@
         text-align: center;
     }
 
-<<<<<<< Updated upstream
-    /* Stack items inside absolute container vertically for mobile layout */
-    .timeline-scroll-container {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .timeline-hour-slot {
-        height: auto;
-        min-height: 120px;
-        padding-top: 12px;
-        padding-bottom: 12px;
-    }
-
-    .timeline-events-container {
-        position: static;
-        width: 100%;
-        padding-left: 12px;
-        pointer-events: auto;
-    }
-
-    .day-event-card {
-        position: relative !important;
-        top: 0 !important;
-        height: auto !important;
-        left: 0 !important;
-        right: 0 !important;
-        margin-bottom: 12px;
-        width: 100%;
-=======
     /* Ensure calendar grids maintain absolute hourly positions on mobile to sync cards */
     .timeline-hour-label {
         width: 70px !important;
@@ -652,7 +622,6 @@
     .event-actions-row {
         gap: 6px !important;
         padding-top: 8px !important;
->>>>>>> Stashed changes
     }
 }
 

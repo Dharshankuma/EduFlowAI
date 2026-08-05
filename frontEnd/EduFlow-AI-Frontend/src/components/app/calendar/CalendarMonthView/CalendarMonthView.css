@@ -1,0 +1,511 @@
+/* Calendar Month View Component Styles */
+
+.calendar-month-view-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 8px;
+    text-align: left;
+}
+
+/* Layout Split */
+.calendar-layout-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.calendar-main-col {
+    flex: 1;
+    min-width: 600px;
+}
+
+.calendar-sidebar-col {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex-shrink: 0;
+}
+
+/* Header Area */
+.calendar-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.calendar-title-info h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+    letter-spacing: -0.5px;
+}
+
+.calendar-title-info .subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* View Switcher */
+.view-switcher {
+    display: flex;
+    background-color: #f1f3f9;
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.switcher-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.switcher-btn:hover {
+    color: var(--text-primary);
+}
+
+.switcher-btn.active {
+    background-color: var(--surface-color);
+    color: var(--primary-color);
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Calendar Card Wrapper */
+.calendar-card {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 24px;
+}
+
+/* Month Title */
+.month-year-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+}
+
+/* Calendar Grid */
+.calendar-grid-wrapper {
+    width: 100%;
+}
+
+.calendar-weekdays-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+    margin-bottom: 8px;
+}
+
+.weekday-header {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.calendar-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    background-color: var(--border-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+/* Calendar Cell */
+.calendar-date-cell {
+    background-color: var(--surface-color);
+    min-height: 120px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+}
+
+.calendar-date-cell:hover {
+    background-color: #fafafc;
+    z-index: 2;
+    box-shadow: inset 0 0 0 1px var(--primary-color);
+}
+
+.calendar-date-cell.other-month {
+    background-color: #fafbfc;
+}
+
+.calendar-date-cell.other-month .cell-day-number {
+    color: var(--text-light);
+}
+
+.calendar-date-cell.selected-date {
+    box-shadow: inset 0 0 0 2px var(--primary-color);
+}
+
+/* Cell Header (Day Number + Pill) */
+.cell-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 2px;
+}
+
+.cell-day-number {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.calendar-date-cell.is-today .cell-day-number {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.today-pill {
+    background-color: #eef2ff;
+    color: var(--primary-color);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+/* Events Inside Cell */
+.cell-events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.event-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border-left: 3px solid transparent;
+    transition: transform 0.15s ease;
+}
+
+.event-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Event Types Color Coding */
+.event-study-session {
+    background-color: rgba(6, 182, 212, 0.08);
+    color: #0891b2;
+    border-left-color: #06b6d4;
+}
+
+.event-revision {
+    background-color: rgba(34, 197, 94, 0.08);
+    color: #16a34a;
+    border-left-color: #22c55e;
+}
+
+.event-exam {
+    background-color: rgba(239, 68, 68, 0.08);
+    color: #dc2626;
+    border-left-color: #ef4444;
+}
+
+.event-assignment {
+    background-color: rgba(245, 158, 11, 0.08);
+    color: #d97706;
+    border-left-color: #f59e0b;
+}
+
+.event-default {
+    background-color: rgba(100, 116, 139, 0.08);
+    color: #475569;
+    border-left-color: #64748b;
+}
+
+/* Completed revision styling */
+.event-completed {
+    text-decoration: line-through;
+    opacity: 0.85;
+}
+
+/* Event Icons */
+.event-icon {
+    font-size: 10px;
+    flex-shrink: 0;
+}
+
+/* Overflow indicator */
+.more-events-indicator {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary-color);
+    padding: 2px 4px;
+    cursor: pointer;
+    text-align: left;
+    margin-top: 1px;
+}
+
+.more-events-indicator:hover {
+    text-decoration: underline;
+}
+
+/* Today's Summary Card */
+.summary-stat-box {
+    background-color: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.summary-stat-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.summary-stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.summary-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.summary-card-title i {
+    color: var(--primary-color);
+    font-size: 18px;
+}
+
+/* Monthly Progress Card (Gradient Background) */
+.monthly-progress-card {
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #818cf8 100%) !important;
+    color: #ffffff !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Add a subtle star icon watermark as seen in Figma */
+.monthly-progress-card::after {
+    content: "\F598"; /* Bootstrap Icon star-fill code */
+    font-family: "bootstrap-icons";
+    position: absolute;
+    bottom: -15px;
+    right: -10px;
+    font-size: 120px;
+    color: rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+    line-height: 1;
+}
+
+.progress-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 20px;
+}
+
+.progress-hours-val {
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.progress-hours-lbl {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+}
+
+.progress-stats-row {
+    display: flex;
+    gap: 32px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding-top: 16px;
+    position: relative;
+    z-index: 1;
+}
+
+.progress-stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.progress-stat-num {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.progress-stat-desc {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+    letter-spacing: 0.5px;
+}
+
+/* Planner Insight Card */
+.planner-insight-card {
+    background-color: #ecfeff !important;
+    border: 1px solid #bae6fd !important;
+}
+
+.insight-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #0891b2;
+    margin-bottom: 12px;
+}
+
+.insight-header i {
+    font-size: 14px;
+}
+
+.insight-recommendation {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #1e293b;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+.adjust-schedule-btn-wrapper button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent !important;
+    border: none !important;
+    color: #0891b2 !important;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 0 !important;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.adjust-schedule-btn-wrapper button:hover {
+    color: #0369a1 !important;
+}
+
+/* RESPONSIVE DESIGN */
+
+/* Mobile Layout */
+@media (max-width: 767.98px) {
+    .calendar-layout-row {
+        flex-direction: column;
+    }
+
+    .calendar-main-col {
+        min-width: 100%;
+    }
+
+    .calendar-sidebar-col {
+        width: 100%;
+    }
+
+    .calendar-header-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .view-switcher {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .switcher-btn {
+        flex: 1;
+        text-align: center;
+    }
+
+    /* Enable horizontal scroll on mobile calendar to preserve cell layouts */
+    .calendar-grid-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-left: -8px;
+        margin-right: -8px;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .calendar-weekdays-row,
+    .calendar-days-grid {
+        min-width: 650px;
+    }
+}
+
+/* Tablet Layout styling */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+    .calendar-layout-row {
+        flex-direction: column;
+    }
+
+    .calendar-sidebar-col {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+}

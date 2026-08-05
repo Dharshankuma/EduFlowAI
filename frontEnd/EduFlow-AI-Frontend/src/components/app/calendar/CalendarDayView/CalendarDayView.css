@@ -1,0 +1,640 @@
+/* Calendar Day View Component Styles */
+
+.calendar-day-view-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 8px;
+    text-align: left;
+}
+
+/* Layout Split */
+.calendar-layout-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.calendar-main-col {
+    flex: 1;
+    min-width: 600px;
+}
+
+.calendar-sidebar-col {
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex-shrink: 0;
+}
+
+/* Header Area */
+.calendar-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.calendar-title-info h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+    letter-spacing: -0.5px;
+}
+
+.calendar-title-info .subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0 0 4px 0;
+}
+
+.calendar-date-display {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+/* Header Action Right (Switcher + Today Button) */
+.header-actions-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* View Switcher */
+.view-switcher {
+    display: flex;
+    background-color: #f1f3f9;
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.switcher-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.switcher-btn:hover {
+    color: var(--text-primary);
+}
+
+.switcher-btn.active {
+    background-color: var(--surface-color);
+    color: var(--primary-color);
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Today Action Controls */
+.today-control-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background-color: #f1f3f9;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    padding: 4px;
+}
+
+.today-nav-arrow {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 14px;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.today-nav-arrow:hover {
+    background-color: #e2e8f0;
+    color: var(--text-primary);
+}
+
+.today-control-wrapper button.today-btn {
+    background-color: var(--primary-color) !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 4px 14px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.today-control-wrapper button.today-btn:hover {
+    background-color: var(--primary-hover) !important;
+}
+
+/* Day View Card Wrapper */
+.calendar-card {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 24px;
+}
+
+/* Vertical Timeline Layout */
+.timeline-scroll-container {
+    width: 100%;
+    position: relative;
+    overflow-y: visible;
+}
+
+.timeline-hour-slot {
+    height: 100px;
+    border-bottom: 1px dotted var(--border-color);
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+}
+
+/* Make the last slot border transparent */
+.timeline-hour-slot:last-child {
+    border-bottom: none;
+}
+
+.timeline-hour-label {
+    width: 90px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-align: right;
+    padding-right: 16px;
+    margin-top: -6px; /* center vertically on horizontal line */
+    background-color: var(--surface-color);
+    z-index: 2;
+    user-select: none;
+}
+
+.timeline-events-container {
+    position: absolute;
+    top: 0;
+    left: 90px; /* align to the right of time label */
+    right: 0;
+    bottom: 0;
+    pointer-events: none; /* let clicks pass through to empty spots if needed */
+}
+
+/* Study Session Card on Timeline */
+.day-event-card {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: auto; /* enable click interaction */
+    z-index: 10;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-left: 4px solid transparent;
+}
+
+.day-event-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    z-index: 15;
+}
+
+/* Event Content Details */
+.event-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.priority-badge,
+.status-badge {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+}
+
+.time-badge {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto; /* push time indicator to far right */
+}
+
+.event-subject-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+    letter-spacing: -0.2px;
+}
+
+.event-course-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.event-course-name i {
+    color: var(--primary-color);
+}
+
+.event-description {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    margin: 0 0 16px 0;
+}
+
+/* Event Action Row */
+.event-actions-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 12px;
+    margin-top: auto;
+}
+
+/* Specific button overrides inside event cards */
+.event-actions-row button {
+    font-size: 12px !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+}
+
+.event-actions-row button.btn-view-goal {
+    background-color: var(--surface-color) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.event-actions-row button.btn-view-goal:hover {
+    background-color: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+}
+
+.event-actions-row button.btn-mark-complete {
+    background-color: var(--primary-color) !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.event-actions-row button.btn-mark-complete:hover {
+    background-color: var(--primary-hover) !important;
+}
+
+.event-actions-row button.btn-reschedule {
+    background: transparent !important;
+    border: none !important;
+    color: var(--text-secondary) !important;
+}
+
+.event-actions-row button.btn-reschedule:hover {
+    color: var(--text-primary) !important;
+}
+
+/* Priority & Status Thematic Styling */
+
+/* High Priority styling */
+.priority-high {
+    border-left-color: var(--danger-color);
+    background-color: rgba(239, 68, 68, 0.01);
+}
+
+.priority-high .priority-badge {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+}
+
+.priority-high .time-badge {
+    color: var(--danger-color);
+}
+
+/* Medium Priority styling */
+.priority-medium {
+    border-left-color: var(--primary-color);
+    background-color: rgba(79, 70, 229, 0.01);
+}
+
+.priority-medium .priority-badge {
+    background-color: rgba(79, 70, 229, 0.1);
+    color: var(--primary-color);
+}
+
+/* Low Priority / Normal styling */
+.priority-low {
+    border-left-color: var(--secondary-color);
+    background-color: rgba(6, 182, 212, 0.01);
+}
+
+.priority-low .priority-badge {
+    background-color: rgba(6, 182, 212, 0.1);
+    color: var(--secondary-color);
+}
+
+/* Completed Status styling */
+.event-status-completed {
+    border-left-color: var(--success-color) !important;
+    background-color: rgba(34, 197, 94, 0.02) !important;
+}
+
+.event-status-completed .status-badge {
+    background-color: rgba(34, 197, 94, 0.1);
+    color: var(--success-color);
+}
+
+.event-status-completed .event-subject-title {
+    text-decoration: line-through;
+    color: var(--text-light);
+}
+
+.completed-check-icon {
+    font-size: 20px;
+    color: var(--success-color);
+    margin-left: auto; /* align icon to right side */
+}
+
+/* Today's Summary Card */
+.summary-stat-box {
+    background-color: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.summary-stat-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.summary-stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.summary-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.summary-card-title i {
+    color: var(--primary-color);
+    font-size: 18px;
+}
+
+/* Monthly Progress Card (Gradient Background) */
+.monthly-progress-card {
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #818cf8 100%) !important;
+    color: #ffffff !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle star icon watermark */
+.monthly-progress-card::after {
+    content: "\F598";
+    font-family: "bootstrap-icons";
+    position: absolute;
+    bottom: -15px;
+    right: -10px;
+    font-size: 120px;
+    color: rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+    line-height: 1;
+}
+
+.progress-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 20px;
+}
+
+.progress-hours-val {
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.progress-hours-lbl {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+}
+
+.progress-stats-row {
+    display: flex;
+    gap: 32px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding-top: 16px;
+    position: relative;
+    z-index: 1;
+}
+
+.progress-stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.progress-stat-num {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.progress-stat-desc {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+    letter-spacing: 0.5px;
+}
+
+/* Planner Insight Card */
+.planner-insight-card {
+    background-color: #ecfeff !important;
+    border: 1px solid #bae6fd !important;
+}
+
+.insight-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #0891b2;
+    margin-bottom: 12px;
+}
+
+.insight-header i {
+    font-size: 14px;
+}
+
+.insight-recommendation {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #1e293b;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+.adjust-schedule-btn-wrapper button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent !important;
+    border: none !important;
+    color: #0891b2 !important;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 0 !important;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.adjust-schedule-btn-wrapper button:hover {
+    color: #0369a1 !important;
+}
+
+/* RESPONSIVE DESIGN */
+
+/* Mobile Layout */
+@media (max-width: 767.98px) {
+    .calendar-layout-row {
+        flex-direction: column;
+    }
+
+    .calendar-main-col {
+        min-width: 100%;
+    }
+
+    .calendar-sidebar-col {
+        width: 100%;
+    }
+
+    .calendar-header-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .header-actions-right {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .view-switcher,
+    .today-control-wrapper {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .switcher-btn {
+        flex: 1;
+        text-align: center;
+    }
+
+    .today-control-wrapper button.today-btn {
+        flex: 1;
+        text-align: center;
+    }
+
+    /* Stack items inside absolute container vertically for mobile layout */
+    .timeline-scroll-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .timeline-hour-slot {
+        height: auto;
+        min-height: 120px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+
+    .timeline-events-container {
+        position: static;
+        width: 100%;
+        padding-left: 12px;
+        pointer-events: auto;
+    }
+
+    .day-event-card {
+        position: relative !important;
+        top: 0 !important;
+        height: auto !important;
+        left: 0 !important;
+        right: 0 !important;
+        margin-bottom: 12px;
+        width: 100%;
+    }
+}
+
+/* Tablet Layout styling */
+@media (min-width: 768px) and (max-width: 1199.98px) {
+    .calendar-layout-row {
+        flex-direction: column;
+    }
+
+    .calendar-sidebar-col {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+}

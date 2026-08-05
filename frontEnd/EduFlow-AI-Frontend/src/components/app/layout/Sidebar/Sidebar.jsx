@@ -12,7 +12,7 @@ export const Sidebar = () => {
 
         { path: '/calendar', label: 'Calendar', icon: 'bi-calendar3' },
 
-        { path: '/analytics', label: 'Analytics', icon: 'bi-bar-chart-line-fill' },
+        // { path: '/analytics', label: 'Analytics', icon: 'bi-bar-chart-line-fill' },
     ];
 
     const bottomNavItems = [

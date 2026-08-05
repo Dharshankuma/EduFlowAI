@@ -10,6 +10,7 @@ import { Settings } from "../pages/app/settings/Settings";
 import { Goals } from "../pages/app/goals/Goals/Goals";
 import { CreateGoal } from "../pages/app/goals/CreateGoal/CreateGoal";
 import { GoalDetails } from "../pages/app/goals/GoalDetails/GoalDetails";
+import { Calendar } from "../pages/app/calendar/Calendar/Calendar";
 import PublicLayout from "../layouts/PublicLayout";
 import AppLayout from "../layouts/AppLayout";
 
@@ -56,10 +57,10 @@ const AppRoutes = () => {
                     <Route path="/goals/create" element={<CreateGoal />} />
                     <Route path="/goals/:goalId" element={<GoalDetails />} />
                     <Route path="/goals/:goalId/edit" element={<GoalDetails />} />
-                    <Route path="/tasks" element={<div className="p-3"><h2>Tasks Page</h2><p>Phase 2 Feature</p></div>} />
-                    <Route path="/calendar" element={<div className="p-3"><h2>Calendar Page</h2><p>Phase 2 Feature</p></div>} />
-                    <Route path="/ai-planner" element={<div className="p-3"><h2>AI Planner Page</h2><p>Phase 2 Feature</p></div>} />
-                    <Route path="/analytics" element={<div className="p-3"><h2>Analytics Page</h2><p>Phase 2 Feature</p></div>} />
+                    {/* <Route path="/tasks" element={<div className="p-3"><h2>Tasks Page</h2><p>Phase 2 Feature</p></div>} /> */}
+                    <Route path="/calendar" element={<Calendar />} />
+                    {/* <Route path="/ai-planner" element={<div className="p-3"><h2>AI Planner Page</h2><p>Phase 2 Feature</p></div>} /> */}
+                    {/* <Route path="/analytics" element={<div className="p-3"><h2>Analytics Page</h2><p>Phase 2 Feature</p></div>} /> */}
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/settings" element={<Settings />} />
                 </Route>

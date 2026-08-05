@@ -594,6 +594,7 @@
         text-align: center;
     }
 
+<<<<<<< Updated upstream
     /* Stack items inside absolute container vertically for mobile layout */
     .timeline-scroll-container {
         overflow-x: auto;
@@ -622,6 +623,36 @@
         right: 0 !important;
         margin-bottom: 12px;
         width: 100%;
+=======
+    /* Ensure calendar grids maintain absolute hourly positions on mobile to sync cards */
+    .timeline-hour-label {
+        width: 70px !important;
+        padding-right: 8px !important;
+    }
+
+    .timeline-events-container {
+        left: 70px !important;
+    }
+
+    .day-event-card {
+        left: 8px !important;
+        right: 8px !important;
+        padding: 12px 14px !important;
+    }
+
+    .event-subject-title {
+        font-size: 16px !important;
+    }
+
+    .event-description {
+        font-size: 12px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .event-actions-row {
+        gap: 6px !important;
+        padding-top: 8px !important;
+>>>>>>> Stashed changes
     }
 }
 

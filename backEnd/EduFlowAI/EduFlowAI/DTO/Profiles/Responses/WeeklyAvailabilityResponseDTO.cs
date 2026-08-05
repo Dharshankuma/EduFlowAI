@@ -2,7 +2,7 @@
 {
     public class WeeklyAvailabilityResponseDTO
     {
-        public DayOfWeek DayOfWeek { get; set; } = DayOfWeek.Monday;
+        public string DayOfWeek { get; set; } = string.Empty;
         public bool IsEnable { get; set; }
         public TimeOnly? StartTime { get; set; }
         public TimeOnly? EndTime { get; set; }  

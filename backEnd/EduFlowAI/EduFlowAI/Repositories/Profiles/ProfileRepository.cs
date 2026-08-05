@@ -1,5 +1,7 @@
 ﻿using EduFlowAI.Data;
 using EduFlowAI.DTO.Profiles.Responses;
+using EduFlowAI.Enums;
+using EduFlowAI.Helpers;
 using EduFlowAI.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +19,12 @@ namespace EduFlowAI.Repositories.Profiles
         public async Task<User> GetUserDetailsByIdAsync(int userId,CancellationToken cancellation)
         {
             return await _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Userid == userId,cancellation);
+        }
+
+        public async Task UpdateUserProfileAsync(User user, CancellationToken cancellation)
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync(cancellation);
         }
 
         public async Task<ProfileSummaryResponseDTO> GetProfileSummaryResponseAsync(int userId,CancellationToken cancellation)
@@ -55,5 +63,42 @@ namespace EduFlowAI.Repositories.Profiles
             return await _context.Useravailabilities.AsNoTracking().Where(x => x.Userid == userId).OrderBy(x => x.Availabilityid).ToListAsync(cancellation);
         }
 
+        public async Task<User> GetUserDetailsByUserNameAsync(string userName, CancellationToken cancellation)
+        {
+            return await _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Username == userName);
+        }
+
+        public async Task UpdateWeeklyAvailability(List<Useravailability> availablity,CancellationToken cancellation)
+        {
+            _context.Useravailabilities.UpdateRange(availablity);
+            await _context.SaveChangesAsync(cancellation);
+        }
+
+        public async Task CreateDefaultAvailabilityAsync(int userId, CancellationToken cancellation)
+        {
+            var currentTime = DateTimeHelper.GetDateTimeNow();
+
+            var weekAvailability = new List<Useravailability>();
+
+            foreach(WeekDays day in Enum.GetValues<WeekDays>())
+            {
+                bool isWeekEnd = day == WeekDays.Saturday || day == WeekDays.Sunday;
+
+                weekAvailability.Add(new Useravailability
+                {
+                    Userid = userId,
+                    DayOfWeek = (int)day,
+                    Isenable = !isWeekEnd,
+                    StartTime = isWeekEnd ? null : new TimeOnly(9, 0),
+                    EndTime = isWeekEnd ? null : new TimeOnly(17, 0),
+                    Availablehours = isWeekEnd ? 0 : 8,
+                    Createdat = DateTimeHelper.GetDateTimeNow(),
+                    Createdby = userId
+                });
+
+                await _context.Useravailabilities.AddRangeAsync(weekAvailability,cancellation);
+                await _context.SaveChangesAsync(cancellation);
+            }
+        }
     }
 }

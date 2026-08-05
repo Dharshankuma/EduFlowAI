@@ -38,9 +38,9 @@ public partial class EduFlowDbContext : DbContext
 
     public virtual DbSet<Useravailability> Useravailabilities { get; set; }
 
-//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseSqlServer("Server=LAPTOP-BVQG4NVS;Database=EduFlowAIDB;User Id=sa;Password=123456;TrustServerCertificate=True;MultipleActiveResultSets=True");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=LAPTOP-BVQG4NVS;Database=EduFlowAIDB;User Id=sa;Password=123456;Trusted_Connection=True;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -451,10 +451,6 @@ public partial class EduFlowDbContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("CREATEDAT");
             entity.Property(e => e.Createdby).HasColumnName("CREATEDBY");
-            entity.Property(e => e.Dayofweek)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("DAYOFWEEK");
             entity.Property(e => e.Isenable)
                 .HasDefaultValue(true)
                 .HasColumnName("ISENABLE");

@@ -15,8 +15,6 @@ public partial class Useravailability
 
     public DateTime? Updatedat { get; set; }
 
-    public string Dayofweek { get; set; } = null!;
-
     public bool Isenable { get; set; }
 
     public int? Createdby { get; set; }
@@ -26,6 +24,8 @@ public partial class Useravailability
     public TimeOnly? StartTime { get; set; }
 
     public TimeOnly? EndTime { get; set; }
+
+    public int DayOfWeek { get; set; }
 
     public virtual User? CreatedbyNavigation { get; set; }
 

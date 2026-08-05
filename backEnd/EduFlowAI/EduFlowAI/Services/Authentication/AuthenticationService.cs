@@ -4,9 +4,11 @@ using EduFlowAI.Exceptions;
 using EduFlowAI.Helpers;
 using EduFlowAI.Models;
 using EduFlowAI.Repositories.Authentication;
+using EduFlowAI.Repositories.Profiles;
 using EduFlowAI.Services.EmailService;
 using EduFlowAI.Services.EmailTemplatesService;
 using EduFlowAI.Services.EmailTemplatesService.Authentication;
+using EduFlowAI.Services.Profiles;
 using FluentValidation.Validators;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -18,14 +20,16 @@ namespace EduFlowAI.Services.Authentication
         private readonly JWTHelper _helper;
         private readonly IEmailService _email;
         private readonly IAuthenticationEmailTemplateService _template;
+        private readonly IProfileRepository _profile;
         private const string LinkUrl = "http://localhost:5173/";
 
-        public AuthenticationService(IAuthenticationRepository repo, JWTHelper helper,IEmailService email, IAuthenticationEmailTemplateService template)
+        public AuthenticationService(IAuthenticationRepository repo, JWTHelper helper,IEmailService email, IAuthenticationEmailTemplateService template, IProfileRepository profile)
         {
             _repo = repo;
             _helper = helper;
             _email = email;
             _template = template;
+            _profile = profile;
         }
 
         public async Task RegisterUserAsync(RegisterRequestDTO objdto,CancellationToken cancellation)
@@ -49,6 +53,9 @@ namespace EduFlowAI.Services.Authentication
             };
 
             await _repo.CreateUserAsync(newUser,cancellation);
+
+            // creates default user availability
+            await _profile.CreateDefaultAvailabilityAsync(newUser.Userid, cancellation);
 
             //generate the email verifiaction token 
 

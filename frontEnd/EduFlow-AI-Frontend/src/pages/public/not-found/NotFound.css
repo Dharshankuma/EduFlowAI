@@ -1,0 +1,94 @@
+.not-found-page-container {
+    background-color: #F8FAFC;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.not-found-header {
+    padding: 2rem 3rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo-img {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color, #4F46E5);
+    letter-spacing: -0.5px;
+}
+
+.not-found-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+    width: 100%;
+}
+
+.not-found-card {
+    background-color: var(--surface-color, #ffffff);
+    border-radius: var(--radius-lg, 20px);
+    box-shadow: var(--shadow-md, 0 8px 20px rgba(0, 0, 0, 0.08));
+    width: 100%;
+    max-width: 480px;
+    padding: 3rem 2rem;
+}
+
+.error-code {
+    font-size: 6rem;
+    font-weight: 800;
+    color: var(--primary-color, #4F46E5);
+    line-height: 1;
+    margin: 0;
+    letter-spacing: -2px;
+}
+
+.error-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary, #0F172A);
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.error-desc {
+    max-width: 320px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.not-found-card .type_1_btn {
+    background-color: var(--primary-color, #4F46E5);
+    color: #ffffff;
+    border: none;
+}
+
+.not-found-card .type_1_btn:hover {
+    background-color: var(--primary-hover, #4338CA);
+}
+
+@media (max-width: 768px) {
+    .not-found-header {
+        padding: 1.5rem;
+        justify-content: center;
+    }
+}

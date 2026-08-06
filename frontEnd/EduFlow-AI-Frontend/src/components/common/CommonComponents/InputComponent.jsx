@@ -9,13 +9,15 @@ export const InputComponent = ({
     value,
     onChange,
     onBlur,
+    onKeyDown,
     error,
     required = false,
     disabled = false,
     helpText,
     className,
     icon,
-    actionButton
+    actionButton,
+    ...rest
 }) => {
 
     const inputClass = `form-control ${error ? 'type1_textbox_error' : ''} ${className || ''}`.trim();
@@ -42,8 +44,10 @@ export const InputComponent = ({
                     value={value}
                     onChange={onChange}
                     onBlur={onBlur}
+                    onKeyDown={onKeyDown}
                     required={required}
                     disabled={disabled}
+                    {...rest}
                 />
 
                 {actionButton ? (

@@ -1,8 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAppState } from '../../../../context/StateContext';
 import { InputComponent } from '../../../common/CommonComponents/InputComponent';
 import './Topbar.css';
 
 export const Topbar = ({ onToggleSidebar }) => {
+    const navigate = useNavigate();
+    const { currentUser, notifications } = useAppState();
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const unreadCount = notifications.filter(n => n.unread).length;
+
+    const handleSearchKeyDown = (e) => {
+        if (e.key === 'Enter' && searchQuery.trim()) {
+            navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        }
+    };
+
+    const handleNotificationClick = () => {
+        navigate('/notifications');
+    };
+
     return (
         <header className="topbar">
             {/* Hamburger button visible only on mobile */}
@@ -16,7 +34,7 @@ export const Topbar = ({ onToggleSidebar }) => {
 
             {/* Left side: Greeting */}
             <div className="topbar-greeting">
-                <h2 className="greeting-title">Good Morning, Dharshan 👋</h2>
+                <h2 className="greeting-title">Good Morning, {currentUser.firstName || 'Dharshan'} 👋</h2>
                 <p className="greeting-subtitle">Ready to achieve today's study goals?</p>
             </div>
 
@@ -28,17 +46,26 @@ export const Topbar = ({ onToggleSidebar }) => {
                         placeholder="Search for goals..."
                         icon={<i className="bi bi-search"></i>}
                         className="topbar-search-input"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onBlur={() => {}}
+                        // Capture key down events to perform search redirect on Enter key
+                        onKeyDown={handleSearchKeyDown}
+                        // To avoid linting/prop warnings, we let input-wrapper capture standard props
                     />
                 </div>
 
                 <div className="topbar-buttons">
                     <button
                         className="topbar-action-btn notification-btn"
+                        onClick={handleNotificationClick}
                         aria-label="View notifications"
                         title="Notifications"
                     >
                         <i className="bi bi-bell"></i>
-                        <span className="notification-badge"></span>
+                        {unreadCount > 0 && (
+                            <span className="notification-badge">{unreadCount}</span>
+                        )}
                     </button>
 
                     <button
@@ -48,10 +75,6 @@ export const Topbar = ({ onToggleSidebar }) => {
                     >
                         <i className="bi bi-moon"></i>
                     </button>
-
-                    {/* <div className="topbar-avatar" title="Dharshan's Profile">
-                        <span>D</span>
-                    </div> */}
                 </div>
             </div>
         </header>

@@ -59,19 +59,43 @@ const MOCK_GOALS = [
     }
 ];
 
-export const Goals = () => {
+import { useNavigate } from 'react-router-dom';
+import { useAppState } from '../../../../context/StateContext';
 
+export const Goals = () => {
     const navigate = useNavigate();
+    const { goals, deleteGoal } = useAppState();
+
+    // Dynamically calculate statistics from global state
+    const totalGoals = goals.length;
+    const activeGoals = goals.filter(g => g.status === 'Active' || g.status === 'In Progress').length;
+    const completedGoals = goals.filter(g => g.progress === 100 || g.status === 'Completed').length;
+    const urgentGoals = goals.filter(g => g.priority === 'High').length;
+
+    const statistics = [
+        { id: 1, title: 'TOTAL', value: totalGoals, description: 'Global objectives', icon: 'bi-flag' },
+        { id: 2, title: 'ACTIVE', value: activeGoals, description: 'In progress now', icon: 'bi-lightning-charge' },
+        { id: 3, title: 'COMPLETED', value: completedGoals, description: 'Milestones reached', icon: 'bi-check-circle' },
+        { id: 4, title: 'URGENT', value: urgentGoals, description: 'Upcoming deadlines', icon: 'bi-calendar-event' }
+    ];
+
     // State management
-    const [goals, setGoals] = useState(MOCK_GOALS);
-    const [statistics] = useState(MOCK_STATISTICS);
     const [searchValue, setSearchValue] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
     const [selectedGoalType, setSelectedGoalType] = useState('');
     const [selectedSort, setSelectedSort] = useState('newest');
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [totalItems, setTotalItems] = useState(36);
+    
+    const filteredGoals = goals.filter(g => {
+        const matchesSearch = g.title.toLowerCase().includes(searchValue.toLowerCase()) || 
+                             g.category.toLowerCase().includes(searchValue.toLowerCase());
+        const matchesStatus = !selectedStatus || g.status === selectedStatus;
+        const matchesType = !selectedGoalType || g.category === selectedGoalType;
+        return matchesSearch && matchesStatus && matchesType;
+    });
+
+    const totalItems = filteredGoals.length;
     const totalPages = Math.ceil(totalItems / pageSize);
 
     // Callback event handlers
@@ -108,8 +132,7 @@ export const Goals = () => {
 
     const handleDeleteGoal = (id) => {
         console.log(`Delete goal action triggered (ID: ${id})`);
-        // Optional: Local state removal mock
-        setGoals(prev => prev.filter(g => g.id !== id));
+        deleteGoal(id);
     };
 
     const handlePageChange = (pageNum) => {
@@ -167,9 +190,9 @@ export const Goals = () => {
 
                 {/* 3. Goal Grid or Empty State Section */}
                 <div className="goals-layout-section">
-                    {goals.length > 0 ? (
+                    {filteredGoals.length > 0 ? (
                         <GoalGrid
-                            goals={goals}
+                            goals={filteredGoals}
                             onView={handleViewGoal}
                             onEdit={handleEditGoal}
                             onDelete={handleDeleteGoal}
@@ -180,7 +203,7 @@ export const Goals = () => {
                 </div>
 
                 {/* 4. Goal Pagination Section (Only when goals exist) */}
-                {goals.length > 0 && (
+                {filteredGoals.length > 0 && (
                     <div className="goals-layout-section">
                         <GoalPagination
                             currentPage={currentPage}

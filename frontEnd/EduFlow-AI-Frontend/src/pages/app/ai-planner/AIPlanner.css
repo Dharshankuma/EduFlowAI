@@ -1,0 +1,45 @@
+.ai-planner-page-container {
+    padding: 1.5rem;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.ai-planner-page-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.ai-planner-page-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.section-title-custom {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.rec-card {
+    border-left: 4px solid var(--primary-color) !important;
+}
+
+.rec-title {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+.rec-desc {
+    color: var(--text-secondary);
+}
+
+.insight-features-box {
+    background-color: rgba(79, 70, 229, 0.02) !important;
+    border: 1px dashed var(--border-color) !important;
+}
+
+@media (max-width: 768px) {
+    .ai-planner-page-container {
+        padding: 1rem;
+    }
+}

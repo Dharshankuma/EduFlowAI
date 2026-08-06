@@ -57,10 +57,17 @@ const DEFAULT_STATISTICS = {
     ]
 };
 
+import { useAppState } from '../../../../context/StateContext';
+
 export const GoalDetails = () => {
     const location = useLocation();
     const { goalId } = useParams(); // Placeholder for future backend fetch
     const navigate = useNavigate();
+    const { goals, tasks: tasksDict, updateGoalWithTasks } = useAppState();
+
+    // Find correct goal and tasks from context
+    const matchedGoal = goals.find(g => g.id === Number(goalId)) || goals.find(g => g.id === 1) || DEFAULT_GOAL;
+    const matchedTasks = tasksDict[matchedGoal.id] || DEFAULT_TASKS;
 
     // Determine mode from React Router pathname
     const isEditMode = location.pathname.endsWith('/edit');
@@ -72,8 +79,14 @@ export const GoalDetails = () => {
     }, [isEditMode]);
 
     // Local states
-    const [goal, setGoal] = useState(DEFAULT_GOAL);
-    const [tasks, setTasks] = useState(DEFAULT_TASKS);
+    const [goal, setGoal] = useState(matchedGoal);
+    const [tasks, setTasks] = useState(matchedTasks);
+
+    // Sync when goalId changes
+    useEffect(() => {
+        setGoal(matchedGoal);
+        setTasks(matchedTasks);
+    }, [goalId, goals, tasksDict]);
 
     // Dynamic calculations for Statistics
     const totalHours = tasks.reduce((sum, t) => sum + (Number(t.estimatedHours) || 0), 0);
@@ -128,8 +141,9 @@ export const GoalDetails = () => {
     // Save tasks edits and return to view mode URL
     const handleSaveTasks = () => {
         console.log('Saved changes inside edit mode:', { goal: updatedGoal, tasks });
+        updateGoalWithTasks(matchedGoal.id, updatedGoal, tasks);
         setMode('view');
-        navigate(`/goals/${goalId || '1'}`);
+        navigate(`/goals/${matchedGoal.id}`);
         alert('Changes saved successfully!');
     };
 

@@ -2,17 +2,18 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import logoImage from '../../../../assets/images/EduFlow_AI_Logo.png';
 import './MobileSidebar.css';
+import { useAppState } from '../../../../context/StateContext';
 
 export const MobileSidebar = ({ isOpen, onClose }) => {
     const navigate = useNavigate();
+    const { currentUser } = useAppState();
 
     const mainNavItems = [
         { path: '/dashboard', label: 'Dashboard', icon: 'bi-grid-fill' },
         { path: '/goals', label: 'Goals', icon: 'bi-bullseye' },
-
         { path: '/calendar', label: 'Calendar', icon: 'bi-calendar3' },
-
-        // { path: '/analytics', label: 'Analytics', icon: 'bi-bar-chart-line-fill' },
+        // { path: '/ai-planner', label: 'AI Planner', icon: 'bi-stars' },
+        { path: '/analytics', label: 'Analytics', icon: 'bi-bar-chart-line-fill' },
     ];
 
     const bottomNavItems = [
@@ -90,13 +91,17 @@ export const MobileSidebar = ({ isOpen, onClose }) => {
 
                 <div className="mobile-sidebar-user-card">
                     <div className="user-avatar-wrapper">
-                        <div className="user-avatar">
-                            <span>D</span>
-                        </div>
+                        {currentUser.profileImage ? (
+                            <img src={currentUser.profileImage} alt={currentUser.userName} className="user-avatar-img" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
+                        ) : (
+                            <div className="user-avatar">
+                                <span>{currentUser.firstName ? currentUser.firstName[0] : 'U'}</span>
+                            </div>
+                        )}
                     </div>
                     <div className="user-info">
-                        <span className="user-name">Dharshan</span>
-                        <span className="user-badge">Premium Student</span>
+                        <span className="user-name">{currentUser.firstName || 'User'}</span>
+                        <span className="user-badge">{currentUser.badge || 'Student'}</span>
                     </div>
                     <button
                         className="logout-btn"

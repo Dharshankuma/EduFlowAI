@@ -20,8 +20,11 @@ const DEFAULT_PLANNER_STEPS = [
     'Creating Weekly Schedule...'
 ];
 
+import { useAppState } from '../../../../context/StateContext';
+
 export const CreateGoal = () => {
     const navigate = useNavigate();
+    const { addGoalWithTasks } = useAppState();
 
     // 1. Wizard workflow step indicator (1 to 5)
     const [currentStep, setCurrentStep] = useState(1);
@@ -176,6 +179,7 @@ export const CreateGoal = () => {
 
     // Trigger Scheduler generation loading step
     const handleGenerateSchedule = () => {
+        addGoalWithTasks(goal, tasks);
         setCurrentStep(4);
     };
 

@@ -1,14 +1,13 @@
 import { useState } from 'react'
 import './App.css'
 import AppRoutes from './routes/AppRoutes'
+import { StateProvider } from './context/StateContext'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
+    <StateProvider>
       <AppRoutes />
-    </>
+    </StateProvider>
   )
 }
 

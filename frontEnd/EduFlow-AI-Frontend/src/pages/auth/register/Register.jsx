@@ -137,11 +137,11 @@ export const Register = () => {
             await new Promise(resolve => setTimeout(resolve, 1500));
 
             console.log('Registration successful with:', formData);
-            setApiSuccess('Account created successfully! Redirecting to login...');
+            setApiSuccess('Account created successfully! Redirecting to email verification...');
 
             // Redirect simulation
             setTimeout(() => {
-                navigate('/login');
+                navigate('/email-verification', { state: { email: formData.email } });
             }, 1500);
 
         } catch (err) {

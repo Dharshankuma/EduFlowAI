@@ -1,0 +1,38 @@
+.search-page-container {
+    padding: 1.5rem;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.search-page-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.search-page-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.goal-card-title {
+    font-size: 1.15rem;
+    color: var(--text-primary);
+}
+
+.goal-card-desc {
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .search-page-container {
+        padding: 1rem;
+    }
+}

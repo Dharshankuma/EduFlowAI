@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAppState } from '../../../context/StateContext';
 import TodayStudyPlan from '../../../components/app/dashboard/TodayStudyPlan/TodayStudyPlan';
 import Statistics from '../../../components/app/dashboard/Statistics/Statistics';
 import TodaySchedule from '../../../components/app/dashboard/TodaySchedule/TodaySchedule';
@@ -10,25 +12,37 @@ import RecentActivity from '../../../components/app/dashboard/RecentActivity/Rec
 import './Dashboard.css';
 
 export const Dashboard = () => {
+    const navigate = useNavigate();
+    const { currentUser, goals, tasks, calendarEvents, notifications } = useAppState();
 
-    // 2. Mock Data aligned with Figma requirements
+    // 1. Compute dynamic metrics from global AppState
+    const activeGoalsCount = goals.filter(g => g.status === 'Active' || g.status === 'In Progress').length;
+    
+    // Count all tasks from all goals
+    let totalTasksCount = 0;
+    let completedTasksCount = 0;
+    Object.values(tasks).forEach(list => {
+        totalTasksCount += list.length;
+        completedTasksCount += list.filter(t => t.status === 'Completed').length;
+    });
+
     const dashboardData = {
         studyPlan: {
             studyHours: "5h 20m",
-            activeGoals: "3",
-            nextTask: "5h 20m", // Est. Time
+            activeGoals: String(activeGoalsCount),
+            nextTask: "45m",
             studyStreak: "12 Days",
             dailyBrief: {
                 recommendations: [
-                    "Complete Data Structures (45 min)",
-                    "Revise Operating Systems (30 min)",
-                    "Practice 2 DSA Problems",
+                    "Complete Data Structures Practice (45 min)",
+                    "Revise Operating Systems process sync (30 min)",
+                    "Review AWS IAM policies (30 min)",
                     "Continue Azure AZ-104 (30 min)"
                 ],
                 studyFocus: "Today's Recommendations",
                 quickTips: "AI Daily Brief",
                 completionEstimate: "Est. 2h 15m",
-                progressToday: 40
+                progressToday: totalTasksCount > 0 ? Math.round((completedTasksCount / totalTasksCount) * 100) : 40
             }
         },
         statistics: [
@@ -42,17 +56,17 @@ export const Dashboard = () => {
             },
             {
                 title: "Completed Tasks",
-                value: "18",
+                value: String(completedTasksCount > 0 ? completedTasksCount : 18),
                 description: "Checks finished today",
-                trend: "+6 today",
+                trend: `+${completedTasksCount} total`,
                 trendType: "success",
                 icon: "bi-check-circle-fill"
             },
             {
                 title: "Active Goals",
-                value: "5",
+                value: String(activeGoalsCount),
                 description: "In-progress academic milestones",
-                trend: "2 due this week",
+                trend: "On Track",
                 trendType: "info",
                 icon: "bi-journal-bookmark-fill"
             },
@@ -65,15 +79,15 @@ export const Dashboard = () => {
                 icon: "bi-fire"
             }
         ],
-        schedule: [
-            { id: 1, time: "09:00", subject: "Data Structures", topic: "Sorting algorithms & Hash Maps", status: "Current" },
-            { id: 2, time: "11:00", subject: "Operating Systems", topic: "Process synchronization & Semaphores", status: "Completed" },
-            { id: 3, time: "14:00", subject: "Mini Project", topic: "UI/UX implementation phase", status: "Pending" },
-            { id: 4, time: "16:00", subject: "Azure Certification", topic: "Cloud fundamental practices", status: "Pending" },
-            { id: 5, time: "18:00", subject: "Gym 🏋️", topic: "Physical well-being break", status: "Pending" }
-        ],
+        schedule: calendarEvents.slice(0, 5).map(event => ({
+            id: event.id,
+            time: event.time.split(' - ')[0],
+            subject: event.course,
+            topic: event.title,
+            status: event.completed ? 'Completed' : 'Pending'
+        })),
         focusSession: {
-            subject: "Data Structures",
+            subject: goals[0]?.title || "Data Structures",
             duration: 1500
         },
         calendar: {
@@ -101,30 +115,40 @@ export const Dashboard = () => {
                 { day: 15, isCurrentMonth: true }
             ]
         },
-        goals: [
-            { id: 1, title: "Placement Preparation", category: "DSA + Aptitude", progress: 75, dueDate: "Due Jul 30", status: "On Track" },
-            { id: 2, title: "Semester Exams", category: "Academic Preparation", progress: 40, dueDate: "Due Nov 15", status: "At Risk" },
-            { id: 3, title: "Azure AZ-104", category: "Cloud Certification", progress: 60, dueDate: "Due Oct 05", status: "Steady" }
-        ],
-        upcomingTasks: [
-            { id: 1, title: "OS Lab Submission", subject: "OS", dueDate: "Today", dueTime: "04:00 PM", priority: "High", status: "Pending", icon: "bi-file-earmark-code" },
-            { id: 2, title: "DS Algo Practice", subject: "DSA", dueDate: "Tomorrow", dueTime: "10:00 AM", priority: "Medium", status: "Pending", icon: "bi-laptop" },
-            { id: 3, title: "Azure Mock Test", subject: "Cloud", dueDate: "Sep 12", dueTime: "06:00 PM", priority: "Low", status: "Pending", icon: "bi-shield-check" }
-        ],
-        recentActivities: [
-            { id: 1, type: "task", title: "Task Completed", description: "Completed Sorting Algorithms Quiz with 95% score.", time: "20 minutes ago" },
-            { id: 2, type: "goal", title: "Goal Created", description: "Added new goal: System Design Mastery.", time: "2 hours ago" },
-            { id: 3, type: "study session", title: "Study Session Completed", description: "Finished a 45-minute Deep Focus session on Python.", time: "4 hours ago" }
-        ]
+        goals: goals.map(g => ({
+            id: g.id,
+            title: g.title,
+            category: g.category,
+            progress: g.progress,
+            dueDate: `Due ${g.targetDate}`,
+            status: g.progress > 50 ? 'On Track' : 'Steady'
+        })),
+        upcomingTasks: calendarEvents.filter(e => !e.completed).slice(0, 3).map(e => ({
+            id: e.id,
+            title: e.title,
+            subject: e.course.substring(0, 10),
+            dueDate: "Upcoming",
+            dueTime: e.time.split(' - ')[0],
+            priority: "Medium",
+            status: "Pending",
+            icon: "bi-file-earmark-code"
+        })),
+        recentActivities: notifications.slice(0, 3).map(n => ({
+            id: n.id,
+            type: n.type,
+            title: n.type === 'success' ? 'Task Completed' : 'Goal Alert',
+            description: n.text,
+            time: n.time
+        }))
     };
 
     // 3. Action Click callbacks (Backend Ready triggers)
-    const handleCreateGoal = () => console.log("Trigger: Create Goal");
-    const handleGeneratePlan = () => console.log("Trigger: Generate Plan");
-    const handleEditSchedule = () => console.log("Trigger: Edit Schedule");
-    const handleViewAllGoals = () => console.log("Trigger: View All Goals");
-    const handleViewAllActivities = () => console.log("Trigger: View All Activities");
-    const handleViewAllTasks = () => console.log("Trigger: View All Tasks");
+    const handleCreateGoal = () => navigate('/goals/create');
+    const handleGeneratePlan = () => navigate('/goals/create');
+    const handleEditSchedule = () => navigate('/calendar');
+    const handleViewAllGoals = () => navigate('/goals');
+    const handleViewAllActivities = () => navigate('/notifications');
+    const handleViewAllTasks = () => navigate('/calendar');
     
     const handlePrevMonth = () => console.log("Trigger: Prev Month");
     const handleNextMonth = () => console.log("Trigger: Next Month");

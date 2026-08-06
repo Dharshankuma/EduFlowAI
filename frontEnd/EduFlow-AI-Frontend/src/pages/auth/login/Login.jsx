@@ -246,7 +246,7 @@ export const Login = () => {
                                     <label className="form-label mb-0" htmlFor="password">
                                         Password<span className="mandatory_text_color ms-1">*</span>
                                     </label>
-                                    <Link to="/" className="forgot-link text-decoration-none">
+                                    <Link to="/forgot-password" className="forgot-link text-decoration-none">
                                         Forgot Password?
                                     </Link>
                                 </div>

@@ -4,28 +4,10 @@ import Security from '../../../components/app/settings/Security/Security';
 import AccountManagement from '../../../components/app/settings/AccountManagement/AccountManagement';
 import './Settings.css';
 
+import { useAppState } from '../../../context/StateContext';
+
 export const Settings = () => {
-    const [settingsData, setSettingsData] = useState({
-        notifications: [
-            { id: 1, title: 'Email Notifications', enabled: true },
-            { id: 2, title: 'Daily Study Reminders', enabled: true },
-            { id: 3, title: 'Planner Notifications', enabled: false }
-        ],
-        security: {
-            twoFactorEnabled: false,
-            actions: [
-                { id: 1, title: 'Active Devices' },
-                { id: 2, title: 'Login History' },
-                { id: 3, title: 'Change Password' }
-            ]
-        },
-        account: {
-            actions: [
-                { id: 1, title: 'Export Study Data' },
-                { id: 2, title: 'Download Schedule' }
-            ]
-        }
-    });
+    const { settings: settingsData, setSettings: setSettingsData } = useAppState();
 
     // 1. Notification Toggle State Handler
     const handleToggleNotification = (id) => {

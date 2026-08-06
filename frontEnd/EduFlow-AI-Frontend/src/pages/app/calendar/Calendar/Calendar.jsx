@@ -137,17 +137,18 @@ const initialEvents = [
     }
 ];
 
+import { useAppState } from '../../../../context/StateContext';
+
 export const Calendar = () => {
     // 1. Controller view switcher state
     const [activeView, setActiveView] = useState("Month"); // "Month", "Week", "Day"
+    const { calendarEvents, setCalendarEvents } = useAppState();
 
     // 2. Mock state variables
     const [selectedDate, setSelectedDate] = useState("Monday, June 12, 2023");
     const [selectedWeek, setSelectedWeek] = useState("June 23 - 29, 2026");
     const [selectedMonth, setSelectedMonth] = useState("October");
     const [selectedYear] = useState(2026);
-
-    const [calendarEvents, setCalendarEvents] = useState(initialEvents);
 
     const [todaySummary] = useState({
         studyGoal: 85,

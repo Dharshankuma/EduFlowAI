@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ProfileHeader from '../../../components/app/profile/ProfileHeader/ProfileHeader';
 import ProfileStatistics from '../../../components/app/profile/ProfileStatistics/ProfileStatistics';
 import PersonalInformation from '../../../components/app/profile/PersonalInformation/PersonalInformation';
@@ -6,19 +7,11 @@ import QuickActions from '../../../components/app/profile/QuickActions/QuickActi
 import StudyAvailability from '../../../components/app/profile/StudyAvailability/StudyAvailability';
 import './Profile.css';
 
+import { useAppState } from '../../../context/StateContext';
+
 export const Profile = () => {
-    // 1. Controlled user information state
-    const [user, setUser] = useState({
-        profileImage: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=120',
-        userName: 'Dharshan Muthukumar',
-        memberSince: 'July 2026',
-        lastLogin: 'Today • 9:20 AM',
-        firstName: 'Dharshan',
-        lastName: 'Muthukumar',
-        username: '@dharshan_m',
-        email: 'dharshan.m@university.edu',
-        timeZone: '(GMT-05:00) Eastern Time (US & Canada)'
-    });
+    const navigate = useNavigate();
+    const { currentUser: user, setCurrentUser: setUser, availability, setAvailability, preferences, setPreferences } = useAppState();
 
     // 2. Statistics state
     const [statistics] = useState([
@@ -28,30 +21,12 @@ export const Profile = () => {
         { id: 4, title: 'STUDY STREAK', value: '15 Days', icon: 'bi-fire', description: 'Current streak', trendType: 'success' }
     ]);
 
-    // 3. Availability state
-    const [availability, setAvailability] = useState([
-        { day: 'Monday', enabled: true, startTime: '09:00', endTime: '17:00' },
-        { day: 'Tuesday', enabled: true, startTime: '09:00', endTime: '17:00' },
-        { day: 'Wednesday', enabled: true, startTime: '09:00', endTime: '17:00' },
-        { day: 'Thursday', enabled: true, startTime: '09:00', endTime: '17:00' },
-        { day: 'Friday', enabled: true, startTime: '09:00', endTime: '17:00' },
-        { day: 'Saturday', enabled: true, startTime: '09:00', endTime: '17:00' },
-        { day: 'Sunday', enabled: false, startTime: '00:00', endTime: '00:00' }
-    ]);
-
-    // 3.5 Preferences state
-    const [preferences, setPreferences] = useState({
-        sessionLength: '60',
-        studyTime: 'Evening'
-    });
-
-
-    // 4. Actions state
+    // 3. Actions state
     const [actions] = useState([
         { id: 1, title: 'Create Goal', icon: 'bullseye', route: '/goals/create' },
-        { id: 2, title: 'Generate Tasks', icon: 'stars', route: '/planner/generate' },
-        { id: 3, title: 'Export Report', icon: 'download', route: '/reports' },
-        { id: 4, title: 'Progress Log', icon: 'graph-up', route: '/progress' }
+        { id: 2, title: 'Generate Tasks', icon: 'stars', route: '/goals/create' },
+        { id: 3, title: 'Export Report', icon: 'download', route: '/analytics' },
+        { id: 4, title: 'Progress Log', icon: 'graph-up', route: '/analytics' }
     ]);
 
     // Callbacks & Event handlers
@@ -63,12 +38,15 @@ export const Profile = () => {
         const { name, value } = e.target;
         setUser((prev) => ({
             ...prev,
-            [name]: value
+            [name]: value,
+            userName: name === 'firstName' ? `${value} ${prev.lastName || ''}` : name === 'lastName' ? `${prev.firstName || ''} ${value}` : prev.userName
         }));
     };
 
     const handleSaveInfo = (e) => {
+        if (e && e.preventDefault) e.preventDefault();
         console.log('Personal Information changes submitted successfully:', user);
+        alert('Personal Information updated successfully!');
     };
 
     const handleCancelInfo = () => {
@@ -95,6 +73,7 @@ export const Profile = () => {
 
     const handleSaveAvailability = () => {
         console.log('Study Availability records and preferences sent to planner engine:', { availability, preferences });
+        alert('Study Availability saved successfully! Scheduler parameters updated.');
     };
 
     const handleSessionLengthChange = (length) => {
@@ -120,10 +99,14 @@ export const Profile = () => {
             studyTime: 'Evening'
         });
         console.log('Study Availability and Preferences reset to defaults.');
+        alert('Availability reset to default configurations.');
     };
 
     const handleActionClick = (action) => {
         console.log('Navigation trigger clicked:', action);
+        if (action.route) {
+            navigate(action.route);
+        }
     };
 
     return (

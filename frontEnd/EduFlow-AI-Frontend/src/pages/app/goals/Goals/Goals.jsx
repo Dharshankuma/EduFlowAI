@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import GoalStatistics from '../../../../components/app/goals/GoalStatistics/GoalStatistics';
 import GoalToolbar from '../../../../components/app/goals/GoalToolbar/GoalToolbar';
 import GoalGrid from '../../../../components/app/goals/GoalGrid/GoalGrid';
 import GoalEmptyState from '../../../../components/app/goals/GoalEmptyState/GoalEmptyState';
 import GoalPagination from '../../../../components/app/goals/GoalPagination/GoalPagination';
 import { ButtonComponent } from '../../../../components/common/CommonComponents/ButtonComponent';
+import { useAppState } from '../../../../context/StateContext';
 import './Goals.css';
-import { useNavigate } from 'react-router-dom';
 
 // Mock statistics data
 const MOCK_STATISTICS = [
@@ -58,9 +59,6 @@ const MOCK_GOALS = [
         status: 'On Hold'
     }
 ];
-
-import { useNavigate } from 'react-router-dom';
-import { useAppState } from '../../../../context/StateContext';
 
 export const Goals = () => {
     const navigate = useNavigate();

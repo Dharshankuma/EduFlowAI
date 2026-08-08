@@ -33,3 +33,19 @@
     --transition: all 0.3s ease;
 
 }
+
+[data-bs-theme="dark"] {
+    --bg-color: #0B0F19;
+    --surface-color: #151F32;
+    --border-color: #1E293B;
+
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+    --text-light: #64748B;
+    --text-teritory: #A5B4FC;
+    --text-box-color: #384252;
+
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 15px 35px rgba(0, 0, 0, 0.45);
+}

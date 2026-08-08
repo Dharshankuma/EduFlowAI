@@ -58,29 +58,29 @@ export const Settings = () => {
             {/* Page Header */}
             <div className="settings-page-header text-start mb-4">
                 <h1 className="settings-page-title m-0">Settings</h1>
-                <p className="settings-page-subtitle mt-1">
+                {/* <p className="settings-page-subtitle mt-1">
                     Manage your account, preferences and application settings.
-                </p>
+                </p> */}
             </div>
 
             {/* Settings Sections */}
             <div className="settings-sections-stack d-flex flex-column">
                 {/* 1. Notification settings card section */}
-                <div className="settings-section-wrapper">
+                {/* <div className="settings-section-wrapper">
                     <NotificationSettings
                         notifications={settingsData.notifications}
                         onToggle={handleToggleNotification}
                     />
-                </div>
+                </div> */}
 
                 {/* 2. Security settings card section */}
-                <div className="settings-section-wrapper">
+                {/* <div className="settings-section-wrapper">
                     <Security
                         security={settingsData.security}
                         onToggleTwoFactor={handleToggleTwoFactor}
                         onActionClick={handleSecurityActionClick}
                     />
-                </div>
+                </div> */}
 
                 {/* 3. Account Management card section */}
                 <div className="settings-section-wrapper">

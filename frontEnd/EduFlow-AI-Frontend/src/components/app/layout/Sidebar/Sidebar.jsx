@@ -77,7 +77,7 @@ export const Sidebar = () => {
                 </div>
                 <div className="user-info">
                     <span className="user-name">{currentUser.firstName || 'User'}</span>
-                    <span className="user-badge">{currentUser.badge || 'Student'}</span>
+                    {/* <span className="user-badge">{currentUser.badge || 'Student'}</span> */}
                 </div>
                 <button
                     className="logout-btn"

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { MOCK_USER } from '../mock/users';
 import { MOCK_GOALS } from '../mock/goals';
 import { MOCK_TASKS_BY_GOAL, DEFAULT_TASKS } from '../mock/tasks';
@@ -18,6 +18,18 @@ export const StateProvider = ({ children }) => {
     const [availability, setAvailability] = useState(MOCK_STUDY_AVAILABILITY);
     const [preferences, setPreferences] = useState(MOCK_STUDY_PREFERENCES);
     const [settings, setSettings] = useState(MOCK_SETTINGS);
+    const [theme, setTheme] = useState(() => {
+        return localStorage.getItem('theme') || 'light';
+    });
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-bs-theme', theme);
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => {
+        setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    };
 
     // Helpers
     const addGoalWithTasks = (goalData, tasksList) => {
@@ -171,6 +183,8 @@ export const StateProvider = ({ children }) => {
             setPreferences,
             settings,
             setSettings,
+            theme,
+            toggleTheme,
             addGoalWithTasks,
             updateGoalWithTasks,
             deleteGoal,

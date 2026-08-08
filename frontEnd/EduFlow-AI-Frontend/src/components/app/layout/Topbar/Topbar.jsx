@@ -6,7 +6,7 @@ import './Topbar.css';
 
 export const Topbar = ({ onToggleSidebar }) => {
     const navigate = useNavigate();
-    const { currentUser, notifications } = useAppState();
+    const { currentUser, notifications, theme, toggleTheme } = useAppState();
     const [searchQuery, setSearchQuery] = useState('');
 
     const unreadCount = notifications.filter(n => n.unread).length;
@@ -40,7 +40,7 @@ export const Topbar = ({ onToggleSidebar }) => {
 
             {/* Right side: Search Box and Action Buttons */}
             <div className="topbar-actions">
-                <div className="topbar-search-wrapper">
+                {/* <div className="topbar-search-wrapper">
                     <InputComponent
                         name="topbar-search"
                         placeholder="Search for goals..."
@@ -53,7 +53,7 @@ export const Topbar = ({ onToggleSidebar }) => {
                         onKeyDown={handleSearchKeyDown}
                         // To avoid linting/prop warnings, we let input-wrapper capture standard props
                     />
-                </div>
+                </div> */}
 
                 <div className="topbar-buttons">
                     <button
@@ -70,10 +70,11 @@ export const Topbar = ({ onToggleSidebar }) => {
 
                     <button
                         className="topbar-action-btn theme-toggle-btn"
-                        aria-label="Toggle theme"
-                        title="Theme Toggle"
+                        onClick={toggleTheme}
+                        aria-label={theme === 'dark' ? "Switch to light theme" : "Switch to dark theme"}
+                        title={theme === 'dark' ? "Switch to light theme" : "Switch to dark theme"}
                     >
-                        <i className="bi bi-moon"></i>
+                        <i className={theme === 'dark' ? "bi bi-sun" : "bi bi-moon"}></i>
                     </button>
                 </div>
             </div>

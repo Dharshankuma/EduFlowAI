@@ -18,6 +18,8 @@ builder.Services.AddCorsConfiguration();
 
 builder.Services.AddJwtAuthentication(builder.Configuration, builder.Environment);
 
+builder.Services.AddGoogleAuthentication(builder.Configuration);
+
 builder.Services.AddEmailServices(builder.Configuration);
 
 builder.Services.RegisterApplicationServices();

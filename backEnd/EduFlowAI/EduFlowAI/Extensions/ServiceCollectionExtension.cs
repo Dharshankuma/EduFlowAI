@@ -3,6 +3,7 @@ using EduFlowAI.Repositories.Authentication;
 using EduFlowAI.Services.Authentication;
 using EduFlowAI.Services.EmailTemplatesService;
 using EduFlowAI.Services.EmailTemplatesService.Authentication;
+using EduFlowAI.Services.Goals;
 using EduFlowAI.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -29,6 +30,7 @@ namespace EduFlowAI.Extensions
             //Services
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IAuthenticationEmailTemplateService, AuthenticationEmailTemplateService>();
+            services.AddScoped<IGoalService, GoalService>();
 
 
             return services;

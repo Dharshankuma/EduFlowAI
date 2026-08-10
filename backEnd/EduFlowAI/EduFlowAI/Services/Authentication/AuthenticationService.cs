@@ -1,4 +1,5 @@
-﻿using EduFlowAI.DTO.Authentiation.Requests;
+﻿using EduFlowAI.Configurations;
+using EduFlowAI.DTO.Authentiation.Requests;
 using EduFlowAI.DTO.Authentiation.Responses;
 using EduFlowAI.Exceptions;
 using EduFlowAI.Helpers;
@@ -10,7 +11,9 @@ using EduFlowAI.Services.EmailTemplatesService;
 using EduFlowAI.Services.EmailTemplatesService.Authentication;
 using EduFlowAI.Services.Profiles;
 using FluentValidation.Validators;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.Options;
 
 namespace EduFlowAI.Services.Authentication
 {
@@ -21,15 +24,17 @@ namespace EduFlowAI.Services.Authentication
         private readonly IEmailService _email;
         private readonly IAuthenticationEmailTemplateService _template;
         private readonly IProfileRepository _profile;
+        private readonly GoogleConfigurationSettings _googleSettings;
         private const string LinkUrl = "http://localhost:5173/";
 
-        public AuthenticationService(IAuthenticationRepository repo, JWTHelper helper,IEmailService email, IAuthenticationEmailTemplateService template, IProfileRepository profile)
+        public AuthenticationService(IAuthenticationRepository repo, JWTHelper helper,IEmailService email, IAuthenticationEmailTemplateService template, IProfileRepository profile,IOptions<GoogleConfigurationSettings> googleSettings)
         {
             _repo = repo;
             _helper = helper;
             _email = email;
             _template = template;
             _profile = profile;
+            _googleSettings = googleSettings.Value;
         }
 
         public async Task RegisterUserAsync(RegisterRequestDTO objdto,CancellationToken cancellation)
@@ -140,6 +145,69 @@ namespace EduFlowAI.Services.Authentication
             var response = BuildLoginResponseDTO(userDetails, accessToken, refreshToken);
 
             return response;
+        }
+
+        public async Task<LoginResponseDTO> GoogleLoginAsync(GoogleLoginRequestDTO dto,CancellationToken cancellationToken)
+        {
+            if (dto == null || string.IsNullOrWhiteSpace(dto.CredentialId))
+            {
+                throw new BadRequestException(
+                    "Google credential is required.");
+            }
+
+            var googleUser = await ValidateGoogleTokenAsync(
+                dto.CredentialId);
+
+            if (!googleUser.EmailVerified)
+            {
+                throw new BadRequestException(
+                    "Google email address is not verified.");
+            }
+
+            var user = await _repo.GetUserByGoogleIdAsync(
+                googleUser.Subject,
+                cancellationToken);
+
+
+            if (user != null)
+            {
+                await LoginExistingGoogleUserAsync(
+                    user,
+                    cancellationToken);
+            }
+            else
+            {
+                user = await _repo.GetUserByEmailAsync(
+                    googleUser.Email,
+                    cancellationToken);
+
+                if (user != null)
+                {
+                    throw new BadRequestException(
+                        "An account already exists with this email. " +
+                        "Please login using your existing authentication method.");
+                }
+
+                user = await CreateGoogleUserAsync(
+                    googleUser,
+                    cancellationToken);
+            }
+
+            var accessToken = _helper.GenerateAccessToken(user);
+            var refreshToken = CommonHelper.GenerateFixedGuidString(32);
+
+            var refreshTokenEntity = new Refreshtoken
+            {
+                Refreshtoken1 = refreshToken,
+                Userid = user.Userid,
+                Isrevoked = false,
+                Createdat = DateTimeHelper.GetDateTimeNow(),
+                Refreshexpiry = DateTimeHelper.GetDateTimeNow().AddDays(7)
+            };
+
+            await _repo.SaveRefreshTokenAsync(refreshTokenEntity, cancellationToken);
+
+            return BuildLoginResponseDTO(user, accessToken, refreshToken);
         }
 
         public async Task LogOutUser(string refreshToken,CancellationToken cancellation)
@@ -277,6 +345,78 @@ namespace EduFlowAI.Services.Authentication
                 RefreshToken = refreshToken,
                 UserData = BuildLoginUserData(user)
             };
+        }
+
+        private async Task<GoogleJsonWebSignature.Payload> ValidateGoogleTokenAsync(string credential)
+        {
+            try
+            {
+                return await GoogleJsonWebSignature.ValidateAsync(credential, new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new[]
+                    {
+                        _googleSettings.ClientId
+                    }
+                });
+            }
+            catch(InvalidJwtException)
+            {
+                throw new("Invalid Google Authentication");
+            }
+        }
+
+        private async Task<User> CreateGoogleUserAsync(GoogleJsonWebSignature.Payload googleUser,CancellationToken cancellationToken)
+        {
+            var currentDateTime =
+                DateTimeHelper.GetDateTimeNow();
+
+            var user = new User
+            {
+                Useridentifier = Guid.NewGuid().ToString(),
+
+                Emailid = googleUser.Email,
+
+                Firstname = googleUser.GivenName,
+
+                Lastname = googleUser.FamilyName,
+
+                Profilepicturepath = googleUser.Picture,
+
+                Googleid = googleUser.Subject,
+
+                Autuhprovider = "Google",
+
+                Emailverified = true,
+
+                Isactive = true,
+
+                Createdat = currentDateTime,
+
+                Lastloginat = currentDateTime
+            };
+
+            user = await _repo.CreateUserAsync(
+                user,
+                cancellationToken);
+
+            await _profile.CreateDefaultAvailabilityAsync(user.Userid, cancellationToken);
+
+            return user;
+        }
+        
+        private async Task LoginExistingGoogleUserAsync(User user,CancellationToken cancellationToken)
+        {
+            if (!user.Isactive)
+            {
+                throw new BadRequestException(
+                    "Your account is inactive.");
+            }
+
+            user.Lastloginat = DateTimeHelper.GetDateTimeNow();
+
+            await _repo.UpdateUserLogin(
+                user,
+                cancellationToken);
         }
     }
 }

@@ -35,8 +35,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DTO\Goals\Requests\" />
     <Folder Include="Models\" />
-    <Folder Include="Data\" />
     <Folder Include="PlannerEngine\" />
   </ItemGroup>
 

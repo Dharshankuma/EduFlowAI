@@ -13,9 +13,16 @@ namespace EduFlowAI.Repositories.Authentication
         {
             _context = context;
         }
+
+
         public async Task<User?> GetUserByEmailAsync(string email,CancellationToken cancellation)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Emailid == email,cancellation);
+        }
+
+        public async Task<User> GetUserByGoogleIdAsync(string googleId,CancellationToken cancellation)
+        {
+            return await _context.Users.FirstOrDefaultAsync(x => x.Googleid == googleId, cancellation);
         }
 
         public async Task<User> CreateUserAsync(User user, CancellationToken cancellation)

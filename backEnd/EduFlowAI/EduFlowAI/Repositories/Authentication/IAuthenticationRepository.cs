@@ -5,6 +5,7 @@ namespace EduFlowAI.Repositories.Authentication
     public interface IAuthenticationRepository
     {
         Task<User?> GetUserByEmailAsync(string email, CancellationToken cancellation);
+        Task<User> GetUserByGoogleIdAsync(string googleId, CancellationToken cancellation);
         Task<User> CreateUserAsync(User user, CancellationToken cancellation);
         Task UpdateUserLogin(User user, CancellationToken cancellation);
         Task SaveRefreshTokenAsync(Refreshtoken refresh, CancellationToken cancellation);

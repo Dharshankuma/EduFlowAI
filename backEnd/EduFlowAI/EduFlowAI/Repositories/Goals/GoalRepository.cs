@@ -4,6 +4,7 @@ using EduFlowAI.Helpers;
 using EduFlowAI.Models;
 using EduFlowAI.Repositories.Goals.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace EduFlowAI.Repositories.Goals
 {
@@ -99,9 +100,105 @@ namespace EduFlowAI.Repositories.Goals
                                         .OrderByDescending(x => x.CreatedAt)
             };
 
+            //var totalRecords = projectedQuery.CountAsync();
+
             var skip = (objdto.PageNumber - 1) * objdto.PageSize;
 
             return await projectedQuery.Skip(skip).Take(objdto.PageSize).ToListAsync(cancellation);
+        }
+
+        public async Task<int> GetFilteredGoalCountAsync(int userId, GoalsGridRequestDTO objdto, CancellationToken cancellation)
+        {
+            var query = _context.Goalmanagements.AsNoTracking().Where(x => x.Userid == userId);
+
+            var search = objdto.GoalSearch;
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                search = search.Trim();
+
+                query = query.Where(x =>
+                    x.Goaltitle.Contains(search) ||
+                    (x.Goaldescription != null &&
+                     x.Goaldescription.Contains(search)));
+            }
+
+            // Status filter
+            var statusId = objdto.StatusId;
+            if (statusId.HasValue)
+            {
+                query = query.Where(x =>
+                    x.Statusid == statusId.Value);
+            }
+
+            // Goal type filter
+            var goalTypeId = objdto.GoalType;
+            if (goalTypeId.HasValue)
+            {
+                query = query.Where(x =>
+                    x.Goaltypeid == goalTypeId.Value);
+            }
+
+            // Priority filter
+            var priorityId = objdto.PriorityId;
+            if (priorityId.HasValue)
+            {
+                query = query.Where(x =>
+                    x.Prioritytypeid == priorityId.Value);
+            }
+
+
+
+            return await query.CountAsync(cancellation);
+        }
+
+        public async Task<GoalGridSummaryQueryModel> GetGoalGridSummaryAsync(int userId, CancellationToken cancellation)
+        {
+            var summary = await _context.Goalmanagements.AsNoTracking().Where(x => x.Userid == userId).GroupBy(x => 1).Select(g => new GoalGridSummaryQueryModel
+            {
+                TotalGoals = g.Count(),
+                ActiveGoals = g.Count(x => x.Statusid == 1),
+                CompletedGoals = g.Count(x => x.Statusid == 3),
+                UrgentGoals = g.Count(x => x.Prioritytypeid == 3 && x.Statusid == 3)
+            }).FirstOrDefaultAsync(cancellation);
+
+            return summary ?? new GoalGridSummaryQueryModel();
+
+        }
+
+        public async Task<GoalDetailsQueryModel?> GetGoalDetailsAsync(int userId, string goalIdentifier, CancellationToken cancellation)
+        {
+            return await _context.Goalmanagements.AsNoTracking()
+                               .Where(x => x.Goalidentifier == goalIdentifier && x.Userid == userId)
+                               .Select(x => new GoalDetailsQueryModel
+                               {
+                                   GoalId = x.Goalid,
+                                   GoalDescription = x.Goaldescription,
+                                   TargetDate = x.Targetdate,
+                                   GoalTitle = x.Goaltitle,
+                                   GoalType = x.Goaltype.Goaltype,
+                                   Priority = x.Prioritytype.Priority,
+                                   GoalIdentifier = x.Goalidentifier,
+                                   Status = x.Status.Status,
+                                   TotalTasks = x.Taskmanagements.Count(),
+                                   CompletedTasks = x.Taskmanagements.Count(x => x.Statusid == 3),
+                                   TotalStudyHours = x.Schedulemanagements.Sum(x => x.Plannedhours),
+                                   CompletedStudyHours = x.Schedulemanagements.Where(x => x.Statusid == 3).Sum(x => x.Plannedhours),
+                               }).FirstOrDefaultAsync(cancellation);
+        }
+
+        public async Task<List<GoalTaskQueryModel>?> GetGoalTasksAsync(int userId , int goalId, CancellationToken cancellation)
+        {
+            return await _context.Taskmanagements.AsNoTracking()
+                                 .Where(x => x.Goalid == goalId && x.Goal.Userid == userId)
+                                 .Select(x => new GoalTaskQueryModel
+                                 {
+                                     TaskIdentifier = x.Taskidentifier,
+                                     TaskDescription = x.Taskdescription,
+                                     TaskName = x.Taskname,
+                                     DueDate = x.Duedate,
+                                     Status = x.Status.Status,
+                                     StatusIdentifier = x.Status.Statusidentifier,
+                                 }).OrderBy(x => x.DueDate).ToListAsync(cancellation);
         }
     }
 }

@@ -45,5 +45,10 @@
             return time.Value.ToString("HH\\:mm");
         }
 
+        public static string? FormatDateString(DateTime? date)
+        {
+            return date?.ToString("dd-MM-yyyy");
+        }
+
     }
 }

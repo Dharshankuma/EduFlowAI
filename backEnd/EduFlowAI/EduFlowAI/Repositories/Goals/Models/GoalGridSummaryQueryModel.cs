@@ -7,5 +7,7 @@
         public int ActiveGoals { get; set; }
 
         public int CompletedGoals { get; set; }
+
+        public int UrgentGoals { get; set; }
     }
 }

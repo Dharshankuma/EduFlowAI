@@ -127,6 +127,7 @@ namespace EduFlowAI.Services.Authentication
 
             //updating the user last login date and time for every login
             userDetails.Lastloginat = DateTimeHelper.GetDateTimeNow();
+
             await _repo.UpdateUserLogin(userDetails,cancellation);
 
             var currentTime = DateTimeHelper.GetDateTimeNow();

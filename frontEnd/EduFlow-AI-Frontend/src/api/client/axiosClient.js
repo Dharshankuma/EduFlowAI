@@ -1,0 +1,26 @@
+import axios from 'axios';
+import {
+    requestInterceptor,
+    requestErrorInterceptor,
+    responseInterceptor,
+    responseErrorInterceptor
+} from './interceptors';
+
+// Fallback URL if env is not defined
+const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7192/api/';
+
+const axiosClient = axios.create({
+    baseURL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    timeout: 0 // 15 seconds timeout
+}); 
+
+// Register request interceptors
+axiosClient.interceptors.request.use(requestInterceptor, requestErrorInterceptor);
+
+// Register response interceptors
+axiosClient.interceptors.response.use(responseInterceptor, responseErrorInterceptor);
+
+export default axiosClient;

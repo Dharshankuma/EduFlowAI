@@ -200,5 +200,66 @@ namespace EduFlowAI.Repositories.Goals
                                      StatusIdentifier = x.Status.Statusidentifier,
                                  }).OrderBy(x => x.DueDate).ToListAsync(cancellation);
         }
+
+        public async Task<Goalmanagement> CreateGoalAsync(Goalmanagement goal, CancellationToken cancellation)
+        {
+            await _context.Goalmanagements.AddAsync(goal,cancellation);
+
+            await _context.SaveChangesAsync(cancellation);
+
+            return goal;
+        }
+
+        public async Task<Goalmanagement?> GetGoalForUserAsync(int userId,string goalIdentifier,CancellationToken cancellationToken)
+        {
+            return await _context.Goalmanagements
+                .FirstOrDefaultAsync(
+                    x =>
+                        x.Userid == userId &&
+                        x.Goalidentifier == goalIdentifier,
+                    cancellationToken);
+        }
+
+        public async Task<List<Taskmanagement>> GetGoalTasksForUpdateAsync(int goalId,CancellationToken cancellationToken)
+        {
+            return await _context.Taskmanagements
+                .Where(x => x.Goalid == goalId)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task SaveGoalTaskChangesAsync(List<Taskmanagement> tasksToAdd,List<Taskmanagement> tasksToUpdate,List<Taskmanagement> tasksToDelete,CancellationToken cancellationToken)
+        {
+            await using var transaction =
+                await _context.Database.BeginTransactionAsync(
+                    cancellationToken);
+
+            try
+            {
+                if (tasksToAdd.Count > 0)
+                {
+                    await _context.Taskmanagements.AddRangeAsync(tasksToAdd,cancellationToken);
+                }
+
+                if (tasksToUpdate.Count > 0)
+                {
+                    _context.Taskmanagements.UpdateRange(tasksToUpdate);
+                }
+
+                if (tasksToDelete.Count > 0)
+                {
+                    _context.Taskmanagements.RemoveRange(tasksToDelete);
+                }
+
+                await _context.SaveChangesAsync(cancellationToken);
+
+                await transaction.CommitAsync(cancellationToken);
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+
+                throw;
+            }
+        }
     }
 }

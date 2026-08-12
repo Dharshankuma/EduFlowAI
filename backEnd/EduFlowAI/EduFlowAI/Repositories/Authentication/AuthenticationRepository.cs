@@ -36,12 +36,14 @@ namespace EduFlowAI.Repositories.Authentication
 
         public async Task UpdateUserLogin(User user, CancellationToken cancellation)
         {
+            Console.WriteLine($"Token cancelled: {cancellation.IsCancellationRequested}");
             _context.Users.Update(user);
             await _context.SaveChangesAsync(cancellation);
         }
 
         public async Task SaveRefreshTokenAsync(Refreshtoken refresh, CancellationToken cancellation)
         {
+            Console.WriteLine($"Token cancelled: {cancellation.IsCancellationRequested}");
             await _context.Refreshtokens.AddAsync(refresh,cancellation);
 
             await _context.SaveChangesAsync(cancellation);

@@ -1,9 +1,12 @@
 ﻿using EduFlowAI.Helpers;
 using EduFlowAI.Repositories.Authentication;
+using EduFlowAI.Repositories.Goals;
+using EduFlowAI.Repositories.Profiles;
 using EduFlowAI.Services.Authentication;
 using EduFlowAI.Services.EmailTemplatesService;
 using EduFlowAI.Services.EmailTemplatesService.Authentication;
 using EduFlowAI.Services.Goals;
+using EduFlowAI.Services.Profiles;
 using EduFlowAI.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -25,11 +28,14 @@ namespace EduFlowAI.Extensions
 
             //Repositories
             services.AddScoped<IAuthenticationRepository,AuthenticationRepository>();
+            services.AddScoped<IProfileRepository, ProfileRepository>();
+            services.AddScoped<IGoalRepository, GoalRepository>();
 
 
             //Services
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IAuthenticationEmailTemplateService, AuthenticationEmailTemplateService>();
+            services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IGoalService, GoalService>();
 
 

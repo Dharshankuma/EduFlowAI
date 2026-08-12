@@ -3,10 +3,12 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import logoImage from '../../../../assets/images/EduFlow_AI_Logo.png';
 import './Sidebar.css';
 import { useAppState } from '../../../../context/StateContext';
+import { useAuth } from '../../../../context/AuthContext';
 
 export const Sidebar = () => {
     const navigate = useNavigate();
     const { currentUser } = useAppState();
+    const { logout } = useAuth();
 
     const mainNavItems = [
         { path: '/dashboard', label: 'Dashboard', icon: 'bi-grid-fill' },
@@ -22,7 +24,7 @@ export const Sidebar = () => {
     ];
 
     const handleLogout = () => {
-        // Simple mock logout action
+        logout();
         navigate('/login');
     };
 

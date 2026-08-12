@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { MOCK_USER } from '../mock/users';
+import { useAuth } from './AuthContext';
 import { MOCK_GOALS } from '../mock/goals';
 import { MOCK_TASKS_BY_GOAL, DEFAULT_TASKS } from '../mock/tasks';
 import { MOCK_EVENTS } from '../mock/calendar';
@@ -10,7 +11,30 @@ import { MOCK_SETTINGS } from '../mock/settings';
 const AppStateContext = createContext(null);
 
 export const StateProvider = ({ children }) => {
+    const { user } = useAuth();
     const [currentUser, setCurrentUser] = useState(MOCK_USER);
+
+    // Sync currentUser with authenticated user from AuthContext
+    useEffect(() => {
+        if (user) {
+            setCurrentUser({
+                ...MOCK_USER, // Keep default mock fields like profileImage and badge for visual aesthetics
+                firstName: user.firstName || user.FirstName || '',
+                lastName: user.lastName || user.LastName || '',
+                userName: user.userName || user.UserName || `${user.firstName || user.FirstName || ''} ${user.lastName || user.LastName || ''}`.trim(),
+                username: user.userName ? `@${user.userName}` : (user.UserName ? `@${user.UserName}` : '@user'),
+                email: user.emailId || user.EmailId || user.email || '',
+            });
+        } else {
+            setCurrentUser({
+                ...MOCK_USER,
+                firstName: '',
+                lastName: '',
+                userName: 'Guest',
+                email: ''
+            });
+        }
+    }, [user]);
     const [goals, setGoals] = useState(MOCK_GOALS);
     const [tasks, setTasks] = useState(MOCK_TASKS_BY_GOAL);
     const [calendarEvents, setCalendarEvents] = useState(MOCK_EVENTS);

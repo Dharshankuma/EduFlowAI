@@ -29,6 +29,8 @@ public partial class Taskmanagement
 
     public DateTime? Updatedat { get; set; }
 
+    public decimal? EstimatedHours { get; set; }
+
     public virtual User CreatedbyNavigation { get; set; } = null!;
 
     public virtual Goalmanagement Goal { get; set; } = null!;

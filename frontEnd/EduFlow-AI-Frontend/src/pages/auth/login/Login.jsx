@@ -5,6 +5,8 @@ import { ButtonComponent } from '../../../components/common/CommonComponents/But
 import { CheckboxComponent } from '../../../components/common/CommonComponents/CheckboxComponent';
 import loginImage from '../../../assets/images/login_image.png';
 import logo from '../../../assets/images/EduFlow_AI_Logo.png';
+import { useAuth } from '../../../context/AuthContext';
+import { toast } from 'react-toastify';
 import './Login.css';
 
 // Inline Google SVG Icon for consistency and crispness
@@ -19,6 +21,7 @@ const GoogleIcon = () => (
 
 export const Login = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     // Form inputs state
     const [formData, setFormData] = useState({
@@ -99,34 +102,20 @@ export const Login = () => {
         setIsLoading(true);
 
         try {
-            // =========================================
-            // PLACEHOLDER FOR AXIOS INTEGRATION
-            // =========================================
-            // const response = await axios.post('/api/auth/login', {
-            //     email: formData.email,
-            //     password: formData.password,
-            //     rememberMe: formData.rememberMe
-            // });
-            //
-            // // Store token and user data
-            // localStorage.setItem('token', response.data.token);
-            // navigate('/dashboard');
-            // =========================================
+            await login({
+                email: formData.email,
+                password: formData.password
+            });
 
-            // Simulate API Call delay
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            console.log('Login successful with:', formData);
+            toast.success('Login successful!');
             setApiSuccess('Login successful! Redirecting...');
 
-            // Redirect simulation
-            setTimeout(() => {
-                navigate('/dashboard');
-            }, 1000);
-
+            navigate('/dashboard');
         } catch (err) {
             console.error('Login error:', err);
-            setApiError(err.response?.data?.message || 'Invalid email or password. Please try again.');
+            const errorMessage = err.message || 'Invalid email or password. Please try again.';
+            setApiError(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }

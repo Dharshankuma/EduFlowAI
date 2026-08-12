@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom"
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
 import { Landing } from "../pages/public/landing/Landing";
 import { Login } from "../pages/auth/login/Login";
@@ -24,6 +24,8 @@ import { Search } from "../pages/app/search/Search";
 import { NotFound } from "../pages/public/not-found/NotFound";
 import PublicLayout from "../layouts/PublicLayout";
 import AppLayout from "../layouts/AppLayout";
+import ProtectedRoute from "./ProtectedRoute";
+import PublicRoute from "./PublicRoute";
 
 const ScrollToTop = () => {
     const { pathname } = useLocation();
@@ -46,40 +48,42 @@ const AppRoutes = () => {
             <ScrollToTop />
             <Routes>
 
-                {/* public routes */}
+                {/* public landing routes */}
                 <Route element={<PublicLayout />}>
-
                     <Route
                         path="/"
                         element={<Landing />}
                     />
-
                 </Route>
 
-                {/* auth routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/email-verification" element={<EmailVerificationSent />} />
-                <Route path="/email-verified" element={<EmailVerificationSuccess />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/forgot-password/success" element={<ForgotPasswordSuccess />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/reset-password/success" element={<ResetPasswordSuccess />} />
+                {/* public auth routes */}
+                <Route element={<PublicRoute />}>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/email-verification" element={<EmailVerificationSent />} />
+                    <Route path="/email-verified" element={<EmailVerificationSuccess />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/forgot-password/success" element={<ForgotPasswordSuccess />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route path="/reset-password/success" element={<ResetPasswordSuccess />} />
+                </Route>
 
-                {/* app routes */}
-                <Route element={<AppLayout />}>
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/goals" element={<Goals />} />
-                    <Route path="/goals/create" element={<CreateGoal />} />
-                    <Route path="/goals/:goalId" element={<GoalDetails />} />
-                    <Route path="/goals/:goalId/edit" element={<GoalDetails />} />
-                    <Route path="/calendar" element={<Calendar />} />
-                    <Route path="/ai-planner" element={<AIPlanner />} />
-                    <Route path="/analytics" element={<Analytics />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="/notifications" element={<Notifications />} />
-                    <Route path="/search" element={<Search />} />
+                {/* protected app routes */}
+                <Route element={<ProtectedRoute />}>
+                    <Route element={<AppLayout />}>
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/goals" element={<Goals />} />
+                        <Route path="/goals/create" element={<CreateGoal />} />
+                        <Route path="/goals/:goalId" element={<GoalDetails />} />
+                        <Route path="/goals/:goalId/edit" element={<GoalDetails />} />
+                        <Route path="/calendar" element={<Calendar />} />
+                        <Route path="/ai-planner" element={<AIPlanner />} />
+                        <Route path="/analytics" element={<Analytics />} />
+                        <Route path="/profile" element={<Profile />} />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="/notifications" element={<Notifications />} />
+                        <Route path="/search" element={<Search />} />
+                    </Route>
                 </Route>
 
                 {/* fallback 404 */}
@@ -87,8 +91,7 @@ const AppRoutes = () => {
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>
-    )
-}
+    );
+};
 
 export default AppRoutes;
-   

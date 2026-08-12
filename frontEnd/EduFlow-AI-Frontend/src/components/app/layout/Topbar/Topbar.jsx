@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppState } from '../../../../context/StateContext';
 import { InputComponent } from '../../../common/CommonComponents/InputComponent';
 import './Topbar.css';
 
 export const Topbar = ({ onToggleSidebar }) => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { currentUser, notifications, theme, toggleTheme } = useAppState();
     const [searchQuery, setSearchQuery] = useState('');
 
     const unreadCount = notifications.filter(n => n.unread).length;
+    const isDashboard = location.pathname === '/dashboard';
 
     const handleSearchKeyDown = (e) => {
         if (e.key === 'Enter' && searchQuery.trim()) {
@@ -19,6 +21,10 @@ export const Topbar = ({ onToggleSidebar }) => {
 
     const handleNotificationClick = () => {
         navigate('/notifications');
+    };
+
+    const handleStudyNowClick = () => {
+        window.dispatchEvent(new CustomEvent('open-study-now'));
     };
 
     return (
@@ -54,6 +60,18 @@ export const Topbar = ({ onToggleSidebar }) => {
                         // To avoid linting/prop warnings, we let input-wrapper capture standard props
                     />
                 </div> */}
+
+                {isDashboard && (
+                    <button
+                        className="topbar-study-now-btn"
+                        onClick={handleStudyNowClick}
+                        aria-label="Open Study Now drawer"
+                        title="Study Now"
+                    >
+                        <i className="bi bi-book-half"></i>
+                        <span>Study Now</span>
+                    </button>
+                )}
 
                 <div className="topbar-buttons">
                     <button

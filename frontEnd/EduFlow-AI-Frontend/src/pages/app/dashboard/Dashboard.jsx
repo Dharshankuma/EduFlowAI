@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppState } from '../../../context/StateContext';
 import TodayStudyPlan from '../../../components/app/dashboard/TodayStudyPlan/TodayStudyPlan';
@@ -9,11 +9,91 @@ import CalendarWidget from '../../../components/app/dashboard/CalendarWidget/Cal
 import GoalProgress from '../../../components/app/dashboard/GoalProgress/GoalProgress';
 import UpcomingTasks from '../../../components/app/dashboard/UpcomingTasks/UpcomingTasks';
 import RecentActivity from '../../../components/app/dashboard/RecentActivity/RecentActivity';
+import StudyNowCanvas from '../../../components/app/dashboard/StudyNowCanvas/StudyNowCanvas';
 import './Dashboard.css';
 
 export const Dashboard = () => {
     const navigate = useNavigate();
     const { currentUser, goals, tasks, calendarEvents, notifications } = useAppState();
+    
+    // Study Now canvas state and integration
+    const [studyNowOpen, setStudyNowOpen] = useState(false);
+
+    useEffect(() => {
+        const handleOpen = () => setStudyNowOpen(true);
+        window.addEventListener('open-study-now', handleOpen);
+        return () => window.removeEventListener('open-study-now', handleOpen);
+    }, []);
+
+    // Mock data for Study Now Canvas
+    const mockTodaySummary = {
+        sessions: 5,
+        completed: 2,
+        inProgress: 1,
+        timeLeft: "3h 15m"
+    };
+
+    const mockSessions = [
+        {
+            id: 1,
+            subject: "Data Structures",
+            type: "Placement Preparation",
+            startTime: "09:00",
+            endTime: "10:00",
+            status: "pending"
+        },
+        {
+            id: 2,
+            subject: "Operating Systems",
+            type: "Placement Preparation",
+            startTime: "11:00",
+            endTime: "12:00",
+            status: "in-progress",
+            startedAt: "11:05 AM"
+        },
+        {
+            id: 3,
+            subject: "Mini Project",
+            type: "Placement Preparation",
+            startTime: "14:00",
+            endTime: "15:00",
+            status: "completed",
+            completedAt: "2:05 PM"
+        },
+        {
+            id: 4,
+            subject: "Azure AZ-104",
+            type: "Azure Certification",
+            startTime: "16:00",
+            endTime: "17:00",
+            status: "pending"
+        },
+        {
+            id: 5,
+            subject: "DSA Practice",
+            type: "Placement Preparation",
+            startTime: "19:00",
+            endTime: "20:00",
+            status: "pending"
+        }
+    ];
+
+    // Callbacks for Study Now Canvas
+    const handleStartSession = (sessionId) => {
+        console.log(`Callback: Start Session triggered for ID: ${sessionId}`);
+    };
+    const handleMarkComplete = (sessionId) => {
+        console.log(`Callback: Mark Session as Complete triggered for ID: ${sessionId}`);
+    };
+    const handleViewSession = (sessionId) => {
+        console.log(`Callback: View Session details triggered for ID: ${sessionId}`);
+    };
+    const handleReschedule = (sessionId) => {
+        console.log(`Callback: Reschedule Session triggered for ID: ${sessionId}`);
+    };
+    const handleViewFullSchedule = () => {
+        console.log("Callback: View Full Schedule triggered");
+    };
 
     // 1. Compute dynamic metrics from global AppState
     const activeGoalsCount = goals.filter(g => g.status === 'Active' || g.status === 'In Progress').length;
@@ -219,6 +299,19 @@ export const Dashboard = () => {
                     </div>
                 </div>
             </div>
+
+            <StudyNowCanvas
+                isOpen={studyNowOpen}
+                todaySummary={mockTodaySummary}
+                progress={60}
+                sessions={mockSessions}
+                onClose={() => setStudyNowOpen(false)}
+                onStartSession={handleStartSession}
+                onMarkComplete={handleMarkComplete}
+                onViewSession={handleViewSession}
+                onReschedule={handleReschedule}
+                onViewFullSchedule={handleViewFullSchedule}
+            />
         </div>
     );
 };

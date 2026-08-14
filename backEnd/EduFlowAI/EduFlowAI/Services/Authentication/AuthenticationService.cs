@@ -373,7 +373,7 @@ namespace EduFlowAI.Services.Authentication
 
             var user = new User
             {
-                Useridentifier = Guid.NewGuid().ToString(),
+                Useridentifier = CommonHelper.GenerateFixedGuidString(32),
 
                 Emailid = googleUser.Email,
 

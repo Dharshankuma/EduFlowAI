@@ -27,19 +27,59 @@ export const login = async (credentials) => {
 };
 
 /**
- * Placeholder for future registration API integration.
+ * Sends a Google authentication request to the backend API.
+ * The backend expects request property: CredentialId.
+ * @param {string} credential - The Google ID token
+ * @returns {Promise<Object>} The API response payload (Token, RefreshToken, UserData)
+ */
+export const googleLogin = async (credential) => {
+    const payload = {
+        CredentialId: credential
+    };
+
+    const response = await axiosClient.post('/Authentication/GoogleLogin', payload);
+
+    if (response && response.data) {
+        if (response.data.data !== undefined) {
+            return response.data.data;
+        }
+        return response.data;
+    }
+
+    throw new Error('Invalid response received from the server.');
+};
+
+
+/**
+ * Sends a registration request to the backend API.
+ * The backend expects request properties: Username, EmailId, Password, authProvider.
+ * @param {Object} userData - The registration data containing Username, EmailId, Password, and authProvider
+ * @returns {Promise<Object>} The API response payload (204 No Content has no body, returns response.data)
  */
 export const register = async (userData) => {
-    // To be implemented in the registration phase
-    throw new Error('Not implemented yet');
+    const payload = {
+        Username: userData.Username,
+        EmailId: userData.EmailId,
+        Password: userData.Password,
+        authProvider: userData.authProvider
+    };
+
+    const response = await axiosClient.post('/Authentication/register', payload);
+
+    if (response && response.data !== undefined) {
+        return response.data;
+    }
+    return null;
 };
 
 /**
  * Placeholder for future email verification API integration.
  */
 export const verifyEmail = async (token) => {
-    // To be implemented in the email verification phase
-    throw new Error('Not implemented yet');
+    const response = await axiosClient.post(
+        `/Authenticationverify-email?token=${encodeURIComponent(token)}`
+    );
+    return response;
 };
 
 /**

@@ -12,6 +12,7 @@ namespace EduFlowAI.Services.Authentication
         Task<LoginResponseDTO> RefreshTokenAsync(string refreshToken, CancellationToken cancellation);
         Task ForgetPasswordAsync(string email, CancellationToken cancellation);
         Task ChangePasswordAsync(ResetPasswordRequestDTO reset, CancellationToken cancellation);
+        Task<LoginResponseDTO> GoogleLoginAsync(GoogleLoginRequestDTO dto, CancellationToken cancellationToken);
 
     }
 }

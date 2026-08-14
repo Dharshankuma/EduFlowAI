@@ -6,6 +6,7 @@ import { Login } from "../pages/auth/login/Login";
 import { Register } from "../pages/auth/register/Register";
 import { EmailVerificationSent } from "../pages/auth/EmailVerificationSent/EmailVerificationSent";
 import { EmailVerificationSuccess } from "../pages/auth/EmailVerificationSuccess/EmailVerificationSuccess";
+import { VerifyEmail } from "../pages/auth/VerifyEmail/VerifyEmail";
 import { ForgotPassword } from "../pages/auth/ForgotPassword/ForgotPassword";
 import { ForgotPasswordSuccess } from "../pages/auth/ForgotPasswordSuccess/ForgotPasswordSuccess";
 import { ResetPassword } from "../pages/auth/ResetPassword/ResetPassword";
@@ -60,6 +61,7 @@ const AppRoutes = () => {
                 <Route element={<PublicRoute />}>
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
+                    <Route path="/verify-email" element={<VerifyEmail />} />
                     <Route path="/email-verification" element={<EmailVerificationSent />} />
                     <Route path="/email-verified" element={<EmailVerificationSuccess />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />

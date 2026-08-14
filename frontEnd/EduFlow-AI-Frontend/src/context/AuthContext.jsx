@@ -60,6 +60,28 @@ export const AuthProvider = ({ children }) => {
     };
 
     /**
+     * Authenticate user with Google Credential token
+     * @param {string} credential - The Google ID token
+     */
+    const googleLogin = async (credential) => {
+        try {
+            const data = await authenticationApi.googleLogin(credential);
+            
+            // Expected response payload contains Token, RefreshToken, UserData
+            authStorage.setAuthData(data);
+            
+            // Set react states
+            setUser(data.UserData || data.userData);
+            setIsAuthenticated(true);
+            
+            return data;
+        } catch (error) {
+            // Throw the normalized error to be handled by the UI
+            throw error;
+        }
+    };
+
+    /**
      * Client-side logout (clears state and local storage)
      */
     const logout = () => {
@@ -75,6 +97,7 @@ export const AuthProvider = ({ children }) => {
                 isAuthenticated,
                 isInitializing,
                 login,
+                googleLogin,
                 logout,
                 initializeAuth
             }}

@@ -23,6 +23,13 @@ namespace EduFlowAI.Controllers
             return Success(result, "Login Successful");
         }
 
+        [HttpPost]
+        [Route("GoogleLogin")]
+        public async Task<IActionResult> GoogleLoginAsync(GoogleLoginRequestDTO objdto, CancellationToken cancellation)
+        {
+            var result = await _service.GoogleLoginAsync(objdto, cancellation);
+            return Success(result, "Login Successfull");
+        }
 
         [HttpPost]
         [Route("register")]

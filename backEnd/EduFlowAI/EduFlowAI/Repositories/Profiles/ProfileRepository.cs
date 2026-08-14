@@ -95,10 +95,10 @@ namespace EduFlowAI.Repositories.Profiles
                     Createdat = DateTimeHelper.GetDateTimeNow(),
                     Createdby = userId
                 });
-
-                await _context.Useravailabilities.AddRangeAsync(weekAvailability,cancellation);
-                await _context.SaveChangesAsync(cancellation);
             }
+
+            await _context.Useravailabilities.AddRangeAsync(weekAvailability, cancellation);
+            await _context.SaveChangesAsync(cancellation);
         }
     }
 }

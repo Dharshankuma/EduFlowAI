@@ -1,4 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../../../context/AuthContext';
+import { toast } from 'react-toastify';
+import { register } from '../../../api/auth/authenticationApi';
+import { loadAndInitGoogleGis } from '../../../utils/googleGis';
 import { Link, useNavigate } from 'react-router-dom';
 import { InputComponent } from '../../../components/common/CommonComponents/InputComponent';
 import { ButtonComponent } from '../../../components/common/CommonComponents/ButtonComponent';
@@ -8,18 +12,12 @@ import loginImage from '../../../assets/images/login_image.png';
 import logo from '../../../assets/images/EduFlow_AI_Logo.png';
 import './Register.css';
 
-// Inline Google SVG Icon for consistency and crispness
-const GoogleIcon = () => (
-    <svg className="google-icon-svg me-2" width="18" height="18" viewBox="0 0 18 18">
-        <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.909c1.702-1.567 2.683-3.874 2.683-6.615z" />
-        <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.909-2.258c-.806.54-1.837.86-3.047.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" />
-        <path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z" />
-        <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.896 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961l3.007 2.332C4.672 5.164 6.656 3.58 9 3.58z" />
-    </svg>
-);
+// GoogleIcon is not required with GIS native renderButton
 
 export const Register = () => {
     const navigate = useNavigate();
+    const { googleLogin } = useAuth();
+    const googleLoginInProgress = useRef(false);
 
     // Form inputs state
     const [formData, setFormData] = useState({
@@ -70,31 +68,31 @@ export const Register = () => {
 
         // Full Name Validation
         if (!formData.fullName.trim()) {
-            newErrors.fullName = 'Full Name is required';
+            newErrors.fullName = 'Full name is required.';
         }
 
         // Email Validation
         if (!formData.email.trim()) {
-            newErrors.email = 'Email address is required';
+            newErrors.email = 'Email address is required.';
         } else {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(formData.email)) {
-                newErrors.email = 'Please enter a valid email address';
+                newErrors.email = 'Please enter a valid email address.';
             }
         }
 
         // Password Validation
         if (!formData.password) {
-            newErrors.password = 'Password is required';
+            newErrors.password = 'Password is required.';
         } else if (formData.password.length < 8) {
-            newErrors.password = 'Password must be at least 8 characters long';
+            newErrors.password = 'Password must be at least 8 characters long.';
         }
 
         // Confirm Password Validation
         if (!formData.confirmPassword) {
-            newErrors.confirmPassword = 'Confirm Password is required';
+            newErrors.confirmPassword = 'Please confirm your password.';
         } else if (formData.password !== formData.confirmPassword) {
-            newErrors.confirmPassword = 'Passwords do not match';
+            newErrors.confirmPassword = 'Passwords do not match.';
         }
 
         // Terms Agreement Validation
@@ -120,47 +118,91 @@ export const Register = () => {
         setIsLoading(true);
 
         try {
-            // =========================================
-            // PLACEHOLDER FOR AXIOS INTEGRATION
-            // =========================================
-            // const response = await axios.post('/api/auth/register', {
-            //     fullName: formData.fullName,
-            //     email: formData.email,
-            //     password: formData.password
-            // });
-            //
-            // localStorage.setItem('token', response.data.token);
-            // navigate('/dashboard');
-            // =========================================
+            const payload = {
+                Username: formData.fullName.trim(),
+                EmailId: formData.email.trim(),
+                Password: formData.password,
+                authProvider: 'Local'
+            };
 
-            // Simulate API Call delay
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            await register(payload);
 
-            console.log('Registration successful with:', formData);
-            setApiSuccess('Account created successfully! Redirecting to email verification...');
+            const successMessage = 'Registration successful! Please check your email for verification.';
+            toast.success(successMessage);
+            setApiSuccess(successMessage);
 
-            // Redirect simulation
-            setTimeout(() => {
-                navigate('/email-verification', { state: { email: formData.email } });
-            }, 1500);
-
+            navigate('/email-verification', { state: { email: formData.email.trim() } });
         } catch (err) {
             console.error('Registration error:', err);
-            setApiError(err.response?.data?.message || 'An error occurred during registration. Please try again.');
+            const errorMessage = err.message || 'An error occurred during registration. Please try again.';
+            setApiError(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsLoading(false);
         }
     };
 
-    // Handle Social Login (Google)
-    const handleGoogleLogin = () => {
-        console.log('Google login clicked');
-        // =========================================
-        // PLACEHOLDER FOR AXIOS / OAUTH GOOGLE
-        // =========================================
-        // window.location.href = `${process.env.REACT_APP_API_URL}/api/auth/google`;
-        // =========================================
-    };
+    // Set up Google Sign-In using Google Identity Services
+    useEffect(() => {
+        let isMounted = true;
+
+        loadAndInitGoogleGis()
+            .then((google) => {
+                if (!isMounted) return;
+
+                // Bind callback to window handler so that one-time GIS init triggers this component's active callback
+                window.handleGoogleCredentialResponse = async (response) => {
+                    if (googleLoginInProgress.current) return;
+                    googleLoginInProgress.current = true;
+                    setIsLoading(true);
+                    setApiError('');
+                    setApiSuccess('');
+
+                    try {
+                        await googleLogin(response.credential);
+                        toast.success('Google login successful!');
+                        setApiSuccess('Google login successful! Redirecting...');
+                        navigate('/dashboard');
+                    } catch (err) {
+                        console.error('Google login error:', err);
+                        const errorMessage = err.message || 'Unable to connect to the server. Please try again.';
+                        setApiError(errorMessage);
+                        toast.error(errorMessage);
+                    } finally {
+                        setIsLoading(false);
+                        googleLoginInProgress.current = false;
+                    }
+                };
+
+                // Render the official Google Identity Services button
+                const btnContainer = document.getElementById('google-signin-btn-container');
+                if (btnContainer) {
+                    btnContainer.innerHTML = ''; // Prevents duplicate rendering in strict mode
+                    google.accounts.id.renderButton(
+                        btnContainer,
+                        {
+                            theme: 'outline',
+                            size: 'large',
+                            width: btnContainer.offsetWidth || 380,
+                            text: 'continue_with',
+                            shape: 'rectangular',
+                            logo_alignment: 'left'
+                        }
+                    );
+                }
+            })
+            .catch((err) => {
+                console.error('Failed to load Google GIS:', err);
+                setApiError(err.message || 'Failed to load Google Sign-In.');
+            });
+
+        return () => {
+            isMounted = false;
+            if (window.handleGoogleCredentialResponse) {
+                window.handleGoogleCredentialResponse = null;
+            }
+        };
+    }, [googleLogin, navigate]);
 
     return (
         <div className="register-page-container container-fluid p-0 overflow-hidden">
@@ -242,7 +284,7 @@ export const Register = () => {
                             {/* Full Name */}
                             <div className="form-group mb-3 text-start">
                                 <InputComponent
-                                    label="Full Name"
+                                    label="User Name"
                                     type="text"
                                     name="fullName"
                                     placeholder="John Doe"
@@ -390,14 +432,8 @@ export const Register = () => {
                             </div>
 
                             {/* Social Login Button */}
-                            <div className="mb-4">
-                                <ButtonComponent
-                                    type="button"
-                                    onclick={handleGoogleLogin}
-                                    text={<><GoogleIcon />Continue with Google</>}
-                                    className="w-100 google-signin-btn"
-                                    disabled={isLoading}
-                                />
+                            <div className="mb-4 d-flex justify-content-center">
+                                <div id="google-signin-btn-container" className="w-100" style={{ minHeight: '40px' }}></div>
                             </div>
 
                             {/* Bottom Sign-In Prompt */}

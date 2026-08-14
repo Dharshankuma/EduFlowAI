@@ -1,0 +1,142 @@
+/* VerifyEmail.css */
+
+body.auth-page #root {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-inline: none !important;
+    margin: 0 !important;
+    text-align: left !important;
+    padding: 0 !important;
+}
+
+.email-verification-container {
+    background-color: #F8FAFC;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.verification-header {
+    padding: 2rem 3rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo-img {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color, #4F46E5);
+    letter-spacing: -0.5px;
+}
+
+.verification-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+    width: 100%;
+    margin-top: -1.5rem;
+}
+
+.verification-card {
+    background-color: var(--surface-color, #ffffff);
+    border-radius: var(--radius-lg, 20px);
+    box-shadow: var(--shadow-md, 0 8px 20px rgba(0, 0, 0, 0.08));
+    width: 100%;
+    max-width: 480px;
+    padding: 3rem 2.25rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 350px;
+}
+
+.loader-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.spinner-glow {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Custom premium spinner color matching EduFlow's primary color */
+.spinner-border-custom {
+    color: var(--primary-color, #4F46E5);
+}
+
+.verification-card-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary, #0F172A);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.verification-card-description {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--text-secondary, #64748B);
+    margin-bottom: 2rem;
+    max-width: 380px;
+}
+
+.verification-footer {
+    width: 100%;
+    padding: 1.5rem 3rem;
+    border-top: 1px solid var(--border-color, #E2E8F0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--surface-color, #ffffff);
+}
+
+.footer-left {
+    font-size: 0.875rem;
+    color: var(--text-secondary, #64748B);
+}
+
+@media (max-width: 768px) {
+    .verification-header {
+        padding: 1.5rem;
+        justify-content: center;
+    }
+
+    .verification-main {
+        padding: 1rem;
+        margin-top: 0;
+    }
+
+    .verification-card {
+        padding: 2.5rem 1.75rem;
+        border-radius: var(--radius-md, 12px);
+        min-height: 300px;
+    }
+}

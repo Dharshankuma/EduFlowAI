@@ -34,7 +34,7 @@ namespace EduFlowAI.Middleware
             }
         }
 
-        private static async Task HandleExceptionAsync(
+        private static async Task HandleExceptionAsync( 
             HttpContext context,
             Exception exception)
         {

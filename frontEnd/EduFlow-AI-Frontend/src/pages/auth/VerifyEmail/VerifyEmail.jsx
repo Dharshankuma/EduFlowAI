@@ -17,11 +17,19 @@ export const VerifyEmail = () => {
     const [verificationError, setVerificationError] = useState(false);
 
     const hasTriggered = useRef(false);
+    const isComponentMounted = useRef(false);
+
+    // Track active mount lifecycle to handle React StrictMode correctly
+    useEffect(() => {
+        isComponentMounted.current = true;
+        document.body.classList.add('auth-page');
+        return () => {
+            isComponentMounted.current = false;
+            document.body.classList.remove('auth-page');
+        };
+    }, []);
 
     useEffect(() => {
-        document.body.classList.add('auth-page');
-
-        let isMounted = true;
         let timer;
 
         // If token is missing, treat it as invalid immediately without calling backend
@@ -30,15 +38,13 @@ export const VerifyEmail = () => {
             setVerificationError(true);
             toast.error("Invalid email verification link.");
             timer = setTimeout(() => {
-                if (isMounted) {
+                if (isComponentMounted.current) {
                     navigate('/login');
                 }
             }, 1500);
 
             return () => {
-                isMounted = false;
                 if (timer) clearTimeout(timer);
-                document.body.classList.remove('auth-page');
             };
         }
 
@@ -48,23 +54,23 @@ export const VerifyEmail = () => {
 
         const triggerVerification = async () => {
             try {
-                if (isMounted) setIsVerifying(true);
+                if (isComponentMounted.current) setIsVerifying(true);
                 await verifyEmail(token);
-                if (isMounted) {
+                if (isComponentMounted.current) {
                     setVerificationSuccess(true);
                 }
             } catch (err) {
-                if (isMounted) {
+                if (isComponentMounted.current) {
                     setVerificationError(true);
                     toast.error(err.message || 'An unexpected error occurred. Please try again.');
                     timer = setTimeout(() => {
-                        if (isMounted) {
+                        if (isComponentMounted.current) {
                             navigate('/login');
                         }
                     }, 1500);
                 }
             } finally {
-                if (isMounted) {
+                if (isComponentMounted.current) {
                     setIsVerifying(false);
                 }
             }
@@ -73,9 +79,7 @@ export const VerifyEmail = () => {
         triggerVerification();
 
         return () => {
-            isMounted = false;
             if (timer) clearTimeout(timer);
-            document.body.classList.remove('auth-page');
         };
     }, [token, navigate]);
 

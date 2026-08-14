@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { InputComponent } from '../../../components/common/CommonComponents/InputComponent';
 import { ButtonComponent } from '../../../components/common/CommonComponents/ButtonComponent';
 import logo from '../../../assets/images/EduFlow_AI_Logo.png';
+import { toast } from 'react-toastify';
+import { forgotPassword } from '../../../api/auth/authenticationApi';
 import './ForgotPassword.css';
 
 export const ForgotPassword = ({
@@ -73,12 +75,20 @@ export const ForgotPassword = ({
             onSubmit({ email });
         }
 
-        // Mock password reset response behavior (no real API call)
-        setTimeout(() => {
-            setIsLoading(false);
-            setSuccessMessage('A password reset link has been sent to your email address.');
-            navigate('/forgot-password/success', { state: { email } });
-        }, 1500);
+        forgotPassword(email)
+            .then(() => {
+                toast.success('Password reset link sent to your email.');
+                setSuccessMessage('A password reset link has been sent to your email address.');
+                navigate('/forgot-password/success', { state: { email } });
+            })
+            .catch((err) => {
+                const errMsg = err.message || 'An unexpected error occurred. Please try again.';
+                setError(errMsg);
+                toast.error(errMsg);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     };
 
     const handleContactSupport = (e) => {

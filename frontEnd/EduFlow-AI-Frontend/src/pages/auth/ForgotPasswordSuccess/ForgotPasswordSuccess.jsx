@@ -4,6 +4,8 @@ import { ButtonComponent } from '../../../components/common/CommonComponents/But
 import { DashboardCard } from '../../../components/common/DashboardCard/DashboardCard';
 import logo from '../../../assets/images/EduFlow_AI_Logo.png';
 import successIllustration from '../../../assets/images/Success_Illustration_margin.png';
+import { toast } from 'react-toastify';
+import { forgotPassword } from '../../../api/auth/authenticationApi';
 import './ForgotPasswordSuccess.css';
 
 const defaultTipsList = [
@@ -56,7 +58,7 @@ export const ForgotPasswordSuccess = ({
         };
     }, []);
 
-    // Resend email handler (mock behavior)
+    // Resend email handler
     const handleResend = (e) => {
         e.preventDefault();
         if (isResending) return;
@@ -68,12 +70,21 @@ export const ForgotPasswordSuccess = ({
             onResendEmail({ email: userEmail });
         }
 
-        // Mock password reset response behavior (no real API call)
-        setTimeout(() => {
-            setIsResending(false);
-            setStatusType('success');
-            setStatusMessage('A new password reset link has been successfully resent.');
-        }, 1200);
+        forgotPassword(userEmail)
+            .then(() => {
+                setStatusType('success');
+                setStatusMessage('A new password reset link has been successfully resent.');
+                toast.success('Password reset link sent to your email.');
+            })
+            .catch((err) => {
+                setStatusType('danger');
+                const errMsg = err.message || 'An unexpected error occurred. Please try again.';
+                setStatusMessage(errMsg);
+                toast.error(errMsg);
+            })
+            .finally(() => {
+                setIsResending(false);
+            });
     };
 
     const handleBackToLogin = (e) => {

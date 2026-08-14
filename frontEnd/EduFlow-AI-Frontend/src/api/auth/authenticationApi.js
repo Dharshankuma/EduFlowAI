@@ -77,7 +77,9 @@ export const register = async (userData) => {
  */
 export const verifyEmail = async (token) => {
     const response = await axiosClient.post(
-        `/Authenticationverify-email?token=${encodeURIComponent(token)}`
+        `/Authentication/verify-email?token=${encodeURIComponent(token)}`,
+        null,
+        { skipAuth: true }
     );
     return response;
 };
@@ -98,18 +100,34 @@ export const logout = async () => {
     throw new Error('Not implemented yet');
 };
 
-/**
- * Placeholder for future forgot password API integration.
- */
 export const forgetPassword = async (email) => {
-    // To be implemented in the forgot password phase
-    throw new Error('Not implemented yet');
+    const response = await axiosClient.post(
+        `/Authentication/forget-password?email=${encodeURIComponent(email)}`,
+        null,
+        { skipAuth: true }
+    );
+    return response;
 };
 
+// Alias forgotPassword for ease of import
+export const forgotPassword = forgetPassword;
+
 /**
- * Placeholder for future change password API integration.
+ * Sends a password reset payload to update user password.
+ * The backend expects request properties: Token, NewPassword, ConfirmPassword.
+ * @param {Object} payload - The reset details containing Token, NewPassword, ConfirmPassword
  */
-export const changePassword = async (data) => {
-    // To be implemented in the change password phase
-    throw new Error('Not implemented yet');
+export const changePassword = async (payload) => {
+    const requestBody = {
+        Token: payload.Token || payload.token,
+        NewPassword: payload.NewPassword || payload.newPassword,
+        ConfirmPassword: payload.ConfirmPassword || payload.confirmPassword
+    };
+
+    const response = await axiosClient.post(
+        '/Authentication/change-password',
+        requestBody,
+        { skipAuth: true }
+    );
+    return response;
 };

@@ -18,6 +18,9 @@ export const registerOnUnauthorized = (callback) => {
  * @returns {Object} Updated Axios request config
  */
 export const requestInterceptor = (config) => {
+    if (config.skipAuth) {
+        return config;
+    }
     const token = getAccessToken();
     if (token) {
         config.headers = config.headers || {};

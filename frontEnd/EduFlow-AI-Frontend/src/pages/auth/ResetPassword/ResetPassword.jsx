@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { InputComponent } from '../../../components/common/CommonComponents/InputComponent';
 import { ButtonComponent } from '../../../components/common/CommonComponents/ButtonComponent';
 import { DashboardCard } from '../../../components/common/DashboardCard/DashboardCard';
 import logo from '../../../assets/images/EduFlow_AI_Logo.png';
+import { toast } from 'react-toastify';
+import { changePassword } from '../../../api/auth/authenticationApi';
 import './ResetPassword.css';
 
 // Reusable Password Input Wrapper Component with Eye Toggle visibility
@@ -83,6 +85,18 @@ export const ResetPassword = ({
     const [error, setError] = useState(propError);
     const [successMessage, setSuccessMessage] = useState('');
 
+    const isComponentMounted = useRef(false);
+
+    // Track active mount lifecycle to handle React StrictMode correctly
+    useEffect(() => {
+        isComponentMounted.current = true;
+        document.body.classList.add('auth-page');
+        return () => {
+            isComponentMounted.current = false;
+            document.body.classList.remove('auth-page');
+        };
+    }, []);
+
     // Sync state if props change (for backend readiness)
     useEffect(() => {
         setToken(urlToken);
@@ -104,13 +118,19 @@ export const ResetPassword = ({
         setIsLoading(loading);
     }, [loading]);
 
-    // Handle body class for auth layouts
+    // Validate that the token is present on mount
     useEffect(() => {
-        document.body.classList.add('auth-page');
-        return () => {
-            document.body.classList.remove('auth-page');
-        };
-    }, []);
+        if (!urlToken) {
+            setError('Invalid or expired password reset link.');
+            toast.error('Invalid or expired password reset link.');
+            const timer = setTimeout(() => {
+                if (isComponentMounted.current) {
+                    navigate('/login');
+                }
+            }, 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [urlToken, navigate]);
 
     // Live update of password security checklist (without block validation logic)
     useEffect(() => {
@@ -130,21 +150,28 @@ export const ResetPassword = ({
 
         if (isLoading) return;
 
-        // Front-end validation (Prepared for future backend integration checks)
+        // Front-end validation
         if (!newPassword || !confirmPassword) {
             setError('Please fill in all password fields.');
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            setError('Passwords do not match.');
+            setError('New password and confirm password do not match.');
             return;
         }
 
-        // Check if rules are satisfied (optional checks but helpful visual warnings)
+        // Check if rules are satisfied
         const unsatisfiedRules = securityRules.filter(rule => !rule.satisfied);
         if (unsatisfiedRules.length > 0) {
             setError('Please meet all security checklist requirements.');
+            return;
+        }
+
+        if (!token) {
+            setError('Invalid or expired password reset link.');
+            toast.error('Invalid or expired password reset link.');
+            navigate('/login');
             return;
         }
 
@@ -157,14 +184,37 @@ export const ResetPassword = ({
             onSubmit({ token, newPassword, confirmPassword });
         }
 
-        // Mock password reset response behavior (no real API call)
-        setTimeout(() => {
-            setIsLoading(false);
-            setSuccessMessage('Your password has been reset successfully!');
-            
-            // Redirect to Password Reset Success page
-            navigate('/reset-password/success');
-        }, 1500);
+        const payload = {
+            Token: token,
+            NewPassword: newPassword,
+            ConfirmPassword: confirmPassword
+        };
+
+        changePassword(payload)
+            .then(() => {
+                toast.success('Password changed successfully.');
+                setSuccessMessage('Your password has been reset successfully!');
+                navigate('/reset-password/success');
+            })
+            .catch((err) => {
+                const errMsg = err.message || 'An unexpected error occurred. Please try again.';
+                setError(errMsg);
+                toast.error(errMsg);
+
+                // If it's a token/link issue, navigate to login after delay
+                if (errMsg.includes('token') || errMsg.includes('Link') || err.status === 400 || err.status === 401) {
+                    setTimeout(() => {
+                        if (isComponentMounted.current) {
+                            navigate('/login');
+                        }
+                    }, 1500);
+                }
+            })
+            .finally(() => {
+                if (isComponentMounted.current) {
+                    setIsLoading(false);
+                }
+            });
     };
 
     const handleFooterLinkClick = (e, callback, linkName) => {

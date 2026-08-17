@@ -16,7 +16,10 @@ export const StudyAvailability = ({
     onSessionLengthChange,
     onStudyPreferenceChange,
     onSave,
-    onReset
+    onReset,
+    errors = {},
+    disabled = false,
+    isSaveDisabled = false
 }) => {
     return (
         <div className="study-availability-container-stack">
@@ -28,7 +31,7 @@ export const StudyAvailability = ({
                     <p className="study-availability-desc">
                         Configure your weekly available study hours.
                     </p>
- 
+
                     {/* UX Informational Message Banner */}
                     <div className="info-message-banner d-flex align-items-start gap-3 mt-3">
                         <i className="bi bi-info-circle-fill info-banner-icon"></i>
@@ -37,15 +40,17 @@ export const StudyAvailability = ({
                         </p>
                     </div>
                 </div>
- 
+
                 {/* Day Rows */}
                 <WeeklyAvailability
                     availability={availability}
                     onToggle={onToggle}
                     onStartTimeChange={onStartTimeChange}
                     onEndTimeChange={onEndTimeChange}
+                    errors={errors}
+                    disabled={disabled}
                 />
- 
+
                 {/* Summary Statistics */}
                 <AvailabilitySummary availability={availability} summary={summary} />
             </DashboardCard>
@@ -61,16 +66,18 @@ export const StudyAvailability = ({
             <div className="availability-page-actions d-flex flex-sm-row flex-column gap-3 justify-content-start mt-3">
                 <ButtonComponent
                     type="button"
-                    text="Save Availability"
+                    text={disabled ? "Saving..." : "Save Availability"}
                     className="save-availability-btn"
                     onclick={onSave}
+                    disabled={disabled || isSaveDisabled}
                 />
-                <ButtonComponent
+                {/* <ButtonComponent
                     type="button"
                     text="Reset"
                     className="reset-availability-btn"
                     onclick={onReset}
-                />
+                    disabled={disabled}
+                /> */}
             </div>
         </div>
     );

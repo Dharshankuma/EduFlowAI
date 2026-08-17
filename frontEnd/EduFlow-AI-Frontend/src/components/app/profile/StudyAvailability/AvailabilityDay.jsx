@@ -41,14 +41,16 @@ export const AvailabilityDay = ({
     availableHours,
     onToggle,
     onStartTimeChange,
-    onEndTimeChange
+    onEndTimeChange,
+    error,
+    disabled = false
 }) => {
     const hoursText = availableHours !== undefined
         ? formatAvailableHours(availableHours, enabled)
         : getHoursAndMinutes(startTime, endTime, enabled);
 
     return (
-        <div className={`availability-day-row ${enabled ? 'is-enabled' : 'is-disabled'}`}>
+        <div className={`availability-day-row ${enabled ? 'is-enabled' : 'is-disabled'} ${error ? 'has-validation-error' : ''}`}>
             <div className="row g-3 align-items-center w-100 m-0">
                 {/* 1. Toggle switch & Day Label */}
                 <div className="col-12 col-md-3 d-flex align-items-center gap-3">
@@ -60,6 +62,7 @@ export const AvailabilityDay = ({
                             checked={enabled}
                             onChange={() => onToggle && onToggle(day)}
                             id={`toggle-${day}`}
+                            disabled={disabled}
                         />
                         <label className="switch-status-label m-0" htmlFor={`toggle-${day}`}>
                             {enabled ? 'Available' : 'Unavailable'}
@@ -79,7 +82,7 @@ export const AvailabilityDay = ({
                             className="form-control availability-time-input"
                             value={startTime}
                             onChange={(e) => onStartTimeChange && onStartTimeChange(day, e.target.value)}
-                            disabled={!enabled}
+                            disabled={!enabled || disabled}
                             aria-label={`${day} start time`}
                         />
                     </div>
@@ -94,7 +97,7 @@ export const AvailabilityDay = ({
                             className="form-control availability-time-input"
                             value={endTime}
                             onChange={(e) => onEndTimeChange && onEndTimeChange(day, e.target.value)}
-                            disabled={!enabled}
+                            disabled={!enabled || disabled}
                             aria-label={`${day} end time`}
                         />
                     </div>
@@ -108,6 +111,14 @@ export const AvailabilityDay = ({
                     </div>
                 </div>
             </div>
+            {error && (
+                <div className="row w-100 m-0 mt-2 px-3">
+                    <div className="col-12 text-danger small p-0 d-flex align-items-center gap-1">
+                        <i className="bi bi-exclamation-circle-fill"></i>
+                        <span>{error}</span>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

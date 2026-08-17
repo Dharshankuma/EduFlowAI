@@ -6,7 +6,9 @@ export const WeeklyAvailability = ({
     availability = [],
     onToggle,
     onStartTimeChange,
-    onEndTimeChange
+    onEndTimeChange,
+    errors = {},
+    disabled = false
 }) => {
     return (
         <div className="weekly-availability-container">
@@ -21,6 +23,8 @@ export const WeeklyAvailability = ({
                     onToggle={onToggle}
                     onStartTimeChange={onStartTimeChange}
                     onEndTimeChange={onEndTimeChange}
+                    error={errors[dayData.day]}
+                    disabled={disabled}
                 />
             ))}
         </div>

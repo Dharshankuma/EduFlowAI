@@ -15,8 +15,8 @@ const axiosClient = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 15000 // 15 seconds timeout
-}); 
+    timeout: 0 // 15 seconds timeout
+});
 
 // Save the reference to the axios client to avoid circular dependencies
 setAxiosClientRef(axiosClient);

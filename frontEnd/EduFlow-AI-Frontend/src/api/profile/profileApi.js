@@ -33,3 +33,14 @@ export const updatePersonalInformation = async (data) => {
     return response;
 };
 
+/**
+ * Updates the weekly study availability for the authenticated user.
+ * 
+ * @param {Object} data - The weekly availability payload (Availability list)
+ * @returns {Promise<Object>} The API response (HTTP 204 has no body, returns response)
+ */
+export const updateWeeklyAvailability = async (data) => {
+    const response = await axiosClient.put('/Profile/weekly-availability', data);
+    return response;
+};
+

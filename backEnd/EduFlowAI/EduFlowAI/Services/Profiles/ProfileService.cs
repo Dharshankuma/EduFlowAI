@@ -155,29 +155,30 @@ namespace EduFlowAI.Services.Profiles
                     continue;
                 }
 
-                if (!request.StartTime.HasValue)
-                {
-                    throw new BadRequestException(
-                        $"Start time is required for {request.DayOfWeek}.");
-                }
+                //if (!DateTimeHelper.ConvertToTimeOnly(request.StartTime).ha)
+                //{
+                //    throw new BadRequestException(
+                //        $"Start time is required for {request.DayOfWeek}.");
+                //}
 
-                if (!request.EndTime.HasValue)
-                {
-                    throw new BadRequestException(
-                        $"End time is required for {request.DayOfWeek}.");
-                }
-
-                if (request.StartTime.Value >= request.EndTime.Value)
+                //if (!request.EndTime.HasValue)
+                //{
+                //    throw new BadRequestException(
+                //        $"End time is required for {request.DayOfWeek}.");
+                //}
+                var starttime = DateTimeHelper.ConvertToTimeOnly(request.StartTime);
+                var endTime = DateTimeHelper.ConvertToTimeOnly(request.EndTime);
+                if (starttime >= endTime)
                 {
                     throw new BadRequestException(
                         $"Start time must be earlier than End time for {request.DayOfWeek}.");
                 }
 
                 day.Isenable = true;
-                day.StartTime = request.StartTime;
-                day.EndTime = request.EndTime;
+                day.StartTime = starttime;
+                day.EndTime = endTime;
                 day.Availablehours =
-                    (decimal)(request.EndTime.Value - request.StartTime.Value).TotalHours;
+                    (decimal)(endTime - starttime).TotalHours;
                 day.Updatedat = currentTime;
             }
 

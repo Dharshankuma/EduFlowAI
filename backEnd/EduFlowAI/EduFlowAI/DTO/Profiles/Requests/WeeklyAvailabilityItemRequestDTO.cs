@@ -8,8 +8,8 @@ namespace EduFlowAI.DTO.Profiles.Requests
 
         public bool IsEnabled { get; set; }
 
-        public TimeOnly? StartTime { get; set; }
+        public string? StartTime { get; set; }
 
-        public TimeOnly? EndTime { get; set; }
+        public string? EndTime { get; set; }
     }
 }

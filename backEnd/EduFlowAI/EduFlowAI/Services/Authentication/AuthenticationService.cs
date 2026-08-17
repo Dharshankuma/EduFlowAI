@@ -233,7 +233,7 @@ namespace EduFlowAI.Services.Authentication
             }
 
             var newAccessToken = _helper.GenerateAccessToken(userDetails);
-            var newRefreshToken = _helper.GenerateRefreshToken();
+            var newRefreshToken = CommonHelper.GenerateFixedGuidString(32);
 
             await _repo.RevokeRefreshTokenAsync(refreshToken,cancellation);
 

@@ -50,5 +50,10 @@
             return date?.ToString("dd-MM-yyyy");
         }
 
+        public static TimeOnly ConvertToTimeOnly(string time)
+        {
+            return TimeOnly.ParseExact(time, "HH:mm:ss");
+        }
+
     }
 }

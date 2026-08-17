@@ -7,7 +7,7 @@ import QuickActions from '../../../components/app/profile/QuickActions/QuickActi
 import StudyAvailability from '../../../components/app/profile/StudyAvailability/StudyAvailability';
 import './Profile.css';
 import { toast } from 'react-toastify';
-import { getProfile, updatePersonalInformation } from '../../../api/profile/profileApi';
+import { getProfile, updatePersonalInformation, updateWeeklyAvailability } from '../../../api/profile/profileApi';
 
 import { useAppState } from '../../../context/StateContext';
 
@@ -19,6 +19,22 @@ const formatTimeOnly = (timeStr) => {
         return `${match[1]}:${match[2]}`;
     }
     return '';
+};
+
+// Helper: Detect browser timezone and format with offset
+const detectBrowserTimeZone = () => {
+    try {
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const offsetMinutes = -new Date().getTimezoneOffset();
+        const absOffset = Math.abs(offsetMinutes);
+        const hours = Math.floor(absOffset / 60);
+        const minutes = absOffset % 60;
+        const sign = offsetMinutes >= 0 ? '+' : '-';
+        const formattedOffset = `GMT${sign}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+        return `(${formattedOffset}) ${timeZone}`;
+    } catch (e) {
+        return 'UTC';
+    }
 };
 
 export const Profile = () => {
@@ -34,17 +50,23 @@ export const Profile = () => {
         firstName: '',
         lastName: '',
         emailId: '',
-        userTimeZone: ''
+        userTimeZone: detectBrowserTimeZone()
     });
     const [savedPersonalInfo, setSavedPersonalInfo] = useState({
         userName: '',
         firstName: '',
         lastName: '',
         emailId: '',
-        userTimeZone: ''
+        userTimeZone: detectBrowserTimeZone()
     });
     const [errors, setErrors] = useState({});
     const [isSaving, setIsSaving] = useState(false);
+
+    // Weekly availability states
+    const [savedAvailability, setSavedAvailability] = useState([]);
+    const [editableAvailability, setEditableAvailability] = useState([]);
+    const [isSavingAvailability, setIsSavingAvailability] = useState(false);
+    const [availabilityErrors, setAvailabilityErrors] = useState({});
 
     // Fetch profile data on mount
     useEffect(() => {
@@ -63,7 +85,7 @@ export const Profile = () => {
 
                     const rawUserName = personalInfoData?.userName || personalInfoData?.UserName || '';
                     const mappedUserName = rawUserName.startsWith('@') ? rawUserName : (rawUserName ? `@${rawUserName}` : '@user');
-                    const rawTimeZone = personalInfoData?.timeZoneOffset || personalInfoData?.TimeZoneOffset || '(GMT-05:00) Eastern Time (US & Canada)';
+                    const rawTimeZone = detectBrowserTimeZone();
 
                     const initialForm = {
                         userName: mappedUserName,
@@ -89,15 +111,18 @@ export const Profile = () => {
                         lastLogin: header?.lastLogin || header?.LastLogin || ''
                     }));
 
-                    // Map Weekly Availability list to context availability state
+                    // Map Weekly Availability list to context and local states
                     if (availabilityList) {
-                        setAvailability(availabilityList.map(day => ({
+                        const mappedList = availabilityList.map(day => ({
                             day: day.dayOfWeek || day.DayOfWeek,
                             enabled: day.isEnable !== undefined ? day.isEnable : day.IsEnable,
                             startTime: formatTimeOnly(day.startTime || day.StartTime) || '09:00',
                             endTime: formatTimeOnly(day.endTime || day.EndTime) || '17:00',
                             availableHours: day.availableHours !== undefined ? day.availableHours : day.AvailableHours
-                        })));
+                        }));
+                        setSavedAvailability(mappedList);
+                        setEditableAvailability(mappedList);
+                        setAvailability(mappedList);
                     }
 
                     // Store Profile Summary statistics
@@ -120,37 +145,37 @@ export const Profile = () => {
 
     // Statistics derived from profileSummary
     const statistics = [
-        { 
-            id: 1, 
-            title: 'STUDY HOURS', 
-            value: profileSummary ? `${profileSummary.totalStudyHours} Hours` : '0 Hours', 
-            icon: 'bi-clock', 
-            description: 'Total study time', 
-            trendType: 'success' 
+        {
+            id: 1,
+            title: 'STUDY HOURS',
+            value: profileSummary ? `${profileSummary.totalStudyHours} Hours` : '0 Hours',
+            icon: 'bi-clock',
+            description: 'Total study time',
+            trendType: 'success'
         },
-        { 
-            id: 2, 
-            title: 'COMPLETED TASKS', 
-            value: profileSummary ? String(profileSummary.totalCompletedTasks) : '0', 
-            icon: 'bi-check-circle', 
-            description: 'Successfully completed', 
-            trendType: 'success' 
+        {
+            id: 2,
+            title: 'COMPLETED TASKS',
+            value: profileSummary ? String(profileSummary.totalCompletedTasks) : '0',
+            icon: 'bi-check-circle',
+            description: 'Successfully completed',
+            trendType: 'success'
         },
-        { 
-            id: 3, 
-            title: 'ACTIVE GOALS', 
-            value: profileSummary ? String(profileSummary.totalActiveGoals) : '0', 
-            icon: 'bi-bullseye', 
-            description: 'Currently active', 
-            trendType: 'success' 
+        {
+            id: 3,
+            title: 'ACTIVE GOALS',
+            value: profileSummary ? String(profileSummary.totalActiveGoals) : '0',
+            icon: 'bi-bullseye',
+            description: 'Currently active',
+            trendType: 'success'
         },
-        { 
-            id: 4, 
-            title: 'STUDY STREAK', 
-            value: profileSummary ? `${profileSummary.totalStudyStreak} Days` : '0 Days', 
-            icon: 'bi-fire', 
-            description: 'Current streak', 
-            trendType: 'success' 
+        {
+            id: 4,
+            title: 'STUDY STREAK',
+            value: profileSummary ? `${profileSummary.totalStudyStreak} Days` : '0 Days',
+            icon: 'bi-fire',
+            description: 'Current streak',
+            trendType: 'success'
         }
     ];
 
@@ -190,6 +215,7 @@ export const Profile = () => {
 
     const handleSaveInfo = async (e) => {
         if (e && e.preventDefault) e.preventDefault();
+        console.log("handleSaveInfo clicked. personalInfo:", personalInfo);
 
         // Client-side validations
         const newErrors = {};
@@ -207,7 +233,9 @@ export const Profile = () => {
         }
 
         setErrors(newErrors);
+        console.log("Personal info validation complete. errors:", newErrors);
         if (Object.keys(newErrors).length > 0) {
+            console.log("Aborting save due to validation errors.");
             return;
         }
 
@@ -225,7 +253,9 @@ export const Profile = () => {
                 UserTimeZone: personalInfo.userTimeZone.trim()
             };
 
+            console.log("Sending payload to PUT /Profile/personal-information:", payload);
             await updatePersonalInformation(payload);
+            console.log("PUT personal-information succeeded.");
 
             const updatedForm = {
                 ...personalInfo,
@@ -250,6 +280,7 @@ export const Profile = () => {
 
             toast.success("Personal information updated successfully.");
         } catch (err) {
+            console.error("PUT personal-information API call failed:", err);
             toast.error(err.message || 'An unexpected error occurred.');
         } finally {
             setIsSaving(false);
@@ -261,27 +292,194 @@ export const Profile = () => {
         setErrors({});
     };
 
+    const calculateAvailableHours = (startTime, endTime, enabled) => {
+        if (!enabled || !startTime || !endTime) return 0;
+        const [startH, startM] = startTime.split(':').map(Number);
+        const [endH, endM] = endTime.split(':').map(Number);
+        const diff = (endH * 60 + endM) - (startH * 60 + startM);
+        return diff <= 0 ? 0 : diff / 60;
+    };
+
     const handleAvailabilityToggle = (day) => {
-        setAvailability((prev) =>
-            prev.map((d) => (d.day === day ? { ...d, enabled: !d.enabled } : d))
+        setEditableAvailability((prev) =>
+            prev.map((d) => {
+                if (d.day === day) {
+                    const newEnabled = !d.enabled;
+                    return {
+                        ...d,
+                        enabled: newEnabled,
+                        availableHours: newEnabled ? calculateAvailableHours(d.startTime, d.endTime, true) : 0
+                    };
+                }
+                return d;
+            })
         );
+        // Clear error for this day if toggle changes
+        if (availabilityErrors[day]) {
+            setAvailabilityErrors(prev => ({
+                ...prev,
+                [day]: null
+            }));
+        }
     };
 
     const handleStartTimeChange = (day, time) => {
-        setAvailability((prev) =>
-            prev.map((d) => (d.day === day ? { ...d, startTime: time } : d))
+        setEditableAvailability((prev) =>
+            prev.map((d) => (d.day === day ? {
+                ...d,
+                startTime: time,
+                availableHours: calculateAvailableHours(time, d.endTime, d.enabled)
+            } : d))
         );
+        if (availabilityErrors[day]) {
+            setAvailabilityErrors(prev => ({
+                ...prev,
+                [day]: null
+            }));
+        }
     };
 
     const handleEndTimeChange = (day, time) => {
-        setAvailability((prev) =>
-            prev.map((d) => (d.day === day ? { ...d, endTime: time } : d))
+        setEditableAvailability((prev) =>
+            prev.map((d) => (d.day === day ? {
+                ...d,
+                endTime: time,
+                availableHours: calculateAvailableHours(d.startTime, time, d.enabled)
+            } : d))
         );
+        if (availabilityErrors[day]) {
+            setAvailabilityErrors(prev => ({
+                ...prev,
+                [day]: null
+            }));
+        }
     };
 
-    const handleSaveAvailability = () => {
-        console.log('Study Availability records and preferences sent to planner engine:', { availability, preferences });
-        toast.info('Changes applied locally (Saving to server will be implemented in a future phase).');
+    const handleSaveAvailability = async () => {
+        console.log("handleSaveAvailability clicked. editableAvailability:", editableAvailability);
+        // 1. Validation
+        const newErrors = {};
+        let isValid = true;
+        for (const item of editableAvailability) {
+            if (item.enabled) {
+                if (!item.startTime || !item.startTime.trim()) {
+                    newErrors[item.day] = `Start time is required for ${item.day}.`;
+                    isValid = false;
+                } else if (!item.endTime || !item.endTime.trim()) {
+                    newErrors[item.day] = `End time is required for ${item.day}.`;
+                    isValid = false;
+                } else {
+                    const [startH, startM] = item.startTime.split(':').map(Number);
+                    const [endH, endM] = item.endTime.split(':').map(Number);
+                    const startMins = startH * 60 + startM;
+                    const endMins = endH * 60 + endM;
+                    if (startMins >= endMins) {
+                        newErrors[item.day] = `Start time must be earlier than End time for ${item.day}.`;
+                        isValid = false;
+                    }
+                }
+            }
+        }
+
+        setAvailabilityErrors(newErrors);
+        console.log("Validation complete. isValid =", isValid, "Errors:", newErrors);
+        if (!isValid) {
+            return;
+        }
+
+        if (isSavingAvailability) return;
+        setIsSavingAvailability(true);
+
+        // 2. Create immutable submitted snapshot and map to backend DTO payload
+        const dayToEnum = {
+            'Monday': 1,
+            'Tuesday': 2,
+            'Wednesday': 3,
+            'Thursday': 4,
+            'Friday': 5,
+            'Saturday': 6,
+            'Sunday': 7
+        };
+
+        const submittedList = editableAvailability.map(day => {
+            const isDayEnabled = day.enabled;
+            const startStr = isDayEnabled ? (day.startTime || '09:00') : null;
+            const endStr = isDayEnabled ? (day.endTime || '17:00') : null;
+
+            // Format to HH:mm:ss
+            const formattedStart = startStr ? (startStr.length === 5 ? `${startStr}:00` : startStr) : null;
+            const formattedEnd = endStr ? (endStr.length === 5 ? `${endStr}:00` : endStr) : null;
+
+            return {
+                day: day.day,
+                enabled: isDayEnabled,
+                startTime: startStr,
+                endTime: endStr,
+                availableHours: isDayEnabled ? calculateAvailableHours(startStr, endStr, true) : 0,
+                // DTO fields
+                DayOfWeek: dayToEnum[day.day] || 1,
+                IsEnabled: isDayEnabled,
+                StartTime: formattedStart,
+                EndTime: formattedEnd
+            };
+        });
+
+        try {
+            // Prepare payload
+            const payload = {
+                Availability: submittedList.map(item => ({
+                    DayOfWeek: item.DayOfWeek,
+                    IsEnabled: item.IsEnabled,
+                    StartTime: item.StartTime,
+                    EndTime: item.EndTime
+                }))
+            };
+
+            console.log("Sending payload to PUT /Profile/weekly-availability:", payload);
+            await updateWeeklyAvailability(payload);
+            console.log("API PUT request succeeded (204 No Content).");
+
+            // PUT succeeded (204 No Content)
+            // Update saved availability and editable availability using the submitted snapshot
+            const synchronizedList = submittedList.map(item => ({
+                day: item.day,
+                enabled: item.enabled,
+                startTime: item.startTime,
+                endTime: item.endTime,
+                availableHours: item.availableHours
+            }));
+
+            setSavedAvailability(synchronizedList);
+            setEditableAvailability(synchronizedList);
+            setAvailability(synchronizedList); // Sync global context state
+
+            // Update Profile Summary locally
+            setProfileSummary(prev => {
+                if (!prev) return null;
+                const activeDays = synchronizedList.filter(d => d.enabled).length;
+                const totalHours = synchronizedList.reduce((sum, d) => sum + d.availableHours, 0);
+                const avgHours = activeDays > 0 ? (totalHours / activeDays) : 0;
+
+                return {
+                    ...prev,
+                    totalWeeklyHours: Number(totalHours.toFixed(1)),
+                    totalActiveStudyDays: activeDays,
+                    averageDailyStudy: Number(avgHours.toFixed(1))
+                };
+            });
+
+            toast.success("Weekly availability updated successfully.");
+        } catch (err) {
+            console.error("PUT availability API call failed:", err);
+            toast.error(err.message || "An unexpected error occurred.");
+        } finally {
+            setIsSavingAvailability(false);
+        }
+    };
+
+    const handleResetAvailability = () => {
+        setEditableAvailability(savedAvailability);
+        setAvailabilityErrors({});
     };
 
     const handleSessionLengthChange = (length) => {
@@ -290,24 +488,6 @@ export const Profile = () => {
 
     const handleStudyPreferenceChange = (time) => {
         setPreferences((prev) => ({ ...prev, studyTime: time }));
-    };
-
-    const handleResetAvailability = () => {
-        setAvailability([
-            { day: 'Monday', enabled: true, startTime: '09:00', endTime: '17:00' },
-            { day: 'Tuesday', enabled: true, startTime: '09:00', endTime: '17:00' },
-            { day: 'Wednesday', enabled: true, startTime: '09:00', endTime: '17:00' },
-            { day: 'Thursday', enabled: true, startTime: '09:00', endTime: '17:00' },
-            { day: 'Friday', enabled: true, startTime: '09:00', endTime: '17:00' },
-            { day: 'Saturday', enabled: true, startTime: '09:00', endTime: '17:00' },
-            { day: 'Sunday', enabled: false, startTime: '00:00', endTime: '00:00' }
-        ]);
-        setPreferences({
-            sessionLength: '60',
-            studyTime: 'Evening'
-        });
-        console.log('Study Availability and Preferences reset to defaults.');
-        toast.info('Availability reset to default configurations (locally only).');
     };
 
     const handleActionClick = (action) => {
@@ -333,19 +513,59 @@ export const Profile = () => {
         );
     }
 
-    const isDirty = 
+    const isDirty =
         personalInfo.firstName !== savedPersonalInfo.firstName ||
         personalInfo.lastName !== savedPersonalInfo.lastName ||
         personalInfo.userName !== savedPersonalInfo.userName ||
         personalInfo.userTimeZone !== savedPersonalInfo.userTimeZone;
 
-    const hasEmptyRequiredFields = 
-        !personalInfo.firstName.trim() || 
-        !personalInfo.lastName.trim() || 
-        !personalInfo.userName.trim() || 
+    const hasEmptyRequiredFields =
+        !personalInfo.firstName.trim() ||
+        !personalInfo.lastName.trim() ||
+        !personalInfo.userName.trim() ||
         !personalInfo.userTimeZone.trim();
 
     const isSaveDisabled = !isDirty || hasEmptyRequiredFields;
+
+    const isAvailabilityDirty =
+        editableAvailability.length !== savedAvailability.length ||
+        editableAvailability.some((edit, idx) => {
+            const saved = savedAvailability[idx];
+            if (!saved) return true;
+            if (edit.day !== saved.day) return true;
+            if (edit.enabled !== saved.enabled) return true;
+            if (edit.enabled) {
+                if (edit.startTime !== saved.startTime) return true;
+                if (edit.endTime !== saved.endTime) return true;
+            }
+            return false;
+        });
+
+    const hasInvalidAvailabilityTimes = editableAvailability.some(day => {
+        if (!day.enabled) return false;
+        if (!day.startTime || !day.startTime.trim()) return true;
+        if (!day.endTime || !day.endTime.trim()) return true;
+        const [startH, startM] = day.startTime.split(':').map(Number);
+        const [endH, endM] = day.endTime.split(':').map(Number);
+        return (startH * 60 + startM) >= (endH * 60 + endM);
+    });
+
+    const isSaveAvailabilityDisabled = !isAvailabilityDirty || hasInvalidAvailabilityTimes;
+
+    console.log("Availability debug:", {
+        isAvailabilityDirty,
+        hasInvalidAvailabilityTimes,
+        isSaveAvailabilityDisabled,
+        editableAvailability
+    });
+
+    console.log("Personal Info debug:", {
+        isDirty,
+        hasEmptyRequiredFields,
+        isSaveDisabled,
+        personalInfo,
+        savedPersonalInfo
+    });
 
     const userForForm = {
         firstName: personalInfo.firstName,
@@ -395,7 +615,7 @@ export const Profile = () => {
             {/* Weekly Availability tracker */}
             <div className="profile-section">
                 <StudyAvailability
-                    availability={availability}
+                    availability={editableAvailability}
                     summary={profileSummary}
                     // preferences={preferences}
                     onToggle={handleAvailabilityToggle}
@@ -405,6 +625,9 @@ export const Profile = () => {
                     onStudyPreferenceChange={handleStudyPreferenceChange}
                     onSave={handleSaveAvailability}
                     onReset={handleResetAvailability}
+                    errors={availabilityErrors}
+                    disabled={isSavingAvailability}
+                    isSaveDisabled={isSaveAvailabilityDisabled}
                 />
             </div>
         </div>

@@ -20,14 +20,26 @@ const formatMinsToText = (totalMins) => {
     return `${hours}h ${minutes}m`;
 };
 
-export const AvailabilitySummary = ({ availability = [] }) => {
-    const activeDays = availability.filter(d => d.enabled).length;
+export const AvailabilitySummary = ({ availability = [], summary }) => {
+    const activeDays = availability.filter(d => d.enabled || d.IsEnable).length;
 
     const totalMinutes = availability.reduce((acc, curr) => {
-        return acc + calculateMinutes(curr.startTime, curr.endTime, curr.enabled);
+        return acc + calculateMinutes(curr.startTime, curr.endTime, curr.enabled || curr.IsEnable);
     }, 0);
 
     const avgMinutes = activeDays > 0 ? Math.round(totalMinutes / activeDays) : 0;
+
+    const displayTotalWeeklyHours = summary && summary.totalWeeklyHours !== undefined
+        ? `${summary.totalWeeklyHours} hrs`
+        : formatMinsToText(totalMinutes);
+
+    const displayActiveStudyDays = summary && summary.totalActiveStudyDays !== undefined
+        ? `${summary.totalActiveStudyDays} / 7`
+        : `${activeDays} / 7`;
+
+    const displayAverageDailyStudy = summary && summary.averageDailyStudy !== undefined
+        ? `${summary.averageDailyStudy} hrs`
+        : formatMinsToText(avgMinutes);
 
     return (
         <div className="availability-summary-section">
@@ -36,7 +48,7 @@ export const AvailabilitySummary = ({ availability = [] }) => {
                 <div className="col-12 col-md-4">
                     <StatCard
                         title="Total Weekly Hours"
-                        value={formatMinsToText(totalMinutes)}
+                        value={displayTotalWeeklyHours}
                         icon="bi-clock-history"
                         description="Total available study time"
                         trendType="success"
@@ -47,7 +59,7 @@ export const AvailabilitySummary = ({ availability = [] }) => {
                 <div className="col-12 col-md-4">
                     <StatCard
                         title="Active Study Days"
-                        value={`${activeDays} / 7`}
+                        value={displayActiveStudyDays}
                         icon="bi-calendar-check"
                         description="Days scheduled for study"
                         trendType="success"
@@ -58,7 +70,7 @@ export const AvailabilitySummary = ({ availability = [] }) => {
                 <div className="col-12 col-md-4">
                     <StatCard
                         title="Average Daily Study"
-                        value={formatMinsToText(avgMinutes)}
+                        value={displayAverageDailyStudy}
                         icon="bi-graph-up-arrow"
                         description="Avg session length per day"
                         trendType="success"

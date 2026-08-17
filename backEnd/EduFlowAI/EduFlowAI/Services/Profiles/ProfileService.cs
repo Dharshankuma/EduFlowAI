@@ -19,26 +19,26 @@ namespace EduFlowAI.Services.Profiles
 
         public async Task<ProfileResponseDTO> GetProfileAsync(int userId, CancellationToken cancellation)
         {
-            var userTask = _repo.GetUserDetailsByIdAsync(userId, cancellation);
+            var user = await _repo.GetUserDetailsByIdAsync(userId, cancellation);
 
-            var availabilityTask = _repo.GetWeekAvailabilityAsync(userId, cancellation);
+            var availability = await _repo.GetWeekAvailabilityAsync(userId, cancellation);
 
-            var summaryTask = _repo.GetProfileSummaryResponseAsync(userId, cancellation);
+            var summary = await _repo.GetProfileSummaryResponseAsync(userId, cancellation);
 
-            var studyStatusTask = _repo.GetDailyStudyStatusAsync(userId, cancellation);
+            var studyStatus = await _repo.GetDailyStudyStatusAsync(userId, cancellation);
 
-            await Task.WhenAll(userTask, availabilityTask, summaryTask, studyStatusTask);
+           // await Task.WhenAll(userTask, availabilityTask, summaryTask, studyStatusTask);
 
-            var user = await userTask;
+            //var user = await userTask;
 
             if(user == null)
             {
                 throw new NotFoundException("User Not Found");
             }
 
-            var availability = await availabilityTask;
-            var summary = await summaryTask;
-            var studyStatus = await studyStatusTask;
+            //var availability = await availabilityTask;
+            //var summary = await summaryTask;
+            //var studyStatus = await studyStatusTask;
 
             var response = new ProfileResponseDTO
             {
@@ -53,7 +53,7 @@ namespace EduFlowAI.Services.Profiles
                 {
                     FirstName = user.Firstname,
                     LastName = user.Lastname,
-                    UserName = user.Lastname,
+                    UserName = user.Username,
                     EmailId = user.Emailid,
                     TimeZoneOffset = user.Usertimezone
                 },
@@ -114,6 +114,8 @@ namespace EduFlowAI.Services.Profiles
             user.Usertimezone = dto.UserTimeZone;
 
             await _repo.UpdateUserProfileAsync(user, cancellationToken);
+
+            
         }
 
         public async Task UpdateWeekAvailability(int userId,WeeklyAvailabilityRequestDTO dto,CancellationToken cancellationToken)

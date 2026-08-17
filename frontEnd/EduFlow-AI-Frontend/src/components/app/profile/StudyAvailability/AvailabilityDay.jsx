@@ -17,16 +17,35 @@ const getHoursAndMinutes = (start, end, enabled) => {
     return `${hText} ${mText}`;
 };
 
+// Helper: Convert decimal available hours to text
+const formatAvailableHours = (availableHours, enabled) => {
+    if (!enabled || availableHours === undefined || availableHours === null) {
+        return '0 Hours 0 Minutes';
+    }
+    const totalMins = Math.round(parseFloat(availableHours) * 60);
+    if (totalMins <= 0) return '0 Hours 0 Minutes';
+    
+    const hours = Math.floor(totalMins / 60);
+    const minutes = totalMins % 60;
+    
+    const hText = hours === 1 ? '1 Hour' : `${hours} Hours`;
+    const mText = minutes === 1 ? '1 Minute' : `${minutes} Minutes`;
+    return `${hText} ${mText}`;
+};
+
 export const AvailabilityDay = ({
     day,
     enabled = false,
     startTime = '09:00',
     endTime = '17:00',
+    availableHours,
     onToggle,
     onStartTimeChange,
     onEndTimeChange
 }) => {
-    const hoursText = getHoursAndMinutes(startTime, endTime, enabled);
+    const hoursText = availableHours !== undefined
+        ? formatAvailableHours(availableHours, enabled)
+        : getHoursAndMinutes(startTime, endTime, enabled);
 
     return (
         <div className={`availability-day-row ${enabled ? 'is-enabled' : 'is-disabled'}`}>

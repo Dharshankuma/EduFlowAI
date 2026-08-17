@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as authenticationApi from '../api/auth/authenticationApi';
 import * as authStorage from '../utils/authStorage';
 import { registerOnUnauthorized } from '../api/client/interceptors';
+import { toast } from 'react-toastify';
 
 const AuthContext = createContext(null);
 
@@ -32,7 +33,12 @@ export const AuthProvider = ({ children }) => {
 
         // Register 401 unauthorized interceptor callback to sync UI state
         registerOnUnauthorized(() => {
-            setUser(null);
+            setUser((currentUser) => {
+                if (currentUser !== null) {
+                    toast.error("Your session has expired. Please sign in again.");
+                }
+                return null;
+            });
             setIsAuthenticated(false);
         });
     }, []);
@@ -82,12 +88,28 @@ export const AuthProvider = ({ children }) => {
     };
 
     /**
-     * Client-side logout (clears state and local storage)
+     * Centralized logout (invalidates server-side session and cleans up local state)
      */
-    const logout = () => {
+    const logout = async () => {
+        const refreshTokenVal = authStorage.getRefreshToken();
+        
+        // Instantly clean up local storage and react state to make UI responsive
         authStorage.clearAuthData();
         setUser(null);
         setIsAuthenticated(false);
+
+        if (refreshTokenVal) {
+            try {
+                await authenticationApi.logout(refreshTokenVal);
+                toast.success("Logged out successfully.");
+            } catch (error) {
+                console.error('Backend logout failed:', error);
+                // Fail silently on backend but still inform user they are logged out locally
+                toast.success("Logged out successfully.");
+            }
+        } else {
+            toast.success("Logged out successfully.");
+        }
     };
 
     return (

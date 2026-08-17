@@ -85,19 +85,38 @@ export const verifyEmail = async (token) => {
 };
 
 /**
- * Placeholder for future refresh token API integration.
+ * Sends a refresh token request to the backend.
+ * @param {string} token - The current refresh token
+ * @returns {Promise<Object>} The new token payload (Token, RefreshToken, UserData)
  */
 export const refreshToken = async (token) => {
-    // To be implemented in the refresh token phase
-    throw new Error('Not implemented yet');
+    const response = await axiosClient.post(
+        `/Authentication/refresh-token?refreshToken=${encodeURIComponent(token)}`,
+        null,
+        { skipAuth: true, skipLoader: true }
+    );
+
+    if (response && response.data) {
+        if (response.data.data !== undefined) {
+            return response.data.data;
+        }
+        return response.data;
+    }
+
+    throw new Error('Invalid response received from the server.');
 };
 
 /**
- * Placeholder for future logout API integration.
+ * Sends a logout request to the backend.
+ * @param {string} token - The refresh token to revoke
  */
-export const logout = async () => {
-    // To be implemented in the logout phase
-    throw new Error('Not implemented yet');
+export const logout = async (token) => {
+    if (!token) return;
+    await axiosClient.post(
+        `/Authentication/logout?refreshToken=${encodeURIComponent(token)}`,
+        null,
+        { skipAuth: true, skipLoader: true }
+    );
 };
 
 export const forgetPassword = async (email) => {

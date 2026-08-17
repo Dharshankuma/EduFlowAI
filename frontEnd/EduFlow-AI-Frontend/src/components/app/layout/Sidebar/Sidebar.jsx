@@ -73,12 +73,12 @@ export const Sidebar = () => {
                         <img src={currentUser.profileImage} alt={currentUser.userName} className="user-avatar-img" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
                     ) : (
                         <div className="user-avatar">
-                            <span>{currentUser.firstName ? currentUser.firstName[0] : 'U'}</span>
+                            <span>{(currentUser.firstName || currentUser.userName || 'U')[0].toUpperCase()}</span>
                         </div>
                     )}
                 </div>
                 <div className="user-info">
-                    <span className="user-name">{currentUser.firstName || 'User'}</span>
+                    <span className="user-name">{currentUser.userName || currentUser.firstName || 'User'}</span>
                     {/* <span className="user-badge">{currentUser.badge || 'Student'}</span> */}
                 </div>
                 <button

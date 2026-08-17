@@ -10,7 +10,8 @@ export const PersonalInformation = ({
     onSave,
     onCancel,
     errors = {},
-    disabled = false
+    disabled = false,
+    isSaveDisabled = false
 }) => {
     const {
         firstName = '',
@@ -47,6 +48,11 @@ export const PersonalInformation = ({
                                 required={true}
                                 disabled={disabled}
                             />
+                            {errors.firstName && (
+                                <div className="form-field-error-message mt-1 text-danger small">
+                                    {errors.firstName}
+                                </div>
+                            )}
                         </div>
                         
                         {/* Last Name Field */}
@@ -61,6 +67,11 @@ export const PersonalInformation = ({
                                 required={true}
                                 disabled={disabled}
                             />
+                            {errors.lastName && (
+                                <div className="form-field-error-message mt-1 text-danger small">
+                                    {errors.lastName}
+                                </div>
+                            )}
                         </div>
                         
                         {/* Username Field */}
@@ -75,6 +86,11 @@ export const PersonalInformation = ({
                                 required={true}
                                 disabled={disabled}
                             />
+                            {errors.username && (
+                                <div className="form-field-error-message mt-1 text-danger small">
+                                    {errors.username}
+                                </div>
+                            )}
                         </div>
                         
                         {/* Email Address Field */}
@@ -88,7 +104,7 @@ export const PersonalInformation = ({
                                 onChange={onChange}
                                 error={errors.email}
                                 required={true}
-                                disabled={disabled}
+                                disabled={true}
                             />
                         </div>
                         
@@ -101,7 +117,7 @@ export const PersonalInformation = ({
                                 <select 
                                     id="timeZone"
                                     name="timeZone"
-                                    className="form-select profile-select-input" 
+                                    className={`form-select profile-select-input ${errors.timeZone ? 'type1_textbox_error' : ''}`}
                                     value={timeZone}
                                     onChange={onChange}
                                     disabled={disabled}
@@ -119,6 +135,11 @@ export const PersonalInformation = ({
                                         (GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi
                                     </option>
                                 </select>
+                                {errors.timeZone && (
+                                    <div className="form-field-error-message mt-1 text-danger small">
+                                        {errors.timeZone}
+                                    </div>
+                                )}
                             </div>
                         </div>
                         
@@ -127,9 +148,9 @@ export const PersonalInformation = ({
                             <div className="profile-form-actions d-flex flex-sm-row flex-column gap-3">
                                 <ButtonComponent
                                     type="submit"
-                                    text="Save Changes"
+                                    text={disabled ? "Saving..." : "Save Changes"}
                                     className="profile-save-btn"
-                                    disabled={disabled}
+                                    disabled={disabled || isSaveDisabled}
                                 />
                                 <ButtonComponent
                                     type="button"

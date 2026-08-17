@@ -40,7 +40,7 @@ export const Topbar = ({ onToggleSidebar }) => {
 
             {/* Left side: Greeting */}
             <div className="topbar-greeting">
-                <h2 className="greeting-title">Good Morning, {currentUser.firstName || 'Dharshan'} 👋</h2>
+                <h2 className="greeting-title">Good Morning, {currentUser.userName || currentUser.firstName || 'Dharshan'} 👋</h2>
                 <p className="greeting-subtitle">Ready to achieve today's study goals?</p>
             </div>
 

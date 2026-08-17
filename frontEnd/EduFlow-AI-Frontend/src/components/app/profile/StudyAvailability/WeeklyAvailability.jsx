@@ -17,6 +17,7 @@ export const WeeklyAvailability = ({
                     enabled={dayData.enabled}
                     startTime={dayData.startTime}
                     endTime={dayData.endTime}
+                    availableHours={dayData.availableHours}
                     onToggle={onToggle}
                     onStartTimeChange={onStartTimeChange}
                     onEndTimeChange={onEndTimeChange}

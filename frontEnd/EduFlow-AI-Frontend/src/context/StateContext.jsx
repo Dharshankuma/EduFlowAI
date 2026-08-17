@@ -17,12 +17,13 @@ export const StateProvider = ({ children }) => {
     // Sync currentUser with authenticated user from AuthContext
     useEffect(() => {
         if (user) {
+            const resolvedUserName = user.userName || user.UserName || user.username || user.Username || '';
             setCurrentUser({
                 ...MOCK_USER, // Keep default mock fields like profileImage and badge for visual aesthetics
                 firstName: user.firstName || user.FirstName || '',
                 lastName: user.lastName || user.LastName || '',
-                userName: user.userName || user.UserName || `${user.firstName || user.FirstName || ''} ${user.lastName || user.LastName || ''}`.trim(),
-                username: user.userName ? `@${user.userName}` : (user.UserName ? `@${user.UserName}` : '@user'),
+                userName: resolvedUserName || `${user.firstName || user.FirstName || ''} ${user.lastName || user.LastName || ''}`.trim() || 'User',
+                username: resolvedUserName ? (resolvedUserName.startsWith('@') ? resolvedUserName : `@${resolvedUserName}`) : '@user',
                 email: user.emailId || user.EmailId || user.email || '',
             });
         } else {

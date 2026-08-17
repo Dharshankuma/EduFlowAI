@@ -3,7 +3,8 @@ import {
     requestInterceptor,
     requestErrorInterceptor,
     responseInterceptor,
-    responseErrorInterceptor
+    responseErrorInterceptor,
+    setAxiosClientRef
 } from './interceptors';
 
 // Fallback URL if env is not defined
@@ -14,8 +15,11 @@ const axiosClient = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    timeout: 0 // 15 seconds timeout
+    timeout: 15000 // 15 seconds timeout
 }); 
+
+// Save the reference to the axios client to avoid circular dependencies
+setAxiosClientRef(axiosClient);
 
 // Register request interceptors
 axiosClient.interceptors.request.use(requestInterceptor, requestErrorInterceptor);

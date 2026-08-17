@@ -9,6 +9,7 @@ import './StudyAvailability.css';
 export const StudyAvailability = ({
     availability = [],
     preferences = {},
+    summary,
     onToggle,
     onStartTimeChange,
     onEndTimeChange,
@@ -27,7 +28,7 @@ export const StudyAvailability = ({
                     <p className="study-availability-desc">
                         Configure your weekly available study hours.
                     </p>
-
+ 
                     {/* UX Informational Message Banner */}
                     <div className="info-message-banner d-flex align-items-start gap-3 mt-3">
                         <i className="bi bi-info-circle-fill info-banner-icon"></i>
@@ -36,7 +37,7 @@ export const StudyAvailability = ({
                         </p>
                     </div>
                 </div>
-
+ 
                 {/* Day Rows */}
                 <WeeklyAvailability
                     availability={availability}
@@ -44,9 +45,9 @@ export const StudyAvailability = ({
                     onStartTimeChange={onStartTimeChange}
                     onEndTimeChange={onEndTimeChange}
                 />
-
+ 
                 {/* Summary Statistics */}
-                <AvailabilitySummary availability={availability} />
+                <AvailabilitySummary availability={availability} summary={summary} />
             </DashboardCard>
 
             {/* Study Preferences Card */}

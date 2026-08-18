@@ -91,23 +91,17 @@ export const AuthProvider = ({ children }) => {
      * Centralized logout (invalidates server-side session and cleans up local state)
      */
     const logout = async () => {
-        const refreshTokenVal = authStorage.getRefreshToken();
-        
         // Instantly clean up local storage and react state to make UI responsive
         authStorage.clearAuthData();
         setUser(null);
         setIsAuthenticated(false);
 
-        if (refreshTokenVal) {
-            try {
-                await authenticationApi.logout(refreshTokenVal);
-                toast.success("Logged out successfully.");
-            } catch (error) {
-                console.error('Backend logout failed:', error);
-                // Fail silently on backend but still inform user they are logged out locally
-                toast.success("Logged out successfully.");
-            }
-        } else {
+        try {
+            await authenticationApi.logout();
+            toast.success("Logged out successfully.");
+        } catch (error) {
+            console.error('Backend logout failed:', error);
+            // Fail silently on backend but still inform user they are logged out locally
             toast.success("Logged out successfully.");
         }
     };

@@ -1,4 +1,4 @@
-import { getAccessToken, getRefreshToken, setAuthData, clearAuthData } from '../../utils/authStorage';
+import { getAccessToken, setAuthData, clearAuthData } from '../../utils/authStorage';
 import { normalizeError } from './apiError';
 
 // Reference to axiosClient to make requests without circular dependency issues
@@ -124,18 +124,13 @@ export const responseErrorInterceptor = async (error) => {
         try {
             // Get or create shared refresh promise to prevent duplicate requests
             if (!refreshPromise) {
-                const rToken = getRefreshToken();
-                if (!rToken) {
-                    throw new Error('No refresh token available');
-                }
-
                 if (!axiosClientRef) {
                     throw new Error('axiosClientRef is not registered in interceptors');
                 }
 
                 // Call refresh-token endpoint with skipAuth and skipLoader
                 refreshPromise = axiosClientRef.post(
-                    `/Authentication/refresh-token?refreshToken=${encodeURIComponent(rToken)}`,
+                    '/Authentication/refresh-token',
                     null,
                     { skipAuth: true, skipLoader: true }
                 ).then(res => {
@@ -147,7 +142,7 @@ export const responseErrorInterceptor = async (error) => {
             const data = await refreshPromise;
 
             // Prevent race condition if user logged out while refresh token call was pending
-            if (!getRefreshToken()) {
+            if (!getAccessToken()) {
                 throw new Error('Session expired or logged out during token refresh');
             }
 

@@ -1,4 +1,5 @@
 ﻿using EduFlowAI.DTO.Authentiation.Requests;
+using EduFlowAI.DTO.Authentiation.Responses;
 using EduFlowAI.Services.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +21,23 @@ namespace EduFlowAI.Controllers
         public async Task<IActionResult> Login(LoginRequestDTO objdto, CancellationToken cancellation)
         {
             var result = await _service.LoginAsync(objdto, cancellation);
-            return Success(result, "Login Successful");
+
+            Response.Cookies.Append("refresh-token", result.RefreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTimeOffset.UtcNow.AddDays(7),
+                Path = "/api/Authentication"
+            });
+
+            var response = new LoginResultDTO
+            {
+                Token = result.Token,
+                UserData = result.UserData
+            };
+
+            return Success(response, "Login Successful");
         }
 
         [HttpPost]
@@ -49,8 +66,16 @@ namespace EduFlowAI.Controllers
 
         [HttpPost]
         [Route("refresh-token")]
-        public async Task<IActionResult> RefreshToken(string refreshToken, CancellationToken cancellation)
+        public async Task<IActionResult> RefreshToken(CancellationToken cancellation)
         {
+            if(!Request.Cookies.TryGetValue("refresh-token", out var refreshToken))
+            {
+                return Unauthorized(new
+                {
+                    message = "Refresh token not found"
+                });
+            }
+
             var result = await _service.RefreshTokenAsync(refreshToken, cancellation);
             return Success(result, "Token refreshed successfully.");
         }

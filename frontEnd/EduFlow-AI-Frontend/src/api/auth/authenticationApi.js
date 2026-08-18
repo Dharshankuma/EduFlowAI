@@ -86,12 +86,11 @@ export const verifyEmail = async (token) => {
 
 /**
  * Sends a refresh token request to the backend.
- * @param {string} token - The current refresh token
- * @returns {Promise<Object>} The new token payload (Token, RefreshToken, UserData)
+ * @returns {Promise<Object>} The new token payload (Token, UserData)
  */
-export const refreshToken = async (token) => {
+export const refreshToken = async () => {
     const response = await axiosClient.post(
-        `/Authentication/refresh-token?refreshToken=${encodeURIComponent(token)}`,
+        '/Authentication/refresh-token',
         null,
         { skipAuth: true, skipLoader: true }
     );
@@ -108,12 +107,10 @@ export const refreshToken = async (token) => {
 
 /**
  * Sends a logout request to the backend.
- * @param {string} token - The refresh token to revoke
  */
-export const logout = async (token) => {
-    if (!token) return;
+export const logout = async () => {
     await axiosClient.post(
-        `/Authentication/logout?refreshToken=${encodeURIComponent(token)}`,
+        '/Authentication/logout',
         null,
         { skipAuth: true, skipLoader: true }
     );

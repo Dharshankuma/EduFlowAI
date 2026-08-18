@@ -15,6 +15,7 @@ const axiosClient = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
+    withCredentials: true,
     timeout: 0 // 15 seconds timeout
 });
 

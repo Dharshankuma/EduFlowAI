@@ -1,5 +1,4 @@
 const ACCESS_TOKEN_KEY = 'eduflow_access_token';
-const REFRESH_TOKEN_KEY = 'eduflow_refresh_token';
 const USER_KEY = 'eduflow_user';
 
 /**
@@ -10,14 +9,10 @@ export const setAuthData = (authData) => {
     if (!authData) return;
 
     const token = authData.Token || authData.token || authData.accessToken;
-    const refreshToken = authData.RefreshToken || authData.refreshToken;
     const userData = authData.UserData || authData.userData;
 
     if (token) {
         localStorage.setItem(ACCESS_TOKEN_KEY, token);
-    }
-    if (refreshToken) {
-        localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
     }
     if (userData) {
         localStorage.setItem(USER_KEY, JSON.stringify(userData));
@@ -32,13 +27,7 @@ export const getAccessToken = () => {
     return localStorage.getItem(ACCESS_TOKEN_KEY);
 };
 
-/**
- * Gets the stored refresh token.
- * @returns {string|null} The refresh token or null
- */
-export const getRefreshToken = () => {
-    return localStorage.getItem(REFRESH_TOKEN_KEY);
-};
+
 
 /**
  * Gets the stored user data.
@@ -59,7 +48,6 @@ export const getUserData = () => {
  */
 export const clearAuthData = () => {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
 };
 

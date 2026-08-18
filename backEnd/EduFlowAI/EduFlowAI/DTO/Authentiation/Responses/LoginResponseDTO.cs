@@ -6,4 +6,10 @@
         public string RefreshToken { get; set; }
         public UserLoginDetailsResponse UserData { get; set; }
     }
+
+    public class LoginResultDTO
+    {
+        public string Token { get; set; }
+        public UserLoginDetailsResponse UserData { get; set; }
+    }
 }

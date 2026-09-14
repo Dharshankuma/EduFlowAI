@@ -7,9 +7,11 @@ using EduFlowAI.Services.EmailTemplatesService;
 using EduFlowAI.Services.EmailTemplatesService.Authentication;
 using EduFlowAI.Services.Goals;
 using EduFlowAI.Services.Profiles;
+using EduFlowAI.PlannerEngine;
 using EduFlowAI.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using EduFlowAI.Services.Schedules;
 
 namespace EduFlowAI.Extensions
 {
@@ -37,6 +39,13 @@ namespace EduFlowAI.Extensions
             services.AddScoped<IAuthenticationEmailTemplateService, AuthenticationEmailTemplateService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IGoalService, GoalService>();
+
+            // Planner Engine
+            services.AddScoped<IPlannerRepository, PlannerRepository>();
+            services.AddScoped<IPlannerEngine, PlannerEngineService>();
+            services.AddSingleton(new PlannerOptions());
+            // Schedule service for status updates
+            services.AddScoped<IScheduleService, ScheduleService>();
 
 
             return services;

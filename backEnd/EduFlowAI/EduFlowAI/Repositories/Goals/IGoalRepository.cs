@@ -15,6 +15,7 @@ namespace EduFlowAI.Repositories.Goals
         Task<Goalmanagement?> GetGoalForUserAsync(int userId, string goalIdentifier, CancellationToken cancellationToken);
         Task<List<Taskmanagement>> GetGoalTasksForUpdateAsync(int goalId, CancellationToken cancellationToken);
         Task SaveGoalTaskChangesAsync(List<Taskmanagement> tasksToAdd, List<Taskmanagement> tasksToUpdate, List<Taskmanagement> tasksToDelete, CancellationToken cancellationToken);
+        Task UpdateGoalStatusAsync(int goalId, int statusId, int updatedBy, CancellationToken cancellation);
 
     }
 }

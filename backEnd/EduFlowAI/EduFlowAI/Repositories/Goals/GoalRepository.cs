@@ -227,7 +227,7 @@ namespace EduFlowAI.Repositories.Goals
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task SaveGoalTaskChangesAsync(List<Taskmanagement> tasksToAdd,List<Taskmanagement> tasksToUpdate,List<Taskmanagement> tasksToDelete,CancellationToken cancellationToken)
+        public async Task SaveGoalTaskChangesAsync(List<Taskmanagement> tasksToAdd, List<Taskmanagement> tasksToUpdate, List<Taskmanagement> tasksToDelete, CancellationToken cancellationToken)
         {
             await using var transaction =
                 await _context.Database.BeginTransactionAsync(
@@ -237,7 +237,7 @@ namespace EduFlowAI.Repositories.Goals
             {
                 if (tasksToAdd.Count > 0)
                 {
-                    await _context.Taskmanagements.AddRangeAsync(tasksToAdd,cancellationToken);
+                    await _context.Taskmanagements.AddRangeAsync(tasksToAdd, cancellationToken);
                 }
 
                 if (tasksToUpdate.Count > 0)
@@ -260,6 +260,19 @@ namespace EduFlowAI.Repositories.Goals
 
                 throw;
             }
+        }
+
+        public async Task UpdateGoalStatusAsync(int goalId, int statusId, int updatedBy, CancellationToken cancellation)
+        {
+            var goal = await _context.Goalmanagements.FirstOrDefaultAsync(g => g.Goalid == goalId, cancellation);
+            if (goal == null) return;
+
+            goal.Statusid = statusId;
+            goal.Updatedat = DateTimeHelper.GetDateTimeNow();
+            goal.Updatedby = updatedBy;
+
+            _context.Goalmanagements.Update(goal);
+            await _context.SaveChangesAsync(cancellation);
         }
     }
 }

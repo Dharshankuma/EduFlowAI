@@ -5,16 +5,21 @@ using EduFlowAI.Exceptions;
 using EduFlowAI.Helpers;
 using EduFlowAI.Models;
 using EduFlowAI.Repositories.Profiles;
+using EduFlowAI.PlannerEngine;
 
 namespace EduFlowAI.Services.Profiles
 {
     public class ProfileService : IProfileService
     {
         private readonly IProfileRepository _repo;
+        private readonly IPlannerEngine _plannerEngine;
+        private readonly Microsoft.Extensions.Logging.ILogger<ProfileService> _logger;
 
-        public ProfileService(IProfileRepository repo)
+        public ProfileService(IProfileRepository repo, IPlannerEngine plannerEngine, Microsoft.Extensions.Logging.ILogger<ProfileService> logger)
         {
             _repo = repo;
+            _plannerEngine = plannerEngine;
+            _logger = logger;
         }
 
         public async Task<ProfileResponseDTO> GetProfileAsync(int userId, CancellationToken cancellation)
@@ -183,6 +188,16 @@ namespace EduFlowAI.Services.Profiles
             }
 
             await _repo.UpdateWeeklyAvailability(availability,cancellationToken);
+
+            // Trigger planner for availability update
+            try
+            {
+                await _plannerEngine.RunPlannerAsync(userId, EduFlowAI.Enums.PlannerEngine.PlannerEngineType.AvailabilityUpdated, cancellationToken);
+            }
+            catch
+            {
+                // planner failures should not block the update
+            }
         }
 
         private static int CalculateStudyStreak(List<DailyStudyStatusResponseDTO> studyDays)

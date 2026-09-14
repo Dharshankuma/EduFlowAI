@@ -3,6 +3,7 @@ using EduFlowAI.DTO.Goals.Responses;
 using EduFlowAI.Exceptions;
 using EduFlowAI.Helpers;
 using EduFlowAI.Models;
+using EduFlowAI.PlannerEngine;
 using EduFlowAI.Repositories.Goals;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Runtime.Serialization;
@@ -12,14 +13,47 @@ namespace EduFlowAI.Services.Goals
     public sealed class GoalService : IGoalService
     {
         private readonly IGoalRepository _repo;
+        private readonly IPlannerEngine _plannerEngine;
+        private readonly IPlannerRepository _plannerRepo;
 
 
-        public GoalService(IGoalRepository repo)
+        private readonly Microsoft.Extensions.Logging.ILogger<GoalService> _logger;
+
+        public GoalService(IGoalRepository repo, IPlannerEngine plannerEngine, IPlannerRepository plannerRepo, Microsoft.Extensions.Logging.ILogger<GoalService> logger)
         {
             _repo = repo;
+            _plannerEngine = plannerEngine;
+            _plannerRepo = plannerRepo;
+            _logger = logger;
         }
 
+        public async Task CompleteGoalAsync(int userId, string goalIdentifier, CancellationToken cancellation)
+        {
+            if (string.IsNullOrWhiteSpace(goalIdentifier))
+                throw new BadRequestException("Goal identifier is required.");
 
+            var goal = await _repo.GetGoalForUserAsync(userId, goalIdentifier, cancellation);
+            if (goal == null) throw new NotFoundException("Goal not found.");
+
+            var completedStatusId = await _plannerRepo.GetStatusIdByNameAsync("Completed", cancellation);
+            if (!completedStatusId.HasValue) throw new BadRequestException("Completed status not configured.");
+
+            // Mark goal completed
+            await _repo.UpdateGoalStatusAsync(goal.Goalid, completedStatusId.Value, userId, cancellation);
+
+            // Cancel future planned schedules for that goal
+            await _plannerRepo.CancelFuturePlannedSchedulesForGoalAsync(goal.Goalid, userId, cancellation);
+
+            // Re-run planner for remaining active goals; log failures but do not block completion
+            try
+            {
+                await _plannerEngine.RunPlannerAsync(userId, EduFlowAI.Enums.PlannerEngine.PlannerEngineType.GoalCompleted, cancellation);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Planner Run failed during CompleteGoalAsync for user {UserId}, goal {GoalIdentifier}", userId, goalIdentifier);
+            }
+        }
 
         public async Task<GoalsGridResponseDTO> GetGoalsGridDataAsync(int userId,GoalsGridRequestDTO objdto,CancellationToken cancellation)
         {
@@ -342,6 +376,37 @@ namespace EduFlowAI.Services.Goals
             // --------------------------------------------------
 
             await _repo.SaveGoalTaskChangesAsync(tasksToAdd,tasksToUpdate,tasksToDelete,cancellationToken);
+
+            // Trigger planner: if new tasks added -> TaskAdded, else if updated -> TaskUpdated
+            try
+            {
+                if (tasksToAdd.Count > 0)
+                {
+                    try
+                    {
+                        await _plannerEngine.RunPlannerForGoalAsync(userId, goal.Goalid, EduFlowAI.Enums.PlannerEngine.PlannerEngineType.TaskAdded, cancellationToken);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Planner Run failed during SaveGoalTasksAsync (TaskAdded) for user {UserId}, goal {GoalIdentifier}", userId, goal.Goalidentifier);
+                    }
+                }
+                else if (tasksToUpdate.Count > 0)
+                {
+                    try
+                    {
+                        await _plannerEngine.RunPlannerForGoalAsync(userId, goal.Goalid, EduFlowAI.Enums.PlannerEngine.PlannerEngineType.TaskUpdated, cancellationToken);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Planner Run failed during SaveGoalTasksAsync (TaskUpdated) for user {UserId}, goal {GoalIdentifier}", userId, goal.Goalidentifier);
+                    }
+                }
+            }
+            catch
+            {
+                // planner failures should not block task save
+            }
 
             // --------------------------------------------------
             // Return the complete current task list

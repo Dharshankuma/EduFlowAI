@@ -3,14 +3,17 @@
     public static class CorsExtensions
     {
         private const string corsPolicy = "AllowReactApp";
-        public static IServiceCollection AddCorsConfiguration(this IServiceCollection services)
+        public static IServiceCollection AddCorsConfiguration(this IServiceCollection services,IConfiguration configuration)
         {
+
+            var allowedOrigins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+
             services.AddCors(options =>
             {
                 options.AddPolicy(corsPolicy, policy =>
                 {
                     policy
-                        .AllowAnyOrigin()
+                        .WithOrigins(allowedOrigins ?? [])
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });

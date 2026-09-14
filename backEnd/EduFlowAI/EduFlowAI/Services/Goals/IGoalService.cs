@@ -7,5 +7,6 @@ namespace EduFlowAI.Services.Goals
     {
         Task<GoalsGridResponseDTO> GetGoalsGridDataAsync(int userId, GoalsGridRequestDTO objdto, CancellationToken cancellation);
         Task<GoalViewResponseDTO> GetParticularGoalAsync(int userId, string taskIdentifier, CancellationToken cancellation);
+        Task CompleteGoalAsync(int userId, string goalIdentifier, CancellationToken cancellation);
     }
 }

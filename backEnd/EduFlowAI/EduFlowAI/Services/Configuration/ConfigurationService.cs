@@ -25,8 +25,8 @@ namespace EduFlowAI.Services.Configuration
                 .Select(x => new { x.Priorityidentifier, x.Priority })
                 .ToListAsync(cancellation);
     
-            var goalTypeData = await _context.Prioritymasters   
-                .Select(x => new { x.Priorityidentifier, x.Priority })
+            var goalTypeData = await _context.Goaltypemasters   
+                .Select(x => new { x.Goaltypeidentifier, x.Goaltype })
                 .ToListAsync(cancellation);
 
 

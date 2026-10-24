@@ -12,6 +12,9 @@ using EduFlowAI.Validators;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using EduFlowAI.Services.Schedules;
+using EduFlowAI.Services.Configuration;
+using EduFlowAI.Repositories.Calendar;
+using EduFlowAI.Services.Calendar;
 
 namespace EduFlowAI.Extensions
 {
@@ -32,6 +35,7 @@ namespace EduFlowAI.Extensions
             services.AddScoped<IAuthenticationRepository,AuthenticationRepository>();
             services.AddScoped<IProfileRepository, ProfileRepository>();
             services.AddScoped<IGoalRepository, GoalRepository>();
+            services.AddScoped<ICalendarRepository, CalendarRepository>();
 
 
             //Services
@@ -39,6 +43,7 @@ namespace EduFlowAI.Extensions
             services.AddScoped<IAuthenticationEmailTemplateService, AuthenticationEmailTemplateService>();
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IGoalService, GoalService>();
+            services.AddScoped<ICalendarService, CalendarService>();
 
             // Planner Engine
             services.AddScoped<IPlannerRepository, PlannerRepository>();
@@ -46,6 +51,7 @@ namespace EduFlowAI.Extensions
             services.AddSingleton(new PlannerOptions());
             // Schedule service for status updates
             services.AddScoped<IScheduleService, ScheduleService>();
+            services.AddScoped<IConfigurationService, ConfigurationService>();
 
 
             return services;

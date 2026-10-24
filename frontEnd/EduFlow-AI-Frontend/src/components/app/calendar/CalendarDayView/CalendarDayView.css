@@ -153,6 +153,118 @@
     padding: 24px;
 }
 
+/* Day Header in Card */
+.day-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.day-nav-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.day-nav-circle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background-color: var(--surface-color);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.day-nav-circle-btn:hover {
+    background-color: #f1f5f9;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.day-title-info-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.day-main-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.today-badge-pill {
+    background-color: #e0e7ff;
+    color: var(--primary-color);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+}
+
+.day-session-count-tag {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.day-session-count-tag i {
+    color: var(--primary-color);
+}
+
+/* Empty day placeholder */
+.empty-day-state-wrapper {
+    position: absolute;
+    top: 60px;
+    left: 80px;
+    right: 0;
+    text-align: center;
+    padding: 60px 20px;
+    background: #fbfcfe;
+    border: 2px dashed #e2e8f0;
+    border-radius: 12px;
+    margin: 20px;
+}
+
+.empty-day-icon {
+    font-size: 40px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+}
+
+.empty-day-state-wrapper h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.empty-day-state-wrapper p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+.empty-day-action {
+    display: inline-block;
+}
+
 /* Vertical Timeline Layout */
 .timeline-scroll-container {
     width: 100%;

@@ -153,6 +153,108 @@
     padding: 24px;
 }
 
+/* Week Header in Card */
+.week-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.week-nav-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.week-nav-circle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background-color: var(--surface-color);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.week-nav-circle-btn:hover {
+    background-color: #f1f5f9;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
+.week-title-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.week-title-month {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.week-number-pill {
+    background-color: #e0e7ff;
+    color: var(--primary-color);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+}
+
+/* Direct Week Selector Pills */
+.week-pills-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.week-pill-btn {
+    border: 1px solid var(--border-color);
+    background-color: #f8fafc;
+    color: var(--text-secondary);
+    padding: 5px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.week-pill-btn:hover {
+    background-color: #e2e8f0;
+    color: var(--text-primary);
+}
+
+.week-pill-btn.active {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+}
+
+.today-dot-indicator {
+    width: 6px;
+    height: 6px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    margin-top: 3px;
+}
+
 /* Scroll Area for Grid */
 .week-planner-scroll-box {
     width: 100%;

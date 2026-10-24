@@ -1,117 +1,16 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import DashboardCard from '../../../common/DashboardCard/DashboardCard';
 import { ButtonComponent } from '../../../common/CommonComponents/ButtonComponent';
 import ProgressBar from '../../../common/ProgressBar/ProgressBar';
+import {
+    MONTH_NAMES,
+    SHORT_MONTH_NAMES,
+    WEEKDAYS_SUN_FIRST,
+    generateMonthGrid,
+    isSameDay,
+    parseDateSafe
+} from '../../../../utils/calendarUtils';
 import './CalendarMonthView.css';
-
-// Safe date parser to avoid timezone mismatch issues
-const parseDateSafe = (dateVal) => {
-    if (dateVal instanceof Date) return dateVal;
-    if (typeof dateVal === 'string') {
-        const parts = dateVal.split('-');
-        if (parts.length === 3) {
-            return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
-        }
-        return new Date(dateVal);
-    }
-    return new Date(dateVal);
-};
-
-// Check if two dates are on the same day
-const isSameDay = (d1, d2) => {
-    if (!d1 || !d2) return false;
-    const date1 = parseDateSafe(d1);
-    const date2 = parseDateSafe(d2);
-    return date1.getDate() === date2.getDate() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getFullYear() === date2.getFullYear();
-};
-
-// List of month names
-const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-];
-
-// Weekday headers
-const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-// Default mock data matching Figma view
-const defaultEvents = [
-    {
-        id: 1,
-        title: "DS Algorithms",
-        date: "2026-10-01",
-        time: "10:00 AM",
-        type: "Study Session"
-    },
-    {
-        id: 2,
-        title: "OS Quiz Prep",
-        date: "2026-10-08",
-        time: "2:00 PM",
-        type: "Revision",
-        completed: true
-    },
-    {
-        id: 3,
-        title: "Final Review",
-        date: "2026-10-24",
-        time: "9:00 AM",
-        type: "Exam"
-    },
-    {
-        id: 4,
-        title: "Linear Algebra",
-        date: "2026-10-24",
-        time: "11:30 AM",
-        type: "Study Session"
-    },
-    {
-        id: 5,
-        title: "Group Discussion",
-        date: "2026-10-24",
-        time: "3:00 PM",
-        type: "Revision"
-    },
-    {
-        id: 6,
-        title: "Session 4",
-        date: "2026-10-24",
-        time: "4:30 PM",
-        type: "Study Session"
-    },
-    {
-        id: 7,
-        title: "Session 5",
-        date: "2026-10-24",
-        time: "6:00 PM",
-        type: "Revision"
-    },
-    {
-        id: 8,
-        title: "DB Lab Report",
-        date: "2026-10-25",
-        time: "11:59 PM",
-        type: "Assignment",
-        urgent: true
-    }
-];
-
-const defaultTodaySummary = {
-    studyGoal: 85,
-    concentrationScore: 92
-};
-
-const defaultMonthlyProgress = {
-    totalStudyHours: 124,
-    completedSessions: 42,
-    upcomingSessions: 18
-};
-
-const defaultPlannerInsight = {
-    recommendation: "Your workload is concentrated on Oct 24-25. Would you like to distribute some tasks to the 26th for better retention?"
-};
 
 // Subcomponent: Individual Calendar Grid Cell
 const CalendarDateCell = ({
@@ -170,7 +69,7 @@ const CalendarDateCell = ({
                             className={`event-badge ${typeClass} ${event.completed ? 'event-completed' : ''}`}
                             title={`${event.title} (${event.time || ''})`}
                             onClick={(e) => {
-                                e.stopPropagation(); // prevent select-date click on the outer cell
+                                e.stopPropagation(); // prevent select-date click on outer cell
                                 onEventClick && onEventClick(event);
                             }}
                         >
@@ -192,105 +91,40 @@ const CalendarDateCell = ({
 
 // Main Calendar Month View Component
 export const CalendarMonthView = ({
-    currentMonth = "October",
+    currentMonth = 9, // 0-based index or string
     currentYear = 2026,
-    calendarDays,
-    events = defaultEvents,
-    todaySummary = defaultTodaySummary,
-    monthlyProgress = defaultMonthlyProgress,
-    plannerInsight = defaultPlannerInsight,
+    selectedDate,
+    events = [],
+    todaySummary,
+    monthlyProgress,
+    plannerInsight,
     activeView = "Month",
     onViewChange,
+    onPrevMonth,
+    onNextMonth,
+    onSelectMonth,
+    onToday,
     onDateClick,
     onEventClick,
     onAdjustSchedule
 }) => {
-    // 1. Month resolution
+    // 1. Resolve month index (0 to 11)
     const activeMonthIndex = useMemo(() => {
         if (typeof currentMonth === 'number') return currentMonth;
-        const idx = monthNames.findIndex(m => m.toLowerCase() === currentMonth.toLowerCase());
+        const idx = MONTH_NAMES.findIndex(m => m.toLowerCase() === String(currentMonth).toLowerCase());
         return idx !== -1 ? idx : 9; // Fallback to October
     }, [currentMonth]);
 
     const activeMonthName = useMemo(() => {
-        return monthNames[activeMonthIndex];
+        return MONTH_NAMES[activeMonthIndex];
     }, [activeMonthIndex]);
 
-    // 2. Interactive Selection State (Local selection to show visual highlight immediately on click)
-    const [localSelectedDate, setLocalSelectedDate] = useState(() => {
-        // Default to October 24, 2026 (the "Today" marker in Figma mockup)
-        return new Date(2026, 9, 24);
-    });
-
-    // 3. Grid generator fallback if calendarDays prop is not provided
+    // 2. Generate month grid cells dynamically based on currentYear and activeMonthIndex
     const daysGrid = useMemo(() => {
-        if (calendarDays && calendarDays.length > 0) {
-            return calendarDays;
-        }
+        return generateMonthGrid(currentYear, activeMonthIndex);
+    }, [currentYear, activeMonthIndex]);
 
-        const firstDayIndex = new Date(currentYear, activeMonthIndex, 1).getDay();
-        const daysInCurrentMonth = new Date(currentYear, activeMonthIndex + 1, 0).getDate();
-        const lastDayPrevMonth = new Date(currentYear, activeMonthIndex, 0).getDate();
-
-        const list = [];
-
-        // Trailing days from previous month
-        for (let i = firstDayIndex - 1; i >= 0; i--) {
-            const dayNum = lastDayPrevMonth - i;
-            const prevMonthDate = new Date(
-                activeMonthIndex === 0 ? currentYear - 1 : currentYear,
-                activeMonthIndex === 0 ? 11 : activeMonthIndex - 1,
-                dayNum
-            );
-            list.push({
-                day: dayNum,
-                date: prevMonthDate,
-                isToday: false,
-                isCurrentMonth: false
-            });
-        }
-
-        // Days in the current month
-        for (let dayNum = 1; dayNum <= daysInCurrentMonth; dayNum++) {
-            const currentMonthDate = new Date(currentYear, activeMonthIndex, dayNum);
-            // Match today's date of October 24, 2026 to visually match the Figma screen
-            const isToday = currentYear === 2026 && activeMonthIndex === 9 && dayNum === 24;
-            list.push({
-                day: dayNum,
-                date: currentMonthDate,
-                isToday,
-                isCurrentMonth: true
-            });
-        }
-
-        // Leading days from next month
-        const remainingSlots = 42 - list.length;
-        for (let dayNum = 1; dayNum <= remainingSlots; dayNum++) {
-            const nextMonthDate = new Date(
-                activeMonthIndex === 11 ? currentYear + 1 : currentYear,
-                activeMonthIndex === 11 ? 0 : activeMonthIndex + 1,
-                dayNum
-            );
-            list.push({
-                day: dayNum,
-                date: nextMonthDate,
-                isToday: false,
-                isCurrentMonth: false
-            });
-        }
-
-        return list;
-    }, [calendarDays, activeMonthIndex, currentYear]);
-
-    // Handle day selection click
-    const handleDayClick = (dayData) => {
-        setLocalSelectedDate(dayData.date);
-        if (onDateClick) {
-            onDateClick(dayData.date);
-        }
-    };
-
-    // Filter events for a particular day
+    // 3. Filter events for a particular day
     const getEventsForDay = (dayDate) => {
         const eventList = events || [];
         return eventList.filter(event => isSameDay(event.date, dayDate));
@@ -300,24 +134,52 @@ export const CalendarMonthView = ({
         <div className="calendar-month-view-container container-fluid p-0">
             {/* 1. Header & Switcher Row */}
             <div className="row align-items-center mb-4">
-                <div className="col-12 col-md-8">
+                <div className="col-12 col-md-7">
                     <div className="calendar-title-info">
                         <h1>Study Calendar</h1>
                         <p className="subtitle">View your personalized study schedule for the month.</p>
                     </div>
                 </div>
-                <div className="col-12 col-md-4 d-flex justify-content-md-end mt-3 mt-md-0">
-                    <div className="view-switcher">
-                        {['Month', 'Week', 'Day'].map((view) => (
+                <div className="col-12 col-md-5 d-flex justify-content-md-end mt-3 mt-md-0">
+                    <div className="header-actions-right">
+                        <div className="view-switcher">
+                            {['Month', 'Week', 'Day'].map((view) => (
+                                <button
+                                    key={view}
+                                    type="button"
+                                    className={`switcher-btn ${activeView === view ? 'active' : ''}`}
+                                    onClick={() => onViewChange && onViewChange(view)}
+                                >
+                                    {view}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Month navigation controls matching Week and Day views */}
+                        <div className="today-control-wrapper">
                             <button
-                                key={view}
                                 type="button"
-                                className={`switcher-btn ${activeView === view ? 'active' : ''}`}
-                                onClick={() => onViewChange && onViewChange(view)}
+                                className="today-nav-arrow"
+                                onClick={onPrevMonth}
+                                title="Previous Month"
                             >
-                                {view}
+                                <i className="bi bi-chevron-left"></i>
                             </button>
-                        ))}
+                            <ButtonComponent
+                                type="button"
+                                text="Today"
+                                className="today-btn"
+                                onclick={onToday}
+                            />
+                            <button
+                                type="button"
+                                className="today-nav-arrow"
+                                onClick={onNextMonth}
+                                title="Next Month"
+                            >
+                                <i className="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -327,14 +189,50 @@ export const CalendarMonthView = ({
                 {/* Calendar Grid on left */}
                 <div className="calendar-main-col">
                     <div className="calendar-card">
-                        <div className="month-year-title">
-                            {activeMonthName} {currentYear}
+                        {/* Month Header with navigation & quick-switch month pills */}
+                        <div className="month-card-header">
+                            <div className="month-title-nav">
+                                <button
+                                    type="button"
+                                    className="month-nav-circle-btn"
+                                    onClick={onPrevMonth}
+                                    title="Previous Month"
+                                >
+                                    <i className="bi bi-chevron-left"></i>
+                                </button>
+                                <h2 className="month-year-title">
+                                    {activeMonthName} {currentYear}
+                                </h2>
+                                <button
+                                    type="button"
+                                    className="month-nav-circle-btn"
+                                    onClick={onNextMonth}
+                                    title="Next Month"
+                                >
+                                    <i className="bi bi-chevron-right"></i>
+                                </button>
+                            </div>
+
+                            {/* Direct month switcher pills: Jan, Feb, Mar, Apr... */}
+                            <div className="month-pills-container">
+                                {SHORT_MONTH_NAMES.map((shortMonth, idx) => (
+                                    <button
+                                        key={shortMonth}
+                                        type="button"
+                                        className={`month-pill-btn ${idx === activeMonthIndex ? 'active' : ''}`}
+                                        onClick={() => onSelectMonth && onSelectMonth(idx)}
+                                        title={`Go to ${MONTH_NAMES[idx]}`}
+                                    >
+                                        {shortMonth}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
 
                         <div className="calendar-grid-wrapper">
                             {/* Weekday headers row */}
                             <div className="calendar-weekdays-row">
-                                {weekdays.map((dayName) => (
+                                {WEEKDAYS_SUN_FIRST.map((dayName) => (
                                     <div key={dayName} className="weekday-header">
                                         {dayName}
                                     </div>
@@ -344,7 +242,7 @@ export const CalendarMonthView = ({
                             {/* Calendar Days Grid */}
                             <div className="calendar-days-grid">
                                 {daysGrid.map((dayData, index) => {
-                                    const isSelected = localSelectedDate && isSameDay(dayData.date, localSelectedDate);
+                                    const isSelected = selectedDate && isSameDay(dayData.date, selectedDate);
                                     const dayEvents = getEventsForDay(dayData.date);
 
                                     return (
@@ -355,7 +253,7 @@ export const CalendarMonthView = ({
                                             isToday={dayData.isToday}
                                             isSelected={isSelected}
                                             events={dayEvents}
-                                            onClick={() => handleDayClick(dayData)}
+                                            onClick={() => onDateClick && onDateClick(dayData.date)}
                                             onEventClick={onEventClick}
                                         />
                                     );
@@ -377,7 +275,7 @@ export const CalendarMonthView = ({
                         {/* Study Goal Reached bar */}
                         <div className="study-goal-section mb-3">
                             <ProgressBar
-                                value={todaySummary?.studyGoal || 0}
+                                value={todaySummary?.studyGoal || 85}
                                 max={100}
                                 label="Study Goal Reached"
                                 height="8px"
@@ -389,23 +287,23 @@ export const CalendarMonthView = ({
                         {/* Concentration Score display */}
                         <div className="summary-stat-box">
                             <span className="summary-stat-label">Concentration Score</span>
-                            <span className="summary-stat-value">{todaySummary?.concentrationScore || 0}</span>
+                            <span className="summary-stat-value">{todaySummary?.concentrationScore || 92}</span>
                         </div>
                     </DashboardCard>
 
                     {/* Monthly Progress Card (Gradient Background) */}
                     <DashboardCard hover={false} shadow={true} padding="24px" className="monthly-progress-card">
                         <div className="progress-card-title">Monthly Progress</div>
-                        <div className="progress-hours-val">{monthlyProgress?.totalStudyHours || 0}h</div>
-                        <div className="progress-hours-lbl">Total Study Hours</div>
+                        <div className="progress-hours-val">{monthlyProgress?.totalStudyHours || 124}h</div>
+                        <div className="progress-hours-lbl">Total Study Hours ({activeMonthName})</div>
 
                         <div className="progress-stats-row">
                             <div className="progress-stat-item">
-                                <span className="progress-stat-num">{monthlyProgress?.completedSessions || 0}</span>
+                                <span className="progress-stat-num">{monthlyProgress?.completedSessions || 42}</span>
                                 <span className="progress-stat-desc">Completed</span>
                             </div>
                             <div className="progress-stat-item">
-                                <span className="progress-stat-num">{monthlyProgress?.upcomingSessions || 0}</span>
+                                <span className="progress-stat-num">{monthlyProgress?.upcomingSessions || 18}</span>
                                 <span className="progress-stat-desc">Upcoming</span>
                             </div>
                         </div>
@@ -418,7 +316,7 @@ export const CalendarMonthView = ({
                             <span>AI Planner Insight</span>
                         </div>
                         <p className="insight-recommendation">
-                            {plannerInsight?.recommendation || ""}
+                            {plannerInsight?.recommendation || "Your study schedule is balanced for optimal retention."}
                         </p>
                         <div className="adjust-schedule-btn-wrapper">
                             <ButtonComponent

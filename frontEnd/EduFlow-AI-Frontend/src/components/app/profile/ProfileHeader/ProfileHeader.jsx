@@ -19,7 +19,7 @@ export const ProfileHeader = ({ user = {}, onUpload }) => {
                     {/* Left Column: Avatar and User Details */}
                     <div className="col-12 col-md-8 d-flex flex-column flex-sm-row align-items-center align-items-sm-start gap-4">
                         {/* Circular Avatar Container with Overlay Pencil Icon */}
-                        <div className="profile-avatar-wrapper">
+                        {/* <div className="profile-avatar-wrapper">
                             {profileImage ? (
                                 <img src={profileImage} alt={userName} className="profile-avatar-img" />
                             ) : (
@@ -35,7 +35,7 @@ export const ProfileHeader = ({ user = {}, onUpload }) => {
                             >
                                 <i className="bi bi-pencil-fill"></i>
                             </button>
-                        </div>
+                        </div> */}
 
                         {/* User Metadata stack */}
                         <div className="profile-meta-details text-center text-sm-start">
@@ -55,7 +55,7 @@ export const ProfileHeader = ({ user = {}, onUpload }) => {
                     </div>
 
                     {/* Right Column: Upload Profile Button */}
-                    <div className="col-12 col-md-4 d-flex justify-content-md-end justify-content-center">
+                    {/* <div className="col-12 col-md-4 d-flex justify-content-md-end justify-content-center">
                         <ButtonComponent
                             type="button"
                             text={
@@ -66,7 +66,7 @@ export const ProfileHeader = ({ user = {}, onUpload }) => {
                             className="cta_btn profile-upload-btn"
                             onclick={onUpload}
                         />
-                    </div>
+                    </div> */}
 
                 </div>
             </div>

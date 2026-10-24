@@ -2,30 +2,14 @@ import React, { useState, useMemo } from 'react';
 import DashboardCard from '../../../common/DashboardCard/DashboardCard';
 import { ButtonComponent } from '../../../common/CommonComponents/ButtonComponent';
 import ProgressBar from '../../../common/ProgressBar/ProgressBar';
+import {
+    MONTH_NAMES,
+    isSameDay,
+    parseDateSafe,
+    getWeeksInMonth,
+    TODAY_ANCHOR
+} from '../../../../utils/calendarUtils';
 import './CalendarWeekView.css';
-
-// Safe date parser to avoid timezone offsets
-const parseDateSafe = (dateVal) => {
-    if (dateVal instanceof Date) return dateVal;
-    if (typeof dateVal === 'string') {
-        const parts = dateVal.split('-');
-        if (parts.length === 3) {
-            return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
-        }
-        return new Date(dateVal);
-    }
-    return new Date(dateVal);
-};
-
-// Check if two dates are on the same day
-const isSameDay = (d1, d2) => {
-    if (!d1 || !d2) return false;
-    const date1 = parseDateSafe(d1);
-    const date2 = parseDateSafe(d2);
-    return date1.getDate() === date2.getDate() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getFullYear() === date2.getFullYear();
-};
 
 // Helper to convert time strings (e.g. "09:00 AM", "13:00", "02:00 PM") to floating-point hours
 const parseTimeToHour = (timeStr) => {
@@ -62,84 +46,21 @@ const defaultTimeSlots = [
     "20:00", "21:00", "22:00", "23:00"
 ];
 
-// Default 7 days of the week (June 23 to 29, 2026, Tuesday June 24 is today)
-const defaultWeekDays = [
-    { name: "Mon", dayNumber: 23, date: new Date(2026, 5, 23), isToday: false, isSelected: false },
-    { name: "Tue", dayNumber: 24, date: new Date(2026, 5, 24), isToday: true, isSelected: false },
-    { name: "Wed", dayNumber: 25, date: new Date(2026, 5, 25), isToday: false, isSelected: false },
-    { name: "Thu", dayNumber: 26, date: new Date(2026, 5, 26), isToday: false, isSelected: false },
-    { name: "Fri", dayNumber: 27, date: new Date(2026, 5, 27), isToday: false, isSelected: false },
-    { name: "Sat", dayNumber: 28, date: new Date(2026, 5, 28), isToday: false, isSelected: false },
-    { name: "Sun", dayNumber: 29, date: new Date(2026, 5, 29), isToday: false, isSelected: false }
-];
-
-const defaultEvents = [
-    {
-        id: 1,
-        title: "Calculus Review",
-        course: "Math Basics",
-        date: "2026-06-23",
-        time: "08:00 AM - 10:00 AM",
-        description: "Review vector calculus theorems and double integrals to prepare for incoming quiz.",
-        status: "Missed",
-        priority: "Medium"
-    },
-    {
-        id: 2,
-        title: "Arrays Practice",
-        course: "Placement Preparation",
-        date: "2026-06-24",
-        time: "09:00 AM - 11:00 AM",
-        description: "Intensive session focusing on multi-dimensional arrays, sliding window techniques, and general complex array patterns.",
-        status: "Completed",
-        priority: "High"
-    },
-    {
-        id: 3,
-        title: "Neural Networks",
-        course: "Advanced AI",
-        date: "2026-06-24",
-        time: "02:00 PM - 04:00 PM",
-        description: "Deep dive into neural nets backpropagation algorithms and gradient descent optimization equations.",
-        status: "Incomplete",
-        priority: "Medium"
-    },
-    {
-        id: 4,
-        title: "Database Indexing",
-        course: "Information Systems",
-        date: "2026-06-25",
-        time: "10:00 AM - 12:00 PM",
-        description: "Learn about B-Trees, B+ Trees, hash indexing and query query optimization layouts.",
-        status: "Upcoming",
-        priority: "Medium"
-    }
-];
-
-const defaultTodaySummary = {
-    studyGoal: 85,
-    concentrationScore: 92
-};
-
-const defaultMonthlyProgress = {
-    totalStudyHours: 124,
-    completedSessions: 42,
-    upcomingSessions: 18
-};
-
-const defaultPlannerInsight = {
-    recommendation: "Your workload is concentrated on Tuesday afternoon. Consider moving one revision session to Thursday for better retention."
-};
-
 export const CalendarWeekView = ({
-    selectedWeek = "June 23 - 29, 2026",
-    weekDays = defaultWeekDays,
+    currentMonth = 9,
+    currentYear = 2026,
+    currentWeekIndex = 0,
+    weeks: providedWeeks,
+    events = [],
+    selectedDate,
     timeSlots = defaultTimeSlots,
-    events = defaultEvents,
-    todaySummary = defaultTodaySummary,
-    monthlyProgress = defaultMonthlyProgress,
-    plannerInsight = defaultPlannerInsight,
+    todaySummary,
+    monthlyProgress,
+    plannerInsight,
     activeView = "Week",
+    onPrevWeek,
+    onNextWeek,
+    onSelectWeek,
     onToday,
     onViewChange,
     onEventClick,
@@ -148,30 +69,64 @@ export const CalendarWeekView = ({
     onReschedule,
     onAdjustSchedule
 }) => {
-    // 1. Timeline bounds index resolution
+    // 1. Resolve month index (0 to 11)
+    const activeMonthIndex = useMemo(() => {
+        if (typeof currentMonth === 'number') return currentMonth;
+        const idx = MONTH_NAMES.findIndex(m => m.toLowerCase() === String(currentMonth).toLowerCase());
+        return idx !== -1 ? idx : 9;
+    }, [currentMonth]);
+
+    const activeMonthName = useMemo(() => {
+        return MONTH_NAMES[activeMonthIndex];
+    }, [activeMonthIndex]);
+
+    // 2. Resolve weeks for this month
+    const weeks = useMemo(() => {
+        if (providedWeeks && providedWeeks.length > 0) return providedWeeks;
+        return getWeeksInMonth(currentYear, activeMonthIndex);
+    }, [providedWeeks, currentYear, activeMonthIndex]);
+
+    // 3. Resolve active week object
+    const activeWeek = useMemo(() => {
+        if (!weeks || weeks.length === 0) return null;
+        const safeIdx = Math.max(0, Math.min(currentWeekIndex, weeks.length - 1));
+        return weeks[safeIdx];
+    }, [weeks, currentWeekIndex]);
+
+    // 4. Days of this active week
+    const weekDays = useMemo(() => {
+        if (!activeWeek || !activeWeek.days) return [];
+        return activeWeek.days;
+    }, [activeWeek]);
+
+    // 5. Timeline bounds start hour
     const timelineStartHour = useMemo(() => {
         if (!timeSlots || timeSlots.length === 0) return 6;
         return parseTimeToHour(timeSlots[0]);
     }, [timeSlots]);
 
-    // 2. Local Popover overlay state for clicked event card details
+    // 6. Popover state for clicked event details
     const [activeEvent, setActiveEvent] = useState(null);
     const [popoverCoords, setPopoverCoords] = useState({ top: 0, left: 0 });
 
-    // 3. Match event date to weekday column index
+    // 7. Check if today is present in the current week
+    const hasTodayInWeek = useMemo(() => {
+        return weekDays.some(d => d.isToday);
+    }, [weekDays]);
+
+    // 8. Match event date to weekday column index (0-6)
     const getEventDayIndex = (eventDateStr) => {
         return weekDays.findIndex(day => isSameDay(day.date, eventDateStr));
     };
 
-    // Calculate layout metrics for absolute positioning overlays
+    // 9. Calculate layout positioning metrics for event cards
     const getEventStyles = (event, dayIndex) => {
         const { start, end } = parseTimeRange(event.time);
         const slotHeight = 100; // height of each hour slot in pixels
         
         const top = (start - timelineStartHour) * slotHeight;
-        const height = (end - start) * slotHeight;
+        const height = Math.max((end - start) * slotHeight, 38);
         
-        // Calculate dynamic horizontal alignment
         const left = `calc(${dayIndex} * (100% / 7) + 5px)`;
         const width = `calc((100% / 7) - 10px)`;
         
@@ -195,20 +150,19 @@ export const CalendarWeekView = ({
         setActiveEvent(event);
         
         const rect = e.currentTarget.getBoundingClientRect();
-        const parentRect = e.currentTarget.offsetParent.getBoundingClientRect();
+        const parentRect = e.currentTarget.offsetParent ? e.currentTarget.offsetParent.getBoundingClientRect() : rect;
         
-        // Offset popover alignment to the right of the block
         let leftPos = rect.left - parentRect.left + rect.width + 10;
         let topPos = rect.top - parentRect.top;
         
-        // Overflow fallback layout shifting popover to the left of card
+        // Overflow fallback if popover extends beyond container width
         if (leftPos + 290 > parentRect.width) {
             leftPos = rect.left - parentRect.left - 300;
         }
         
         setPopoverCoords({
-            top: topPos,
-            left: leftPos
+            top: Math.max(0, topPos),
+            left: Math.max(10, leftPos)
         });
         
         if (onEventClick) {
@@ -223,8 +177,10 @@ export const CalendarWeekView = ({
                 <div className="col-12 col-md-7">
                     <div className="calendar-title-info">
                         <h1>Study Calendar</h1>
-                        <p className="subtitle">Today's Study Schedule</p>
-                        <p className="calendar-date-display">{selectedWeek}</p>
+                        <p className="subtitle">Weekly Study Schedule</p>
+                        <p className="calendar-date-display">
+                            {activeWeek ? activeWeek.fullLabel : `${activeMonthName} ${currentYear}`}
+                        </p>
                     </div>
                 </div>
                 <div className="col-12 col-md-5 d-flex justify-content-md-end mt-3 mt-md-0">
@@ -242,8 +198,14 @@ export const CalendarWeekView = ({
                             ))}
                         </div>
 
+                        {/* Week navigation arrows: < (Prev Week), Today, > (Next Week) */}
                         <div className="today-control-wrapper">
-                            <button type="button" className="today-nav-arrow" onClick={onToday} title="Previous Week">
+                            <button
+                                type="button"
+                                className="today-nav-arrow"
+                                onClick={onPrevWeek}
+                                title="Previous Week"
+                            >
                                 <i className="bi bi-chevron-left"></i>
                             </button>
                             <ButtonComponent
@@ -252,7 +214,12 @@ export const CalendarWeekView = ({
                                 className="today-btn"
                                 onclick={onToday}
                             />
-                            <button type="button" className="today-nav-arrow" onClick={onToday} title="Next Week">
+                            <button
+                                type="button"
+                                className="today-nav-arrow"
+                                onClick={onNextWeek}
+                                title="Next Week"
+                            >
                                 <i className="bi bi-chevron-right"></i>
                             </button>
                         </div>
@@ -265,23 +232,68 @@ export const CalendarWeekView = ({
                 {/* Weekly Grid display */}
                 <div className="calendar-main-col">
                     <div className="calendar-card">
+                        {/* Week Card Header: Month/Week Badge + Direct Week Selector Pills (Week 1, Week 2...) */}
+                        <div className="week-card-header">
+                            <div className="week-nav-group">
+                                <button
+                                    type="button"
+                                    className="week-nav-circle-btn"
+                                    onClick={onPrevWeek}
+                                    title="Previous Week"
+                                >
+                                    <i className="bi bi-chevron-left"></i>
+                                </button>
+                                <div className="week-title-badge">
+                                    <span className="week-title-month">{activeMonthName} {currentYear}</span>
+                                    <span className="week-number-pill">
+                                        Week {currentWeekIndex + 1} of {weeks.length}
+                                    </span>
+                                </div>
+                                <button
+                                    type="button"
+                                    className="week-nav-circle-btn"
+                                    onClick={onNextWeek}
+                                    title="Next Week"
+                                >
+                                    <i className="bi bi-chevron-right"></i>
+                                </button>
+                            </div>
+
+                            {/* Direct Week Selector Pills: Week 1, Week 2, Week 3, Week 4, Week 5 */}
+                            <div className="week-pills-container">
+                                {weeks.map((week, idx) => (
+                                    <button
+                                        key={week.weekNumber}
+                                        type="button"
+                                        className={`week-pill-btn ${idx === currentWeekIndex ? 'active' : ''}`}
+                                        onClick={() => onSelectWeek && onSelectWeek(idx)}
+                                        title={`${week.shortLabel}: ${week.rangeLabel}`}
+                                    >
+                                        Week {week.weekNumber}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
                         <div className="week-planner-scroll-box">
                             <div className="week-planner-container">
                                 
-                                {/* 2.1 Week Header row */}
+                                {/* 2.1 Week Header row with dynamically computed dates */}
                                 <div className="week-grid-row week-header-row">
                                     <div className="week-header-timezone-lbl">GMT-5</div>
                                     {weekDays.map((day) => {
+                                        const isSelected = selectedDate && isSameDay(day.date, selectedDate);
                                         const headerClass = [
                                             'week-day-header-cell',
                                             day.isToday ? 'is-today-header' : '',
-                                            day.isSelected ? 'is-selected-header' : ''
+                                            isSelected ? 'is-selected-header' : ''
                                         ].filter(Boolean).join(' ');
 
                                         return (
-                                            <div key={day.name} className={headerClass}>
+                                            <div key={`${day.name}-${day.dayNumber}`} className={headerClass}>
                                                 <span className="day-name">{day.name}</span>
                                                 <span className="day-number">{day.dayNumber}</span>
+                                                {day.isToday && <span className="today-dot-indicator"></span>}
                                             </div>
                                         );
                                     })}
@@ -294,7 +306,7 @@ export const CalendarWeekView = ({
                                     <div className="week-grid-columns-layer">
                                         {weekDays.map((day) => (
                                             <div
-                                                key={day.name}
+                                                key={`${day.name}-${day.dayNumber}`}
                                                 className={`week-grid-column-line ${day.isToday ? 'is-today-column' : ''}`}
                                             />
                                         ))}
@@ -307,10 +319,12 @@ export const CalendarWeekView = ({
                                         </div>
                                     ))}
 
-                                    {/* Red horizontal current timeline indicator (e.g. positioned at 12:30 PM) */}
-                                    <div className="current-time-indicator" style={{ top: '650px' }}>
-                                        <div className="current-time-dot"></div>
-                                    </div>
+                                    {/* Current timeline indicator line (visible when today is inside this week) */}
+                                    {hasTodayInWeek && (
+                                        <div className="current-time-indicator" style={{ top: '650px' }}>
+                                            <div className="current-time-dot"></div>
+                                        </div>
+                                    )}
 
                                     {/* Placed event cards absolute overlays */}
                                     <div className="week-events-overlay">
@@ -453,7 +467,7 @@ export const CalendarWeekView = ({
 
                         <div className="study-goal-section mb-3">
                             <ProgressBar
-                                value={todaySummary?.studyGoal || 0}
+                                value={todaySummary?.studyGoal || 85}
                                 max={100}
                                 label="Study Goal Reached"
                                 height="8px"
@@ -464,23 +478,23 @@ export const CalendarWeekView = ({
 
                         <div className="summary-stat-box">
                             <span className="summary-stat-label">Concentration Score</span>
-                            <span className="summary-stat-value">{todaySummary?.concentrationScore || 0}</span>
+                            <span className="summary-stat-value">{todaySummary?.concentrationScore || 92}</span>
                         </div>
                     </DashboardCard>
 
                     {/* Monthly Progress Card */}
                     <DashboardCard hover={false} shadow={true} padding="24px" className="monthly-progress-card">
                         <div className="progress-card-title">Monthly Progress</div>
-                        <div className="progress-hours-val">{monthlyProgress?.totalStudyHours || 0}h</div>
-                        <div className="progress-hours-lbl">Total Study Hours</div>
+                        <div className="progress-hours-val">{monthlyProgress?.totalStudyHours || 124}h</div>
+                        <div className="progress-hours-lbl">Total Study Hours ({activeMonthName})</div>
 
                         <div className="progress-stats-row">
                             <div className="progress-stat-item">
-                                <span className="progress-stat-num">{monthlyProgress?.completedSessions || 0}</span>
+                                <span className="progress-stat-num">{monthlyProgress?.completedSessions || 42}</span>
                                 <span className="progress-stat-desc">Completed</span>
                             </div>
                             <div className="progress-stat-item">
-                                <span className="progress-stat-num">{monthlyProgress?.upcomingSessions || 0}</span>
+                                <span className="progress-stat-num">{monthlyProgress?.upcomingSessions || 18}</span>
                                 <span className="progress-stat-desc">Upcoming</span>
                             </div>
                         </div>
@@ -493,7 +507,7 @@ export const CalendarWeekView = ({
                             <span>AI Planner Insight</span>
                         </div>
                         <p className="insight-recommendation">
-                            {plannerInsight?.recommendation || ""}
+                            {plannerInsight?.recommendation || "Your weekly study workload is distributed evenly."}
                         </p>
                         <div className="adjust-schedule-btn-wrapper">
                             <ButtonComponent

@@ -2,30 +2,14 @@ import React, { useMemo } from 'react';
 import DashboardCard from '../../../common/DashboardCard/DashboardCard';
 import { ButtonComponent } from '../../../common/CommonComponents/ButtonComponent';
 import ProgressBar from '../../../common/ProgressBar/ProgressBar';
+import {
+    MONTH_NAMES,
+    isSameDay,
+    parseDateSafe,
+    formatFullDate,
+    TODAY_ANCHOR
+} from '../../../../utils/calendarUtils';
 import './CalendarDayView.css';
-
-// Safe date parser to avoid timezone mismatch issues
-const parseDateSafe = (dateVal) => {
-    if (dateVal instanceof Date) return dateVal;
-    if (typeof dateVal === 'string') {
-        const parts = dateVal.split('-');
-        if (parts.length === 3) {
-            return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
-        }
-        return new Date(dateVal);
-    }
-    return new Date(dateVal);
-};
-
-// Check if two dates are on the same day
-const isSameDay = (d1, d2) => {
-    if (!d1 || !d2) return false;
-    const date1 = parseDateSafe(d1);
-    const date2 = parseDateSafe(d2);
-    return date1.getDate() === date2.getDate() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getFullYear() === date2.getFullYear();
-};
 
 // Helper to convert time strings (e.g., "09:30 AM" or "02:00 PM") to floating-point hours
 const parseTimeToHour = (timeStr) => {
@@ -54,7 +38,7 @@ const parseTimeRange = (timeRangeStr) => {
     return { start: 9, end: 11 };
 };
 
-// Default mock values representing the Figma day view state
+// Default mock values representing standard day timeline slots
 const defaultTimeSlots = [
     "06:00 AM", "07:00 AM", "08:00 AM", "09:00 AM", "10:00 AM",
     "11:00 AM", "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM",
@@ -62,59 +46,16 @@ const defaultTimeSlots = [
     "09:00 PM", "10:00 PM", "11:00 PM"
 ];
 
-const defaultEvents = [
-    {
-        id: 1,
-        title: "Arrays Practice",
-        course: "Placement Preparation",
-        time: "09:00 AM - 11:00 AM",
-        description: "Intensive session focusing on multi-dimensional arrays, sliding window techniques, and...",
-        priority: "High",
-        status: "Incomplete"
-    },
-    {
-        id: 2,
-        title: "Neural Networks",
-        course: "Advanced AI",
-        time: "02:00 PM - 04:00 PM",
-        description: "Focus on backpropagation algorithms, training processes, and neural network tuning techniques.",
-        priority: "Low",
-        status: "Completed"
-    },
-    {
-        id: 3,
-        title: "Operating Systems",
-        course: "Computer Science Core",
-        time: "06:00 PM - 08:00 PM",
-        description: "Deep dive into Process Synchronization and Deadlocks. Covering Semaphores, Monitors, and classical synchronization problems.",
-        priority: "Medium",
-        status: "Incomplete"
-    }
-];
-
-const defaultTodaySummary = {
-    studyGoal: 85,
-    concentrationScore: 92
-};
-
-const defaultMonthlyProgress = {
-    totalStudyHours: 124,
-    completedSessions: 42,
-    upcomingSessions: 18
-};
-
-const defaultPlannerInsight = {
-    recommendation: "Your workload is concentrated on today's afternoon sessions. Consider moving one revision session to tomorrow for better retention."
-};
-
 export const CalendarDayView = ({
-    selectedDate = "Monday, June 12, 2023",
+    selectedDate = TODAY_ANCHOR,
     timeSlots = defaultTimeSlots,
-    events = defaultEvents,
-    todaySummary = defaultTodaySummary,
-    monthlyProgress = defaultMonthlyProgress,
-    plannerInsight = defaultPlannerInsight,
+    events = [],
+    todaySummary,
+    monthlyProgress,
+    plannerInsight,
     activeView = "Day",
+    onPrevDay,
+    onNextDay,
     onToday,
     onViewChange,
     onEventClick,
@@ -123,20 +64,25 @@ export const CalendarDayView = ({
     onReschedule,
     onAdjustSchedule
 }) => {
-    // 1. Core Timeline start parameters
+    // 1. Resolve safe date
+    const activeDate = useMemo(() => parseDateSafe(selectedDate), [selectedDate]);
+    const formattedDateString = useMemo(() => formatFullDate(activeDate), [activeDate]);
+    const isToday = useMemo(() => isSameDay(activeDate, TODAY_ANCHOR), [activeDate]);
+    const activeMonthName = useMemo(() => MONTH_NAMES[activeDate.getMonth()], [activeDate]);
+
+    // 2. Timeline start parameters
     const timelineStartHour = useMemo(() => {
         if (!timeSlots || timeSlots.length === 0) return 6;
         return parseTimeToHour(timeSlots[0]);
     }, [timeSlots]);
 
-    // 2. Compute absolute placement style for event cards on desktop
+    // 3. Compute absolute placement style for event cards on desktop
     const getEventStyle = (event) => {
         const { start, end } = parseTimeRange(event.time);
         const slotHeight = 130; // matching CSS slot height in px
         
-        // 8px margin padding offsets to keep badges clean inside horizontal grids
         const top = (start - timelineStartHour) * slotHeight + 8;
-        const height = (end - start) * slotHeight - 16;
+        const height = Math.max((end - start) * slotHeight - 16, 55);
         
         return {
             top: `${top}px`,
@@ -144,11 +90,11 @@ export const CalendarDayView = ({
         };
     };
 
-    // Filter events for the active selected day
+    // 4. Filter events strictly for the active selected day
     const dayEvents = useMemo(() => {
         const list = events || [];
-        return list.filter(event => isSameDay(event.date, selectedDate));
-    }, [events, selectedDate]);
+        return list.filter(event => isSameDay(event.date, activeDate));
+    }, [events, activeDate]);
 
     return (
         <div className="calendar-day-view-container container-fluid p-0">
@@ -157,8 +103,8 @@ export const CalendarDayView = ({
                 <div className="col-12 col-md-7">
                     <div className="calendar-title-info">
                         <h1>Study Calendar</h1>
-                        <p className="subtitle">Today's Study Schedule</p>
-                        <p className="calendar-date-display">{selectedDate}</p>
+                        <p className="subtitle">Daily Study Schedule</p>
+                        <p className="calendar-date-display">{formattedDateString}</p>
                     </div>
                 </div>
                 <div className="col-12 col-md-5 d-flex justify-content-md-end mt-3 mt-md-0">
@@ -177,9 +123,14 @@ export const CalendarDayView = ({
                             ))}
                         </div>
 
-                        {/* Today navigation indicator */}
+                        {/* Day navigation controls: < (Prev Day), Today, > (Next Day) */}
                         <div className="today-control-wrapper">
-                            <button type="button" className="today-nav-arrow" onClick={onToday} title="Previous Day">
+                            <button
+                                type="button"
+                                className="today-nav-arrow"
+                                onClick={onPrevDay}
+                                title="Previous Day"
+                            >
                                 <i className="bi bi-chevron-left"></i>
                             </button>
                             <ButtonComponent
@@ -188,7 +139,12 @@ export const CalendarDayView = ({
                                 className="today-btn"
                                 onclick={onToday}
                             />
-                            <button type="button" className="today-nav-arrow" onClick={onToday} title="Next Day">
+                            <button
+                                type="button"
+                                className="today-nav-arrow"
+                                onClick={onNextDay}
+                                title="Next Day"
+                            >
                                 <i className="bi bi-chevron-right"></i>
                             </button>
                         </div>
@@ -201,6 +157,37 @@ export const CalendarDayView = ({
                 {/* Timeline display on left */}
                 <div className="calendar-main-col">
                     <div className="calendar-card">
+                        {/* Day Card Header with Prev/Next buttons and Session count */}
+                        <div className="day-card-header">
+                            <div className="day-nav-group">
+                                <button
+                                    type="button"
+                                    className="day-nav-circle-btn"
+                                    onClick={onPrevDay}
+                                    title="Previous Day"
+                                >
+                                    <i className="bi bi-chevron-left"></i>
+                                </button>
+                                <div className="day-title-info-group">
+                                    <h2 className="day-main-title">{formattedDateString}</h2>
+                                    {isToday && <span className="today-badge-pill">Today</span>}
+                                </div>
+                                <button
+                                    type="button"
+                                    className="day-nav-circle-btn"
+                                    onClick={onNextDay}
+                                    title="Next Day"
+                                >
+                                    <i className="bi bi-chevron-right"></i>
+                                </button>
+                            </div>
+
+                            <div className="day-session-count-tag">
+                                <i className="bi bi-calendar2-check"></i>
+                                <span>{dayEvents.length} {dayEvents.length === 1 ? 'Session' : 'Sessions'} Scheduled</span>
+                            </div>
+                        </div>
+
                         <div className="timeline-scroll-container">
                             {/* Render dynamic time hour markings */}
                             {timeSlots.map((slot) => (
@@ -215,10 +202,8 @@ export const CalendarDayView = ({
                                     const isCompleted = event.status?.toLowerCase() === 'completed';
                                     const priorityLower = event.priority?.toLowerCase() || 'low';
                                     
-                                    // Custom style position offsets
                                     const cardStyle = getEventStyle(event);
                                     
-                                    // Priority-status mapping classes
                                     let thematicClass = `priority-${priorityLower}`;
                                     if (isCompleted) {
                                         thematicClass = 'event-status-completed';
@@ -235,7 +220,7 @@ export const CalendarDayView = ({
                                             <div className="event-card-header">
                                                 {!isCompleted && (
                                                     <span className="priority-badge">
-                                                        {event.priority} Priority
+                                                        {event.priority || 'Normal'} Priority
                                                     </span>
                                                 )}
                                                 {isCompleted && (
@@ -303,6 +288,24 @@ export const CalendarDayView = ({
                                         </div>
                                     );
                                 })}
+
+                                {/* Empty state if no sessions for this day */}
+                                {dayEvents.length === 0 && (
+                                    <div className="empty-day-state-wrapper">
+                                        <div className="empty-day-icon">
+                                            <i className="bi bi-cup-hot"></i>
+                                        </div>
+                                        <h4>No Study Sessions on this Day</h4>
+                                        <p>You have no planned tasks scheduled for {formattedDateString}.</p>
+                                        <div className="empty-day-action">
+                                            <ButtonComponent
+                                                type="button"
+                                                text="Plan a Session with AI →"
+                                                onclick={onAdjustSchedule}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -319,7 +322,7 @@ export const CalendarDayView = ({
 
                         <div className="study-goal-section mb-3">
                             <ProgressBar
-                                value={todaySummary?.studyGoal || 0}
+                                value={todaySummary?.studyGoal || 85}
                                 max={100}
                                 label="Study Goal Reached"
                                 height="8px"
@@ -330,23 +333,23 @@ export const CalendarDayView = ({
 
                         <div className="summary-stat-box">
                             <span className="summary-stat-label">Concentration Score</span>
-                            <span className="summary-stat-value">{todaySummary?.concentrationScore || 0}</span>
+                            <span className="summary-stat-value">{todaySummary?.concentrationScore || 92}</span>
                         </div>
                     </DashboardCard>
 
                     {/* Monthly Progress Card */}
                     <DashboardCard hover={false} shadow={true} padding="24px" className="monthly-progress-card">
                         <div className="progress-card-title">Monthly Progress</div>
-                        <div className="progress-hours-val">{monthlyProgress?.totalStudyHours || 0}h</div>
-                        <div className="progress-hours-lbl">Total Study Hours</div>
+                        <div className="progress-hours-val">{monthlyProgress?.totalStudyHours || 124}h</div>
+                        <div className="progress-hours-lbl">Total Study Hours ({activeMonthName})</div>
 
                         <div className="progress-stats-row">
                             <div className="progress-stat-item">
-                                <span className="progress-stat-num">{monthlyProgress?.completedSessions || 0}</span>
+                                <span className="progress-stat-num">{monthlyProgress?.completedSessions || 42}</span>
                                 <span className="progress-stat-desc">Completed</span>
                             </div>
                             <div className="progress-stat-item">
-                                <span className="progress-stat-num">{monthlyProgress?.upcomingSessions || 0}</span>
+                                <span className="progress-stat-num">{monthlyProgress?.upcomingSessions || 18}</span>
                                 <span className="progress-stat-desc">Upcoming</span>
                             </div>
                         </div>
@@ -359,7 +362,7 @@ export const CalendarDayView = ({
                             <span>AI Planner Insight</span>
                         </div>
                         <p className="insight-recommendation">
-                            {plannerInsight?.recommendation || ""}
+                            {plannerInsight?.recommendation || "Your workload for this day is well distributed."}
                         </p>
                         <div className="adjust-schedule-btn-wrapper">
                             <ButtonComponent

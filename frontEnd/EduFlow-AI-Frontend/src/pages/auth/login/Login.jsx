@@ -316,7 +316,7 @@ export const Login = () => {
                             </div>
 
                             {/* Remember Me */}
-                            <div className="form-group mb-4 text-start">
+                            {/* <div className="form-group mb-4 text-start">
                                 <CheckboxComponent
                                     label="Remember Me"
                                     name="rememberMe"
@@ -324,7 +324,7 @@ export const Login = () => {
                                     onChange={handleChange}
                                     disabled={isLoading}
                                 />
-                            </div>
+                            </div> */}
 
                             {/* Sign In Button */}
                             <div className="mb-4">

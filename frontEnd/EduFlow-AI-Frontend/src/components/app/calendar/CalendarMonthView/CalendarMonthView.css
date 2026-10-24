@@ -52,6 +52,13 @@
     margin: 0;
 }
 
+/* Actions Header Right */
+.header-actions-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
 /* View Switcher */
 .view-switcher {
     display: flex;
@@ -84,6 +91,52 @@
     box-shadow: var(--shadow-sm);
 }
 
+/* Today navigation */
+.today-control-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background-color: #f1f3f9;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    padding: 4px;
+}
+
+.today-nav-arrow {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 14px;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.today-nav-arrow:hover {
+    background-color: #e2e8f0;
+    color: var(--text-primary);
+}
+
+.today-control-wrapper button.today-btn {
+    background-color: var(--primary-color) !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 4px 14px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    border-radius: 6px !important;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.today-control-wrapper button.today-btn:hover {
+    background-color: var(--primary-hover) !important;
+}
+
 /* Calendar Card Wrapper */
 .calendar-card {
     background-color: var(--surface-color);
@@ -93,12 +146,86 @@
     padding: 24px;
 }
 
-/* Month Title */
+/* Month Header in Card */
+.month-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.month-title-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.month-nav-circle-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background-color: var(--surface-color);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.month-nav-circle-btn:hover {
+    background-color: #f1f5f9;
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: scale(1.05);
+}
+
 .month-year-title {
     font-size: 20px;
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: 20px;
+    margin: 0;
+    min-width: 170px;
+    text-align: center;
+}
+
+/* Quick Month Pills Container */
+.month-pills-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+.month-pill-btn {
+    border: 1px solid var(--border-color);
+    background-color: #f8fafc;
+    color: var(--text-secondary);
+    padding: 4px 9px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.month-pill-btn:hover {
+    background-color: #e2e8f0;
+    color: var(--text-primary);
+}
+
+.month-pill-btn.active {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    border-color: var(--primary-color);
+    font-weight: 600;
+    box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
 }
 
 /* Calendar Grid */

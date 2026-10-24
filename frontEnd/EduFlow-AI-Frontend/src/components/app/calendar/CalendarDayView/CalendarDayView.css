@@ -165,54 +165,31 @@
     border-bottom: 1px solid var(--border-color);
 }
 
-.day-nav-group {
+.day-card-title-group {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.day-nav-circle-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 1px solid var(--border-color);
-    background-color: var(--surface-color);
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s ease;
-}
-
-.day-nav-circle-btn:hover {
-    background-color: #f1f5f9;
-    color: var(--primary-color);
-    border-color: var(--primary-color);
-    transform: scale(1.05);
-}
-
-.day-title-info-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
 .day-main-title {
-    font-size: 18px;
+    font-size: 22px;
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
+    letter-spacing: -0.3px;
 }
 
 .today-badge-pill {
-    background-color: #e0e7ff;
-    color: var(--primary-color);
-    font-size: 12px;
-    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
     padding: 3px 10px;
     border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(79, 70, 229, 0.25);
 }
 
 .day-session-count-tag {

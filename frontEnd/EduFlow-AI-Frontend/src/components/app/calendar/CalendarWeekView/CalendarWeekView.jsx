@@ -6,8 +6,7 @@ import {
     MONTH_NAMES,
     isSameDay,
     parseDateSafe,
-    getWeeksInMonth,
-    TODAY_ANCHOR
+    getWeeksInMonth
 } from '../../../../utils/calendarUtils';
 import './CalendarWeekView.css';
 
@@ -232,31 +231,15 @@ export const CalendarWeekView = ({
                 {/* Weekly Grid display */}
                 <div className="calendar-main-col">
                     <div className="calendar-card">
-                        {/* Week Card Header: Month/Week Badge + Direct Week Selector Pills (Week 1, Week 2...) */}
+                        {/* Week Card Header: Month/Week Title + Direct Week Selector Pills (Week 1, Week 2...) */}
                         <div className="week-card-header">
-                            <div className="week-nav-group">
-                                <button
-                                    type="button"
-                                    className="week-nav-circle-btn"
-                                    onClick={onPrevWeek}
-                                    title="Previous Week"
-                                >
-                                    <i className="bi bi-chevron-left"></i>
-                                </button>
-                                <div className="week-title-badge">
-                                    <span className="week-title-month">{activeMonthName} {currentYear}</span>
-                                    <span className="week-number-pill">
-                                        Week {currentWeekIndex + 1} of {weeks.length}
+                            <div className="week-card-title-group">
+                                <h2 className="week-month-heading">{activeMonthName} {currentYear}</h2>
+                                {activeWeek && (
+                                    <span className="week-range-badge">
+                                        {activeWeek.rangeLabel}
                                     </span>
-                                </div>
-                                <button
-                                    type="button"
-                                    className="week-nav-circle-btn"
-                                    onClick={onNextWeek}
-                                    title="Next Week"
-                                >
-                                    <i className="bi bi-chevron-right"></i>
-                                </button>
+                                )}
                             </div>
 
                             {/* Direct Week Selector Pills: Week 1, Week 2, Week 3, Week 4, Week 5 */}

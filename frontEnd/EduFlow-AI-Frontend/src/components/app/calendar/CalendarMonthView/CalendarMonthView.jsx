@@ -4,11 +4,10 @@ import { ButtonComponent } from '../../../common/CommonComponents/ButtonComponen
 import ProgressBar from '../../../common/ProgressBar/ProgressBar';
 import {
     MONTH_NAMES,
-    SHORT_MONTH_NAMES,
     WEEKDAYS_SUN_FIRST,
     generateMonthGrid,
     isSameDay,
-    parseDateSafe
+    isCurrentMonthNow
 } from '../../../../utils/calendarUtils';
 import './CalendarMonthView.css';
 
@@ -22,11 +21,9 @@ const CalendarDateCell = ({
     onClick,
     onEventClick
 }) => {
-    // Show max 3 events, list the rest as "+X More"
     const visibleEvents = events.slice(0, 3);
     const remainingCount = events.length - 3;
 
-    // Combine classes
     const cellClass = [
         'calendar-date-cell',
         !isCurrentMonth ? 'other-month' : '',
@@ -35,7 +32,13 @@ const CalendarDateCell = ({
     ].filter(Boolean).join(' ');
 
     return (
-        <div className={cellClass} onClick={onClick}>
+        <div
+            className={cellClass}
+            onClick={onClick}
+            tabIndex={0}
+            role="button"
+            aria-label={`Date ${day}${isToday ? ', Today' : ''}${isSelected ? ', Selected' : ''}`}
+        >
             <div className="cell-header">
                 <span className="cell-day-number">{day}</span>
                 {isToday && <span className="today-pill">Today</span>}
@@ -69,7 +72,7 @@ const CalendarDateCell = ({
                             className={`event-badge ${typeClass} ${event.completed ? 'event-completed' : ''}`}
                             title={`${event.title} (${event.time || ''})`}
                             onClick={(e) => {
-                                e.stopPropagation(); // prevent select-date click on outer cell
+                                e.stopPropagation();
                                 onEventClick && onEventClick(event);
                             }}
                         >
@@ -91,8 +94,8 @@ const CalendarDateCell = ({
 
 // Main Calendar Month View Component
 export const CalendarMonthView = ({
-    currentMonth = 9, // 0-based index or string
-    currentYear = 2026,
+    currentMonth = new Date().getMonth(),
+    currentYear = new Date().getFullYear(),
     selectedDate,
     events = [],
     todaySummary,
@@ -103,6 +106,7 @@ export const CalendarMonthView = ({
     onPrevMonth,
     onNextMonth,
     onSelectMonth,
+    onSelectYear,
     onToday,
     onDateClick,
     onEventClick,
@@ -112,14 +116,18 @@ export const CalendarMonthView = ({
     const activeMonthIndex = useMemo(() => {
         if (typeof currentMonth === 'number') return currentMonth;
         const idx = MONTH_NAMES.findIndex(m => m.toLowerCase() === String(currentMonth).toLowerCase());
-        return idx !== -1 ? idx : 9; // Fallback to October
+        return idx !== -1 ? idx : new Date().getMonth();
     }, [currentMonth]);
 
     const activeMonthName = useMemo(() => {
         return MONTH_NAMES[activeMonthIndex];
     }, [activeMonthIndex]);
 
-    // 2. Generate month grid cells dynamically based on currentYear and activeMonthIndex
+    const isCurrentMonth = useMemo(() => {
+        return isCurrentMonthNow(currentYear, activeMonthIndex);
+    }, [currentYear, activeMonthIndex]);
+
+    // 2. Generate month grid cells dynamically based on real dates
     const daysGrid = useMemo(() => {
         return generateMonthGrid(currentYear, activeMonthIndex);
     }, [currentYear, activeMonthIndex]);
@@ -130,6 +138,12 @@ export const CalendarMonthView = ({
         return eventList.filter(event => isSameDay(event.date, dayDate));
     };
 
+    // Years range for dropdown
+    const yearOptions = useMemo(() => {
+        const base = new Date().getFullYear();
+        return [base - 2, base - 1, base, base + 1, base + 2];
+    }, []);
+
     return (
         <div className="calendar-month-view-container container-fluid p-0">
             {/* 1. Header & Switcher Row */}
@@ -137,7 +151,7 @@ export const CalendarMonthView = ({
                 <div className="col-12 col-md-7">
                     <div className="calendar-title-info">
                         <h1>Study Calendar</h1>
-                        <p className="subtitle">View your personalized study schedule for the month.</p>
+                        <p className="subtitle">View and manage your personalized study schedule</p>
                     </div>
                 </div>
                 <div className="col-12 col-md-5 d-flex justify-content-md-end mt-3 mt-md-0">
@@ -155,7 +169,7 @@ export const CalendarMonthView = ({
                             ))}
                         </div>
 
-                        {/* Month navigation controls matching Week and Day views */}
+                        {/* Month navigation controls */}
                         <div className="today-control-wrapper">
                             <button
                                 type="button"
@@ -189,43 +203,64 @@ export const CalendarMonthView = ({
                 {/* Calendar Grid on left */}
                 <div className="calendar-main-col">
                     <div className="calendar-card">
-                        {/* Month Header with navigation & quick-switch month pills */}
+                        {/* Elegant Month Card Header with clean title & custom month/year selectors */}
                         <div className="month-card-header">
-                            <div className="month-title-nav">
+                            <div className="month-card-title-group">
                                 <button
                                     type="button"
-                                    className="month-nav-circle-btn"
+                                    className="month-nav-arrow-btn"
                                     onClick={onPrevMonth}
                                     title="Previous Month"
                                 >
                                     <i className="bi bi-chevron-left"></i>
                                 </button>
-                                <h2 className="month-year-title">
+                                <h2 className="month-display-heading">
                                     {activeMonthName} {currentYear}
                                 </h2>
                                 <button
                                     type="button"
-                                    className="month-nav-circle-btn"
+                                    className="month-nav-arrow-btn"
                                     onClick={onNextMonth}
                                     title="Next Month"
                                 >
                                     <i className="bi bi-chevron-right"></i>
                                 </button>
+                                {isCurrentMonth && (
+                                    <span className="current-month-badge">
+                                        <i className="bi bi-check2-circle"></i> Current Month
+                                    </span>
+                                )}
                             </div>
 
-                            {/* Direct month switcher pills: Jan, Feb, Mar, Apr... */}
-                            <div className="month-pills-container">
-                                {SHORT_MONTH_NAMES.map((shortMonth, idx) => (
-                                    <button
-                                        key={shortMonth}
-                                        type="button"
-                                        className={`month-pill-btn ${idx === activeMonthIndex ? 'active' : ''}`}
-                                        onClick={() => onSelectMonth && onSelectMonth(idx)}
-                                        title={`Go to ${MONTH_NAMES[idx]}`}
+                            {/* Clean, luxury Month & Year Selectors */}
+                            <div className="month-selectors-wrapper">
+                                <div className="custom-select-box">
+                                    <select
+                                        className="styled-calendar-select"
+                                        value={activeMonthIndex}
+                                        onChange={(e) => onSelectMonth && onSelectMonth(Number(e.target.value))}
+                                        title="Select Month"
                                     >
-                                        {shortMonth}
-                                    </button>
-                                ))}
+                                        {MONTH_NAMES.map((name, idx) => (
+                                            <option key={name} value={idx}>{name}</option>
+                                        ))}
+                                    </select>
+                                    <i className="bi bi-chevron-down select-caret"></i>
+                                </div>
+
+                                <div className="custom-select-box year-select">
+                                    <select
+                                        className="styled-calendar-select"
+                                        value={currentYear}
+                                        onChange={(e) => onSelectYear && onSelectYear(Number(e.target.value))}
+                                        title="Select Year"
+                                    >
+                                        {yearOptions.map((yr) => (
+                                            <option key={yr} value={yr}>{yr}</option>
+                                        ))}
+                                    </select>
+                                    <i className="bi bi-chevron-down select-caret"></i>
+                                </div>
                             </div>
                         </div>
 

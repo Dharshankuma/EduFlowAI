@@ -4,33 +4,26 @@ import CalendarWeekView from '../../../../components/app/calendar/CalendarWeekVi
 import CalendarDayView from '../../../../components/app/calendar/CalendarDayView/CalendarDayView';
 import { useAppState } from '../../../../context/StateContext';
 import {
-    TODAY_ANCHOR,
-    MONTH_NAMES,
+    getRealToday,
     isSameDay,
-    getWeeksInMonth
+    isCurrentMonthNow,
+    getWeeksInMonth,
+    findWeekIndexForDate
 } from '../../../../utils/calendarUtils';
 import './Calendar.css';
 
 export const Calendar = () => {
-    // 1. Controller view switcher state
-    const [activeView, setActiveView] = useState("Month"); // "Month", "Week", "Day"
+    // 1. Controller view switcher state ("Month", "Week", "Day")
+    const [activeView, setActiveView] = useState("Month");
     const { calendarEvents, setCalendarEvents } = useAppState();
 
-    // 2. Coordinated calendar timeline states anchored to TODAY_ANCHOR (Oct 24, 2026)
-    const [selectedDate, setSelectedDate] = useState(TODAY_ANCHOR);
-    const [currentYear, setCurrentYear] = useState(TODAY_ANCHOR.getFullYear());
-    const [currentMonth, setCurrentMonth] = useState(TODAY_ANCHOR.getMonth()); // 0-based index (9 = October)
-    
-    // Find initial week index for TODAY_ANCHOR in October
-    const initialWeeks = useMemo(() => getWeeksInMonth(2026, 9), []);
-    const initialWeekIdx = useMemo(() => {
-        const idx = initialWeeks.findIndex(w => w.days.some(d => isSameDay(d.date, TODAY_ANCHOR)));
-        return idx !== -1 ? idx : 3;
-    }, [initialWeeks]);
+    // 2. Real System Date Initialization (No hardcoded mock anchor)
+    const [selectedDate, setSelectedDate] = useState(() => getRealToday());
+    const [currentYear, setCurrentYear] = useState(() => getRealToday().getFullYear());
+    const [currentMonth, setCurrentMonth] = useState(() => getRealToday().getMonth()); // 0-based
+    const [currentWeekIndex, setCurrentWeekIndex] = useState(() => findWeekIndexForDate(getRealToday()));
 
-    const [currentWeekIndex, setCurrentWeekIndex] = useState(initialWeekIdx);
-
-    // Dynamic weeks list for currently selected year and month
+    // Dynamic weeks list for currently viewed year and month
     const weeks = useMemo(() => {
         return getWeeksInMonth(currentYear, currentMonth);
     }, [currentYear, currentMonth]);
@@ -77,15 +70,41 @@ export const Calendar = () => {
 
     // 4. "Today" button handler across all views
     const handleToday = () => {
-        setSelectedDate(TODAY_ANCHOR);
-        setCurrentYear(TODAY_ANCHOR.getFullYear());
-        setCurrentMonth(TODAY_ANCHOR.getMonth());
-        const octWeeks = getWeeksInMonth(TODAY_ANCHOR.getFullYear(), TODAY_ANCHOR.getMonth());
-        const tIdx = octWeeks.findIndex(w => w.days.some(d => isSameDay(d.date, TODAY_ANCHOR)));
-        setCurrentWeekIndex(tIdx !== -1 ? tIdx : 3);
+        const today = getRealToday();
+        setSelectedDate(today);
+        setCurrentYear(today.getFullYear());
+        setCurrentMonth(today.getMonth());
+        setCurrentWeekIndex(findWeekIndexForDate(today));
     };
 
     // 5. Month View Navigation Handlers
+    // Requirement: When navigating or clicking the current month, automatically focus on the current date!
+    const handleSelectMonth = (monthIdx) => {
+        setCurrentMonth(monthIdx);
+        const today = getRealToday();
+        if (monthIdx === today.getMonth() && currentYear === today.getFullYear()) {
+            // It's the current month: automatically focus on current date!
+            setSelectedDate(today);
+            setCurrentWeekIndex(findWeekIndexForDate(today));
+        } else {
+            // Different month: focus on the 1st day of that month
+            setSelectedDate(new Date(currentYear, monthIdx, 1));
+            setCurrentWeekIndex(0);
+        }
+    };
+
+    const handleSelectYear = (yr) => {
+        setCurrentYear(yr);
+        const today = getRealToday();
+        if (currentMonth === today.getMonth() && yr === today.getFullYear()) {
+            setSelectedDate(today);
+            setCurrentWeekIndex(findWeekIndexForDate(today));
+        } else {
+            setSelectedDate(new Date(yr, currentMonth, 1));
+            setCurrentWeekIndex(0);
+        }
+    };
+
     const handlePrevMonth = () => {
         let prevM = currentMonth - 1;
         let prevY = currentYear;
@@ -95,8 +114,14 @@ export const Calendar = () => {
         }
         setCurrentYear(prevY);
         setCurrentMonth(prevM);
-        setCurrentWeekIndex(0);
-        setSelectedDate(new Date(prevY, prevM, 1));
+        const today = getRealToday();
+        if (prevM === today.getMonth() && prevY === today.getFullYear()) {
+            setSelectedDate(today);
+            setCurrentWeekIndex(findWeekIndexForDate(today));
+        } else {
+            setSelectedDate(new Date(prevY, prevM, 1));
+            setCurrentWeekIndex(0);
+        }
     };
 
     const handleNextMonth = () => {
@@ -108,14 +133,14 @@ export const Calendar = () => {
         }
         setCurrentYear(nextY);
         setCurrentMonth(nextM);
-        setCurrentWeekIndex(0);
-        setSelectedDate(new Date(nextY, nextM, 1));
-    };
-
-    const handleSelectMonth = (monthIdx) => {
-        setCurrentMonth(monthIdx);
-        setCurrentWeekIndex(0);
-        setSelectedDate(new Date(currentYear, monthIdx, 1));
+        const today = getRealToday();
+        if (nextM === today.getMonth() && nextY === today.getFullYear()) {
+            setSelectedDate(today);
+            setCurrentWeekIndex(findWeekIndexForDate(today));
+        } else {
+            setSelectedDate(new Date(nextY, nextM, 1));
+            setCurrentWeekIndex(0);
+        }
     };
 
     const handleDateClick = (dateObj) => {
@@ -133,20 +158,28 @@ export const Calendar = () => {
     const handleSelectWeek = (weekIdx) => {
         setCurrentWeekIndex(weekIdx);
         if (weeks[weekIdx]) {
-            setSelectedDate(weeks[weekIdx].startDate);
+            // If the selected week contains today, focus on today
+            const today = getRealToday();
+            const containsToday = weeks[weekIdx].days.some(d => isSameDay(d.date, today));
+            if (containsToday) {
+                setSelectedDate(today);
+            } else {
+                setSelectedDate(weeks[weekIdx].startDate);
+            }
         }
     };
 
     const handlePrevWeek = () => {
         if (safeWeekIndex > 0) {
-            // Move to previous week within current month
             const newIdx = safeWeekIndex - 1;
             setCurrentWeekIndex(newIdx);
             if (weeks[newIdx]) {
-                setSelectedDate(weeks[newIdx].startDate);
+                const today = getRealToday();
+                const containsToday = weeks[newIdx].days.some(d => isSameDay(d.date, today));
+                setSelectedDate(containsToday ? today : weeks[newIdx].startDate);
             }
         } else {
-            // Reached before Week 1 of current month: automatically jump to previous month's last week!
+            // Reached before Week 1 of current month: automatically jump to previous month's last week
             let prevM = currentMonth - 1;
             let prevY = currentYear;
             if (prevM < 0) {
@@ -166,14 +199,15 @@ export const Calendar = () => {
 
     const handleNextWeek = () => {
         if (safeWeekIndex < weeks.length - 1) {
-            // Move to next week within current month
             const newIdx = safeWeekIndex + 1;
             setCurrentWeekIndex(newIdx);
             if (weeks[newIdx]) {
-                setSelectedDate(weeks[newIdx].startDate);
+                const today = getRealToday();
+                const containsToday = weeks[newIdx].days.some(d => isSameDay(d.date, today));
+                setSelectedDate(containsToday ? today : weeks[newIdx].startDate);
             }
         } else {
-            // Reached the end of weeks for this month: automatically change to next month's Week 1!
+            // Reached the end of weeks for this month: automatically change to next month's Week 1
             let nextM = currentMonth + 1;
             let nextY = currentYear;
             if (nextM > 11) {
@@ -299,6 +333,7 @@ export const Calendar = () => {
                         onPrevMonth={handlePrevMonth}
                         onNextMonth={handleNextMonth}
                         onSelectMonth={handleSelectMonth}
+                        onSelectYear={handleSelectYear}
                         onDateClick={handleDateClick}
                     />
                 );

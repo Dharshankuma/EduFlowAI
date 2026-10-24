@@ -1,4 +1,4 @@
-// Calendar Date Utilities and Helper Functions
+// Real Calendar Date Utilities (100% Dynamic, Real Date System)
 
 export const MONTH_NAMES = [
     "January", "February", "March", "April", "May", "June",
@@ -13,14 +13,17 @@ export const SHORT_MONTH_NAMES = [
 export const WEEKDAYS_SUN_FIRST = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export const WEEKDAYS_MON_FIRST = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-// Design anchor date for EduFlowAI mock data (October 24, 2026)
-export const TODAY_ANCHOR = new Date(2026, 9, 24);
+/**
+ * Returns the real current date from the user's system
+ */
+export const getRealToday = () => new Date();
+export const TODAY_ANCHOR = new Date(); // Safe fallback alias referencing real current date
 
 /**
  * Safely parse a date value to avoid timezone offsets and formatting mismatches
  */
 export const parseDateSafe = (dateVal) => {
-    if (!dateVal) return new Date(TODAY_ANCHOR);
+    if (!dateVal) return new Date();
     if (dateVal instanceof Date) return new Date(dateVal.getTime());
     if (typeof dateVal === 'string') {
         const parts = dateVal.split('-');
@@ -45,6 +48,21 @@ export const isSameDay = (d1, d2) => {
 };
 
 /**
+ * Check if a date is the real current day
+ */
+export const isTodayDate = (d) => {
+    return isSameDay(d, new Date());
+};
+
+/**
+ * Check if a given year & month is the real current month
+ */
+export const isCurrentMonthNow = (year, monthIndex) => {
+    const now = new Date();
+    return now.getFullYear() === year && now.getMonth() === monthIndex;
+};
+
+/**
  * Format a Date object to "YYYY-MM-DD"
  */
 export const formatDateKey = (date) => {
@@ -57,7 +75,7 @@ export const formatDateKey = (date) => {
 
 /**
  * Format a Date object to "DayOfWeek, Month Day, Year"
- * Example: "Saturday, October 24, 2026"
+ * Example: "Sunday, October 25, 2026"
  */
 export const formatFullDate = (date) => {
     const d = parseDateSafe(date);
@@ -67,7 +85,7 @@ export const formatFullDate = (date) => {
 
 /**
  * Format a Date object to "Month Day, Year"
- * Example: "October 24, 2026"
+ * Example: "October 25, 2026"
  */
 export const formatShortDate = (date) => {
     const d = parseDateSafe(date);
@@ -76,6 +94,7 @@ export const formatShortDate = (date) => {
 
 /**
  * Generates the full 35-42 calendar days grid for a given year and month (Sunday - Saturday)
+ * Dynamically compares against the real today: new Date()
  */
 export const generateMonthGrid = (year, monthIndex) => {
     const firstDayIndex = new Date(year, monthIndex, 1).getDay(); // 0 = Sun
@@ -83,6 +102,7 @@ export const generateMonthGrid = (year, monthIndex) => {
     const lastDayPrevMonth = new Date(year, monthIndex, 0).getDate();
 
     const list = [];
+    const today = new Date();
 
     // Trailing days from previous month
     for (let i = firstDayIndex - 1; i >= 0; i--) {
@@ -95,7 +115,7 @@ export const generateMonthGrid = (year, monthIndex) => {
         list.push({
             day: dayNum,
             date: prevMonthDate,
-            isToday: isSameDay(prevMonthDate, TODAY_ANCHOR),
+            isToday: isSameDay(prevMonthDate, today),
             isCurrentMonth: false
         });
     }
@@ -106,7 +126,7 @@ export const generateMonthGrid = (year, monthIndex) => {
         list.push({
             day: dayNum,
             date: currentMonthDate,
-            isToday: isSameDay(currentMonthDate, TODAY_ANCHOR),
+            isToday: isSameDay(currentMonthDate, today),
             isCurrentMonth: true
         });
     }
@@ -123,7 +143,7 @@ export const generateMonthGrid = (year, monthIndex) => {
         list.push({
             day: dayNum,
             date: nextMonthDate,
-            isToday: isSameDay(nextMonthDate, TODAY_ANCHOR),
+            isToday: isSameDay(nextMonthDate, today),
             isCurrentMonth: false
         });
     }
@@ -134,38 +154,26 @@ export const generateMonthGrid = (year, monthIndex) => {
 /**
  * Generates all Monday-to-Sunday 7-day weeks that belong to a specific month.
  * A week belongs to a month if its Thursday falls within that month (ISO-8601 rule).
- * This ensures no duplicate weeks across months and no missing weeks.
  */
 export const getWeeksInMonth = (year, monthIndex) => {
     const firstOfMonth = new Date(year, monthIndex, 1);
     const firstDayOfWeek = firstOfMonth.getDay(); // 0 = Sun, 1 = Mon ...
     
-    // Find the Thursday of the first week of this month
-    // Offset to Thursday (day 4):
-    // If Sun (0): +4 days -> Thu
-    // If Mon (1): +3 days -> Thu
-    // If Tue (2): +2 days -> Thu
-    // If Wed (3): +1 day -> Thu
-    // If Thu (4): 0 days -> Thu
-    // If Fri (5): -1 day -> previous Thu
-    // If Sat (6): -2 days -> previous Thu
     let dayOffsetToThu = 4 - firstDayOfWeek;
     if (dayOffsetToThu > 3) dayOffsetToThu -= 7;
 
     let firstThu = new Date(year, monthIndex, 1 + dayOffsetToThu);
-    // If this Thursday is in the previous month, advance by 7 days
     if (firstThu.getMonth() !== monthIndex) {
         firstThu = new Date(firstThu.getFullYear(), firstThu.getMonth(), firstThu.getDate() + 7);
     }
 
     const weeks = [];
     let currentThu = new Date(firstThu);
+    const today = new Date();
 
     while (currentThu.getMonth() === monthIndex && currentThu.getFullYear() === year) {
-        // Monday is 3 days before Thursday
         const monday = new Date(currentThu.getFullYear(), currentThu.getMonth(), currentThu.getDate() - 3);
         
-        // Construct the 7 days of this week (Mon to Sun)
         const days = [];
         for (let i = 0; i < 7; i++) {
             const d = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i);
@@ -174,7 +182,7 @@ export const getWeeksInMonth = (year, monthIndex) => {
                 name: dayNames[d.getDay()],
                 dayNumber: d.getDate(),
                 date: d,
-                isToday: isSameDay(d, TODAY_ANCHOR),
+                isToday: isSameDay(d, today),
                 isCurrentMonth: d.getMonth() === monthIndex
             });
         }
@@ -201,9 +209,18 @@ export const getWeeksInMonth = (year, monthIndex) => {
             days
         });
 
-        // Advance to next Thursday
         currentThu = new Date(currentThu.getFullYear(), currentThu.getMonth(), currentThu.getDate() + 7);
     }
 
     return weeks;
+};
+
+/**
+ * Finds the week index containing a given date in its month's weeks
+ */
+export const findWeekIndexForDate = (date) => {
+    const d = parseDateSafe(date);
+    const weeks = getWeeksInMonth(d.getFullYear(), d.getMonth());
+    const idx = weeks.findIndex(w => w.days.some(day => isSameDay(day.date, d)));
+    return idx !== -1 ? idx : 0;
 };

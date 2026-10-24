@@ -7,7 +7,8 @@ import {
     isSameDay,
     parseDateSafe,
     formatFullDate,
-    TODAY_ANCHOR
+    getRealToday,
+    isTodayDate
 } from '../../../../utils/calendarUtils';
 import './CalendarDayView.css';
 
@@ -47,7 +48,7 @@ const defaultTimeSlots = [
 ];
 
 export const CalendarDayView = ({
-    selectedDate = TODAY_ANCHOR,
+    selectedDate = getRealToday(),
     timeSlots = defaultTimeSlots,
     events = [],
     todaySummary,
@@ -67,7 +68,7 @@ export const CalendarDayView = ({
     // 1. Resolve safe date
     const activeDate = useMemo(() => parseDateSafe(selectedDate), [selectedDate]);
     const formattedDateString = useMemo(() => formatFullDate(activeDate), [activeDate]);
-    const isToday = useMemo(() => isSameDay(activeDate, TODAY_ANCHOR), [activeDate]);
+    const isToday = useMemo(() => isTodayDate(activeDate), [activeDate]);
     const activeMonthName = useMemo(() => MONTH_NAMES[activeDate.getMonth()], [activeDate]);
 
     // 2. Timeline start parameters
@@ -159,27 +160,13 @@ export const CalendarDayView = ({
                     <div className="calendar-card">
                         {/* Day Card Header with Prev/Next buttons and Session count */}
                         <div className="day-card-header">
-                            <div className="day-nav-group">
-                                <button
-                                    type="button"
-                                    className="day-nav-circle-btn"
-                                    onClick={onPrevDay}
-                                    title="Previous Day"
-                                >
-                                    <i className="bi bi-chevron-left"></i>
-                                </button>
-                                <div className="day-title-info-group">
-                                    <h2 className="day-main-title">{formattedDateString}</h2>
-                                    {isToday && <span className="today-badge-pill">Today</span>}
-                                </div>
-                                <button
-                                    type="button"
-                                    className="day-nav-circle-btn"
-                                    onClick={onNextDay}
-                                    title="Next Day"
-                                >
-                                    <i className="bi bi-chevron-right"></i>
-                                </button>
+                            <div className="day-card-title-group">
+                                <h2 className="day-main-title">{formattedDateString}</h2>
+                                {isToday && (
+                                    <span className="today-badge-pill">
+                                        <i className="bi bi-star-fill"></i> Today
+                                    </span>
+                                )}
                             </div>
 
                             <div className="day-session-count-tag">

@@ -4,6 +4,7 @@ using EduFlowAI.Enums;
 using EduFlowAI.Helpers;
 using EduFlowAI.Models;
 using Microsoft.EntityFrameworkCore;
+using EduFlowAI.Constants;
 
 namespace EduFlowAI.Repositories.Profiles
 {
@@ -29,10 +30,12 @@ namespace EduFlowAI.Repositories.Profiles
 
         public async Task<ProfileSummaryResponseDTO> GetProfileSummaryResponseAsync(int userId,CancellationToken cancellation)
         {
-            var completedTasksCount = await _context.Taskmanagements.AsNoTracking().CountAsync(x => x.Createdby == userId && x.Statusid == 3, cancellation);
+            var completedTasksCount = await _context.Taskmanagements.AsNoTracking()
+                .CountAsync(x => x.Goal.Userid == userId && x.Status != null && x.Status.Status == StatusConstants.Completed, cancellation);
 
 
-            var activeGoalsCount = await _context.Goalmanagements.AsNoTracking().CountAsync(x => x.Userid == userId && x.Statusid == 3, cancellation);
+            var activeGoalsCount = await _context.Goalmanagements.AsNoTracking()
+                .CountAsync(x => x.Userid == userId && x.Status != null && x.Status.Status == StatusConstants.Active, cancellation);
 
 
             var totalStudyHours = await _context.Schedulemanagements.AsNoTracking().Where(x => x.Createdby == userId).SumAsync(x => (decimal?)x.Plannedhours, cancellation) ?? 0;
@@ -53,7 +56,7 @@ namespace EduFlowAI.Repositories.Profiles
                        .Select(group => new DailyStudyStatusResponseDTO
                        {
                            StudyDate = group.Key,
-                           IsCompleted = group.All(x => x.Statusid == 3)
+                           IsCompleted = group.All(x => x.Status != null && x.Status.Status == StatusConstants.Completed)
                        })
                        .OrderByDescending(x => x.StudyDate).ToListAsync(cancellation);
         }

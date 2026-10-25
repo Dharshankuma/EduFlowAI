@@ -15,6 +15,8 @@ using EduFlowAI.Services.Schedules;
 using EduFlowAI.Services.Configuration;
 using EduFlowAI.Repositories.Calendar;
 using EduFlowAI.Services.Calendar;
+using EduFlowAI.Repositories.Dashboard;
+using EduFlowAI.Services.Dashboard;
 
 namespace EduFlowAI.Extensions
 {
@@ -36,6 +38,7 @@ namespace EduFlowAI.Extensions
             services.AddScoped<IProfileRepository, ProfileRepository>();
             services.AddScoped<IGoalRepository, GoalRepository>();
             services.AddScoped<ICalendarRepository, CalendarRepository>();
+            services.AddScoped<IDashboardRepository, DashboardRepository>();
 
 
             //Services
@@ -44,6 +47,7 @@ namespace EduFlowAI.Extensions
             services.AddScoped<IProfileService, ProfileService>();
             services.AddScoped<IGoalService, GoalService>();
             services.AddScoped<ICalendarService, CalendarService>();
+            services.AddScoped<IDashboardService, DashboardService>();
 
             // Planner Engine
             services.AddScoped<IPlannerRepository, PlannerRepository>();

@@ -7,6 +7,7 @@ using EduFlowAI.Data;
 using EduFlowAI.Models;
 using Microsoft.EntityFrameworkCore;
 using EduFlowAI.Helpers;
+using EduFlowAI.Constants;
 
 namespace EduFlowAI.PlannerEngine
 {
@@ -30,7 +31,7 @@ namespace EduFlowAI.PlannerEngine
         public async Task<List<Goalmanagement>> GetActiveGoalsWithTasksAsync(int userId, CancellationToken cancellation)
         {
             // Treat goals with Statusid != Completed as active
-            var completedStatus = await GetStatusIdByNameAsync("Completed", cancellation);
+            var completedStatus = await GetStatusIdByNameAsync(StatusConstants.Completed, cancellation);
 
             return await _context.Goalmanagements.AsNoTracking()
                 .Where(g => g.Userid == userId && (!completedStatus.HasValue || g.Statusid != completedStatus.Value))
@@ -42,7 +43,7 @@ namespace EduFlowAI.PlannerEngine
         public async Task<List<Schedulemanagement>> GetFutureSchedulesAsync(int userId, DateTime fromDate, CancellationToken cancellation)
         {
             // Only treat schedules that occupy planner time: exclude Cancelled and other non-occupying statuses
-            var cancelledStatus = await GetStatusIdByNameAsync("Cancelled", cancellation);
+            var cancelledStatus = await GetStatusIdByNameAsync(StatusConstants.Cancelled, cancellation);
 
             return await _context.Schedulemanagements.AsNoTracking()
                 .Where(s => s.Createdby == userId && s.Scheduleddate >= fromDate && (!cancelledStatus.HasValue || s.Statusid != cancelledStatus.Value))
@@ -54,7 +55,7 @@ namespace EduFlowAI.PlannerEngine
             var ids = taskIds.ToList();
             if (!ids.Any()) return new Dictionary<int, decimal>();
 
-            var completedStatus = await GetStatusIdByNameAsync("Completed", cancellation);
+            var completedStatus = await GetStatusIdByNameAsync(StatusConstants.Completed, cancellation);
             if (!completedStatus.HasValue) return new Dictionary<int, decimal>();
 
             var completed = await _context.Schedulemanagements.AsNoTracking()
@@ -71,7 +72,7 @@ namespace EduFlowAI.PlannerEngine
             if (string.IsNullOrWhiteSpace(statusName)) return null;
 
             var status = await _context.Statusmasters.AsNoTracking()
-                .FirstOrDefaultAsync(s => s.Status.Equals(statusName, StringComparison.OrdinalIgnoreCase) || s.Statusidentifier.Equals(statusName, StringComparison.OrdinalIgnoreCase), cancellation);
+                .FirstOrDefaultAsync(s => s.Status == statusName || s.Statusidentifier == statusName, cancellation);
 
             return status?.Statusid;
         }
@@ -85,7 +86,7 @@ namespace EduFlowAI.PlannerEngine
             foreach (var s in schedules)
             {
                 // Normalize comparison to minute precision and only consider Planned schedules to avoid false duplicates
-                var plannedStatus = await GetStatusIdByNameAsync("Planned", cancellation);
+                var plannedStatus = await GetStatusIdByNameAsync(StatusConstants.Planned, cancellation);
                 DateTime incomingStart = s.Scheduleddate;
                 incomingStart = new DateTime(incomingStart.Year, incomingStart.Month, incomingStart.Day, incomingStart.Hour, incomingStart.Minute, 0, DateTimeKind.Utc);
                 var incomingEnd = incomingStart.AddHours((double)s.Plannedhours);
@@ -109,8 +110,8 @@ namespace EduFlowAI.PlannerEngine
 
         public async Task CancelFuturePlannedSchedulesForGoalAsync(int goalId, int userId, CancellationToken cancellation)
         {
-            var plannedStatus = await GetStatusIdByNameAsync("Planned", cancellation);
-            var cancelledStatus = await GetStatusIdByNameAsync("Cancelled", cancellation);
+            var plannedStatus = await GetStatusIdByNameAsync(StatusConstants.Planned, cancellation);
+            var cancelledStatus = await GetStatusIdByNameAsync(StatusConstants.Cancelled, cancellation);
 
             if (!plannedStatus.HasValue || !cancelledStatus.HasValue) return;
 
@@ -140,8 +141,8 @@ namespace EduFlowAI.PlannerEngine
             if (sched == null) return;
 
             // If changing to Missed, ensure current status is Planned
-            var missedStatus = await GetStatusIdByNameAsync("Missed", cancellation);
-            var plannedStatus = await GetStatusIdByNameAsync("Planned", cancellation);
+            var missedStatus = await GetStatusIdByNameAsync(StatusConstants.Missed, cancellation);
+            var plannedStatus = await GetStatusIdByNameAsync(StatusConstants.Planned, cancellation);
 
             if (missedStatus.HasValue && statusId == missedStatus.Value)
             {

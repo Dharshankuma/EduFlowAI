@@ -264,7 +264,7 @@ namespace EduFlowAI.Services.Authentication
             var forgetPasswordToken = CommonHelper.GenerateFixedGuidString(32);
             var forgetPasswordLink = $"{LinkUrl}reset-password?token={forgetPasswordToken}";
 
-            userDetails.Passwordresettoken = forgetPasswordLink;
+            userDetails.Passwordresettoken = forgetPasswordToken;
             userDetails.Passwordresettokenexpiry = DateTimeHelper.GetDateTimeNow().AddMinutes(10);
 
             await _repo.UpdateUserLogin(userDetails, cancellation);

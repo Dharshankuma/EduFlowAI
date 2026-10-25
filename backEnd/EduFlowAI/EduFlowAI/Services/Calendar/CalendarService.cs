@@ -4,6 +4,7 @@ using EduFlowAI.Exceptions;
 using EduFlowAI.Helpers;
 using EduFlowAI.Repositories.Calendar;
 using EduFlowAI.Repositories.Calendar.Models;
+using EduFlowAI.Constants;
 
 namespace EduFlowAI.Services.Calendar
 {
@@ -34,8 +35,8 @@ namespace EduFlowAI.Services.Calendar
             var dayStart = date.Date;
             var events = await _repository.GetEventsAsync(userId, dayStart, dayStart.AddDays(1), cancellation);
 
-            var completedEvents = events.Where(e => IsStatus(e.Status, "Completed")).ToList();
-            var missedEvents = events.Where(e => IsStatus(e.Status, "Missed")).ToList();
+            var completedEvents = events.Where(e => IsStatus(e.Status, StatusConstants.Completed)).ToList();
+            var missedEvents = events.Where(e => IsStatus(e.Status, StatusConstants.Missed)).ToList();
             var plannedHours = events.Sum(e => e.PlannedHours);
             var completedHours = completedEvents.Sum(e => e.PlannedHours);
 
@@ -69,9 +70,9 @@ namespace EduFlowAI.Services.Calendar
             var now = DateTimeHelper.GetDateTimeNow();
             var events = await _repository.GetEventsAsync(userId, from, to, cancellation);
 
-            var completedEvents = events.Where(e => IsStatus(e.Status, "Completed")).ToList();
-            var missedEvents = events.Where(e => IsStatus(e.Status, "Missed")).ToList();
-            var upcomingEvents = events.Where(e => IsStatus(e.Status, "Planned") && e.Start >= now).ToList();
+            var completedEvents = events.Where(e => IsStatus(e.Status, StatusConstants.Completed)).ToList();
+            var missedEvents = events.Where(e => IsStatus(e.Status, StatusConstants.Missed)).ToList();
+            var upcomingEvents = events.Where(e => IsStatus(e.Status, StatusConstants.Planned) && e.Start >= now).ToList();
 
             return new CalendarMonthlyProgressResponseDTO
             {
@@ -95,7 +96,7 @@ namespace EduFlowAI.Services.Calendar
             if (schedule == null)
                 throw new NotFoundException("Calendar event not found.");
 
-            var plannedStatusId = await _repository.GetStatusIdByNameAsync("Planned", cancellation);
+            var plannedStatusId = await _repository.GetStatusIdByNameAsync(StatusConstants.Planned, cancellation);
             if (!plannedStatusId.HasValue || schedule.Statusid != plannedStatusId.Value)
                 throw new BadRequestException("Only planned calendar events can be rescheduled.");
 
@@ -114,7 +115,7 @@ namespace EduFlowAI.Services.Calendar
             if (start < availabilityStart || end > availabilityEnd)
                 throw new BadRequestException("The event must fit inside your weekly availability.");
 
-            var cancelledStatusId = await _repository.GetStatusIdByNameAsync("Cancelled", cancellation);
+            var cancelledStatusId = await _repository.GetStatusIdByNameAsync(StatusConstants.Cancelled, cancellation);
             if (await _repository.HasScheduleConflictAsync(userId, scheduleId, start, end, cancelledStatusId, cancellation))
                 throw new ConflictException("The selected time overlaps another calendar event.");
 

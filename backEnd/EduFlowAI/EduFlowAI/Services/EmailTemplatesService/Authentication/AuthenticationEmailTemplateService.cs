@@ -31,11 +31,11 @@ namespace EduFlowAI.Services.EmailTemplatesService.Authentication
 
         public async Task<EmailDTO> GetResetPasswordEmailTemplateAsync(string email,string userName, string resetLink)
         {
-            var templatePath = Path.Combine(_environment.ContentRootPath, "Templates", "EmailTemplates", "ResetPasswordTemplate.html");
+            var templatePath = Path.Combine(_environment.ContentRootPath, "Services", "Templates", "EmailTemplates", "ForgetPasswordTemplate.html");
             var html = await File.ReadAllTextAsync(templatePath);
 
             html = html.Replace("{{UserName}}", userName);
-            html = html.Replace("{{ResetLink}}", resetLink);
+            html = html.Replace("{{ResetPasswordLink}}", resetLink);
 
             return new EmailDTO
             {

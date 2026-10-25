@@ -7,6 +7,7 @@ using EduFlowAI.Enums.PlannerEngine;
 using EduFlowAI.PlannerEngine.Models;
 using EduFlowAI.Models;
 using EduFlowAI.Helpers;
+using EduFlowAI.Constants;
 
 namespace EduFlowAI.PlannerEngine
 {
@@ -49,6 +50,7 @@ namespace EduFlowAI.PlannerEngine
             var allTasks = context.ActiveGoals.SelectMany(g => g.Taskmanagements ?? Enumerable.Empty<Taskmanagement>()).ToList();
             var taskIds = allTasks.Select(t => t.Taskid).ToList();
             var completedHoursMap = await _repo.GetCompletedHoursForTasksAsync(taskIds, cancellation);
+            var completedStatusId = await _repo.GetStatusIdByNameAsync(StatusConstants.Completed, cancellation);
 
             var tasks = new List<TaskPlanModel>();
             foreach (var goal in context.ActiveGoals)
@@ -58,7 +60,7 @@ namespace EduFlowAI.PlannerEngine
 
                 foreach (var task in goal.Taskmanagements ?? Enumerable.Empty<Taskmanagement>())
                 {
-                    if (task.Statusid == 3) continue; // skip completed
+                    if (completedStatusId.HasValue && task.Statusid == completedStatusId.Value) continue;
 
                     var estimated = task.EstimatedHours ?? 0m;
                     var completedHours = completedHoursMap.ContainsKey(task.Taskid) ? completedHoursMap[task.Taskid] : 0m;
@@ -215,7 +217,7 @@ namespace EduFlowAI.PlannerEngine
 
             // 7. Persistence
             var schedulesToSave = new List<Schedulemanagement>();
-            var plannedStatusId = await _repo.GetStatusIdByNameAsync("Planned", cancellation);
+            var plannedStatusId = await _repo.GetStatusIdByNameAsync(StatusConstants.Planned, cancellation);
             var nowTime = DateTimeHelper.GetDateTimeNow();
 
             foreach (var d in drafts)

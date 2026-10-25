@@ -5,6 +5,7 @@ using EduFlowAI.Helpers;
 using EduFlowAI.Models;
 using EduFlowAI.PlannerEngine;
 using EduFlowAI.Repositories.Goals;
+using EduFlowAI.Constants;
 using Microsoft.AspNetCore.Http.HttpResults;
 using System.Runtime.Serialization;
 
@@ -35,7 +36,7 @@ namespace EduFlowAI.Services.Goals
             var goal = await _repo.GetGoalForUserAsync(userId, goalIdentifier, cancellation);
             if (goal == null) throw new NotFoundException("Goal not found.");
 
-            var completedStatusId = await _plannerRepo.GetStatusIdByNameAsync("Completed", cancellation);
+            var completedStatusId = await _plannerRepo.GetStatusIdByNameAsync(StatusConstants.Completed, cancellation);
             if (!completedStatusId.HasValue) throw new BadRequestException("Completed status not configured.");
 
             // Mark goal completed
@@ -149,7 +150,9 @@ namespace EduFlowAI.Services.Goals
                     TaskStatus = x.Status,
                     TaskEstimatedHours = x.EstimatedHours,
                     TaskIdentifier = x.TaskIdentifier,
-                    TaskStatusIdentifier = x.StatusIdentifier
+                    TaskStatusIdentifier = x.StatusIdentifier,
+                    Priority = x.PrioritIdentifer
+
                 }).ToList()
             };
 
@@ -183,6 +186,10 @@ namespace EduFlowAI.Services.Goals
             }
 
 
+            var activeStatusId = await _plannerRepo.GetStatusIdByNameAsync(StatusConstants.Active, cancellationToken);
+            if (!activeStatusId.HasValue)
+                throw new BadRequestException("Active status is not configured.");
+
             var currentDateTime = DateTimeHelper.GetDateTimeNow();
 
             var goal = new Goalmanagement
@@ -196,8 +203,9 @@ namespace EduFlowAI.Services.Goals
                 Goaltypeid = dto.GoalTypeId,
                 Prioritytypeid = dto.PriorityId,
                 Targetdate = dto.TargetDate.Date,
-                Statusid = 2,
+                Statusid = activeStatusId.Value,
                 Createdat = currentDateTime,
+                Createdby = userId,
                 Updatedat = currentDateTime
             };
 
@@ -208,6 +216,118 @@ namespace EduFlowAI.Services.Goals
                 GoalId = goal.Goalid,
                 GoalIdentifier =goal.Goalidentifier,
                 GoalTitle =goal.Goaltitle
+            };
+        }
+
+        public async Task<CreateGoalWithTasksResponseDTO> CreateGoalWithTasksAsync(int userId, CreateGoalWithTasksRequestDTO dto, CancellationToken cancellationToken)
+        {
+            if (dto == null)
+                throw new BadRequestException("Goal information is required.");
+
+            if (string.IsNullOrWhiteSpace(dto.GoalTitle))
+                throw new BadRequestException("Goal title is required.");
+
+            if (dto.GoalTitle.Trim().Length > 200)
+                throw new BadRequestException("Goal title cannot exceed 200 characters.");
+
+            if (dto.TargetDate.Date < DateTime.UtcNow.Date)
+                throw new BadRequestException("Target date cannot be in the past.");
+
+            if (dto.Tasks == null || dto.Tasks.Count == 0)
+                throw new BadRequestException("At least one task is required when creating a goal.");
+
+            var activeStatusId = await _plannerRepo.GetStatusIdByNameAsync(StatusConstants.Active, cancellationToken);
+            var pendingStatusId = await _plannerRepo.GetStatusIdByNameAsync(StatusConstants.Pending, cancellationToken);
+            if (!activeStatusId.HasValue)
+                throw new BadRequestException("Active status is not configured.");
+
+            if (!pendingStatusId.HasValue)
+                throw new BadRequestException("Pending status is not configured.");
+
+            var now = DateTimeHelper.GetDateTimeNow();
+            var tasks = new List<Taskmanagement>();
+
+            foreach (var request in dto.Tasks)
+            {
+                if (string.IsNullOrWhiteSpace(request.TaskName))
+                    throw new BadRequestException("Task name is required.");
+
+                if (request.EstimatedHours <= 0)
+                    throw new BadRequestException($"Estimated hours must be greater than zero for '{request.TaskName}'.");
+
+                if (request.DueDate.Date < DateTime.UtcNow.Date)
+                    throw new BadRequestException($"Due date cannot be in the past for '{request.TaskName}'.");
+
+                if (request.DueDate.Date > dto.TargetDate.Date)
+                    throw new BadRequestException($"Due date for '{request.TaskName}' cannot be after the goal target date.");
+
+                var statusId = pendingStatusId.Value;
+                if (!string.IsNullOrWhiteSpace(request.StatusIdentifier))
+                {
+                    var resolvedStatusId = await _plannerRepo.GetStatusIdByNameAsync(request.StatusIdentifier.Trim(), cancellationToken);
+                    if (!resolvedStatusId.HasValue)
+                        throw new BadRequestException("The selected task status is not configured.");
+
+                    statusId = resolvedStatusId.Value;
+                }
+
+                tasks.Add(new Taskmanagement
+                {
+                    Taskidentifier = Guid.NewGuid().ToString(),
+                    Taskname = request.TaskName.Trim(),
+                    Taskdescription = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim(),
+                    Duedate = request.DueDate.Date,
+                    EstimatedHours = request.EstimatedHours,
+                    Statusid = statusId,
+                    Isaigenerated = false,
+                    Createdby = userId,
+                    Createdat = now,
+                    Updatedat = now
+                });
+            }
+
+            var goalId = await _repo.GetGoalTypeIdAsync(dto.GoalTypeIdentifier, cancellationToken);
+            var priorityId = await _repo.GetPriorityIdAsync(dto.PriorityIdentifier, cancellationToken);
+
+
+
+            var goal = new Goalmanagement
+            {
+                Goalidentifier = Guid.NewGuid().ToString(),
+                Userid = userId,
+                Goaltitle = dto.GoalTitle.Trim(),
+                Goaldescription = string.IsNullOrWhiteSpace(dto.GoalDescription) ? null : dto.GoalDescription.Trim(),
+                Goaltypeid = (int)goalId,
+                Prioritytypeid = (int)priorityId,
+                Targetdate = dto.TargetDate.Date,
+                Statusid = activeStatusId.Value,
+                Createdby = userId,
+                Createdat = now,
+                Updatedat = now
+            };
+
+            goal = await _repo.CreateGoalWithTasksAsync(goal, tasks, cancellationToken);
+
+            try
+            {
+                await _plannerEngine.RunPlannerForGoalAsync(userId, goal.Goalid, EduFlowAI.Enums.PlannerEngine.PlannerEngineType.TaskAdded, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Planner run failed after creating goal {GoalIdentifier} with tasks for user {UserId}", goal.Goalidentifier, userId);
+            }
+
+            return new CreateGoalWithTasksResponseDTO
+            {
+                GoalId = goal.Goalid,
+                GoalIdentifier = goal.Goalidentifier,
+                GoalTitle = goal.Goaltitle,
+                Tasks = tasks.Select(task => new SavedGoalTaskResponseDTO
+                {
+                    TaskId = task.Taskid,
+                    TaskIdentifier = task.Taskidentifier,
+                    TaskName = task.Taskname
+                }).ToList()
             };
         }
 
@@ -324,6 +444,13 @@ namespace EduFlowAI.Services.Goals
 
                 if (string.IsNullOrWhiteSpace(request.TaskIdentifier))
                 {
+                    var statusReference = string.IsNullOrWhiteSpace(request.StatusIdentifier)
+                        ? StatusConstants.Pending
+                        : request.StatusIdentifier.Trim();
+                    var statusId = await _plannerRepo.GetStatusIdByNameAsync(statusReference, cancellationToken);
+                    if (!statusId.HasValue)
+                        throw new BadRequestException("The selected task status is not configured.");
+
                     var newTask = new Taskmanagement
                     {
                         Taskidentifier = Guid.NewGuid().ToString(),
@@ -331,8 +458,9 @@ namespace EduFlowAI.Services.Goals
                         Taskname = request.TaskName.Trim(),
                         Taskdescription = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim(),
                         Duedate = request.DueDate.Date,
-                        Statusid = request.StatusId,
+                        Statusid = statusId.Value,
                         Isaigenerated = false,
+                        Createdby = userId,
                         Createdat = now,
                         Updatedat = now,
                         EstimatedHours = request.EstimatedHours
@@ -361,6 +489,15 @@ namespace EduFlowAI.Services.Goals
                 existingTaskToUpdate.Taskdescription = string.IsNullOrWhiteSpace(request.Description)? null : request.Description.Trim();
                 existingTaskToUpdate.Duedate = request.DueDate.Date;
                 existingTaskToUpdate.Updatedat = now;
+
+                if (!string.IsNullOrWhiteSpace(request.StatusIdentifier))
+                {
+                    var statusId = await _plannerRepo.GetStatusIdByNameAsync(request.StatusIdentifier.Trim(), cancellationToken);
+                    if (!statusId.HasValue)
+                        throw new BadRequestException("The selected task status is not configured.");
+
+                    existingTaskToUpdate.Statusid = statusId.Value;
+                }
 
                 tasksToUpdate.Add(existingTaskToUpdate);
             }

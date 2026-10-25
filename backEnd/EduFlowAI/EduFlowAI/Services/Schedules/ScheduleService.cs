@@ -2,6 +2,7 @@ using EduFlowAI.PlannerEngine;
 using EduFlowAI.PlannerEngine.Models;
 using EduFlowAI.Services.Schedules;
 using EduFlowAI.Helpers;
+using EduFlowAI.Constants;
 
 namespace EduFlowAI.Services.Schedules
 {
@@ -26,8 +27,9 @@ namespace EduFlowAI.Services.Schedules
 
             await _plannerRepo.UpdateScheduleStatusAsync(scheduleId, statusId.Value, userId, cancellation);
 
-            // If schedule marked as Missed, trigger replanning for the user
-            if (string.Equals(newStatusIdentifier, "Missed", StringComparison.OrdinalIgnoreCase))
+            // The frontend submits STATUSIDENTIFIER, so compare the resolved database IDs.
+            var missedStatusId = await _plannerRepo.GetStatusIdByNameAsync(StatusConstants.Missed, cancellation);
+            if (missedStatusId.HasValue && statusId.Value == missedStatusId.Value)
             {
                 try
                 {

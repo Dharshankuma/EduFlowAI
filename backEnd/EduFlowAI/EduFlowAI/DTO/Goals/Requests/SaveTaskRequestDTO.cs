@@ -14,6 +14,7 @@
 
         public int PriorityId { get; set; }
 
-        public int? StatusId { get; set; }
+        // Sent by the frontend from STATUSMASTER. Do not send the environment-specific STATUSID.
+        public string? StatusIdentifier { get; set; }
     }
 }

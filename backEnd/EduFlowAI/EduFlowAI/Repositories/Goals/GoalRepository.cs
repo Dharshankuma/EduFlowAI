@@ -5,6 +5,7 @@ using EduFlowAI.Models;
 using EduFlowAI.Repositories.Goals.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using EduFlowAI.Constants;
 
 namespace EduFlowAI.Repositories.Goals
 {
@@ -31,22 +32,22 @@ namespace EduFlowAI.Repositories.Goals
             }
 
             //Status filter
-            var statusId = objdto.StatusId;
-            if (!statusId.HasValue)
+            var statusIdentifier = objdto.StatusIdentifier?.Trim();
+            if (!string.IsNullOrWhiteSpace(statusIdentifier))
             {
-                query = query.Where(x => x.Statusid == statusId);
+                query = query.Where(x => x.Status != null && x.Status.Statusidentifier == statusIdentifier);
             }
 
             //goalType Filter
             var goalTypeId = objdto.GoalType;
-            if (!goalTypeId.HasValue)
+            if (goalTypeId.HasValue)
             {
                 query = query.Where(x => x.Goaltypeid == goalTypeId);
             }
 
             //priority filter
             var priorityId = objdto.PriorityId;
-            if (!priorityId.HasValue)
+            if (priorityId.HasValue)
             {
                 query = query.Where(x => x.Prioritytypeid == priorityId);
             }
@@ -65,12 +66,12 @@ namespace EduFlowAI.Repositories.Goals
                 CreatedAt = x.Createdat,
 
                 TotalTasks = x.Taskmanagements.Count(),
-                CompletedTasks = x.Taskmanagements.Count(x => x.Statusid == 3),
-                RemainingTasks = x.Taskmanagements.Count(x => x.Statusid != 3),
+                CompletedTasks = x.Taskmanagements.Count(x => x.Status != null && x.Status.Status == StatusConstants.Completed),
+                RemainingTasks = x.Taskmanagements.Count(x => x.Status == null || x.Status.Status != StatusConstants.Completed),
 
                 ProgressPercentage = x.Taskmanagements.Count() == 0 ? 0 :
                                                         Math.Round(
-                                                        (decimal)x.Taskmanagements.Count(t => t.Statusid == 3) * 100 / x.Taskmanagements.Count(), 2),
+                                                        (decimal)x.Taskmanagements.Count(t => t.Status != null && t.Status.Status == StatusConstants.Completed) * 100 / x.Taskmanagements.Count(), 2),
 
                 NextSession = x.Schedulemanagements.Where(s => s.Scheduleddate >= DateTime.UtcNow)
                                                     .OrderBy(s => s.Scheduleddate).Select(s => (DateTime?)s.Scheduleddate).FirstOrDefault()
@@ -123,11 +124,11 @@ namespace EduFlowAI.Repositories.Goals
             }
 
             // Status filter
-            var statusId = objdto.StatusId;
-            if (statusId.HasValue)
+            var statusIdentifier = objdto.StatusIdentifier?.Trim();
+            if (!string.IsNullOrWhiteSpace(statusIdentifier))
             {
                 query = query.Where(x =>
-                    x.Statusid == statusId.Value);
+                    x.Status != null && x.Status.Statusidentifier == statusIdentifier);
             }
 
             // Goal type filter
@@ -150,15 +151,40 @@ namespace EduFlowAI.Repositories.Goals
 
             return await query.CountAsync(cancellation);
         }
+        public async Task<int?> GetGoalTypeIdAsync(string identifier,CancellationToken cancellation)
+        {
+            if (string.IsNullOrWhiteSpace(identifier))
+            {
+                return null;
+            }
 
+            return await _context.Goaltypemasters
+                .AsNoTracking()
+                .Where(x => x.Goaltypeidentifier == identifier)
+                .Select(x => (int?)x.Goaltypeid)
+                .SingleOrDefaultAsync(cancellation);
+        }
+        public async Task<int?> GetPriorityIdAsync(string identifier, CancellationToken cancellation)
+        {
+            if (string.IsNullOrWhiteSpace(identifier))
+            {
+                return null;
+            }
+
+            return await _context.Prioritymasters
+                .AsNoTracking()
+                .Where(x => x.Priority == identifier)
+                .Select(x => (int?)x.Priorityid)
+                .SingleOrDefaultAsync(cancellation);
+        }
         public async Task<GoalGridSummaryQueryModel> GetGoalGridSummaryAsync(int userId, CancellationToken cancellation)
         {
             var summary = await _context.Goalmanagements.AsNoTracking().Where(x => x.Userid == userId).GroupBy(x => 1).Select(g => new GoalGridSummaryQueryModel
             {
                 TotalGoals = g.Count(),
-                ActiveGoals = g.Count(x => x.Statusid == 1),
-                CompletedGoals = g.Count(x => x.Statusid == 3),
-                UrgentGoals = g.Count(x => x.Prioritytypeid == 3 && x.Statusid == 3)
+                ActiveGoals = g.Count(x => x.Status != null && x.Status.Status == StatusConstants.Active),
+                CompletedGoals = g.Count(x => x.Status != null && x.Status.Status == StatusConstants.Completed),
+                UrgentGoals = g.Count(x => x.Prioritytype.Priority == "High" && x.Status != null && x.Status.Status == StatusConstants.Active)
             }).FirstOrDefaultAsync(cancellation);
 
             return summary ?? new GoalGridSummaryQueryModel();
@@ -180,9 +206,9 @@ namespace EduFlowAI.Repositories.Goals
                                    GoalIdentifier = x.Goalidentifier,
                                    Status = x.Status.Status,
                                    TotalTasks = x.Taskmanagements.Count(),
-                                   CompletedTasks = x.Taskmanagements.Count(x => x.Statusid == 3),
+                                   CompletedTasks = x.Taskmanagements.Count(x => x.Status != null && x.Status.Status == StatusConstants.Completed),
                                    TotalStudyHours = x.Schedulemanagements.Sum(x => x.Plannedhours),
-                                   CompletedStudyHours = x.Schedulemanagements.Where(x => x.Statusid == 3).Sum(x => x.Plannedhours),
+                                   CompletedStudyHours = x.Schedulemanagements.Where(x => x.Status != null && x.Status.Status == StatusConstants.Completed).Sum(x => x.Plannedhours),
                                }).FirstOrDefaultAsync(cancellation);
         }
 
@@ -198,6 +224,7 @@ namespace EduFlowAI.Repositories.Goals
                                      DueDate = x.Duedate,
                                      Status = x.Status.Status,
                                      StatusIdentifier = x.Status.Statusidentifier,
+                                     
                                  }).OrderBy(x => x.DueDate).ToListAsync(cancellation);
         }
 
@@ -208,6 +235,33 @@ namespace EduFlowAI.Repositories.Goals
             await _context.SaveChangesAsync(cancellation);
 
             return goal;
+        }
+
+        public async Task<Goalmanagement> CreateGoalWithTasksAsync(Goalmanagement goal, List<Taskmanagement> tasks, CancellationToken cancellation)
+        {
+            await using var transaction = await _context.Database.BeginTransactionAsync(cancellation);
+
+            try
+            {
+                await _context.Goalmanagements.AddAsync(goal, cancellation);
+                await _context.SaveChangesAsync(cancellation);
+
+                foreach (var task in tasks)
+                {
+                    task.Goalid = goal.Goalid;
+                }
+
+                await _context.Taskmanagements.AddRangeAsync(tasks, cancellation);
+                await _context.SaveChangesAsync(cancellation);
+                await transaction.CommitAsync(cancellation);
+
+                return goal;
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellation);
+                throw;
+            }
         }
 
         public async Task<Goalmanagement?> GetGoalForUserAsync(int userId,string goalIdentifier,CancellationToken cancellationToken)

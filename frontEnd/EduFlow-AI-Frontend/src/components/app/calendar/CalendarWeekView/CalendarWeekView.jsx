@@ -457,7 +457,7 @@ export const CalendarWeekView = ({
                 {/* Sidebar on right */}
                 <div className="calendar-sidebar-col">
                     {/* Today's Summary Card */}
-                    <DashboardCard hover={false} shadow={true} padding="24px">
+                    <DashboardCard hover={false} shadow={true} padding="18px 20px">
                         <div className="summary-card-title">
                             <i className="bi bi-file-earmark-check"></i>
                             <span>Today's Summary</span>
@@ -485,7 +485,7 @@ export const CalendarWeekView = ({
                     </DashboardCard>
 
                     {/* Monthly Progress Card */}
-                    <DashboardCard hover={false} shadow={true} padding="24px" className="monthly-progress-card">
+                    <DashboardCard hover={false} shadow={true} padding="18px 20px" className="monthly-progress-card">
                         <div className="progress-card-title">Monthly Progress</div>
                         <div className="progress-hours-val">{monthlyProgress?.totalStudyHours ?? 0}h</div>
                         <div className="progress-hours-lbl">Total Study Hours ({activeMonthName})</div>
@@ -503,7 +503,7 @@ export const CalendarWeekView = ({
                     </DashboardCard>
 
                     {/* AI Planner Insight Card */}
-                    <DashboardCard hover={true} shadow={true} padding="24px" className="planner-insight-card">
+                    <DashboardCard hover={true} shadow={true} padding="18px 20px" className="planner-insight-card">
                         <div className="insight-header">
                             <i className="bi bi-stars"></i>
                             <span>AI Planner Insight</span>

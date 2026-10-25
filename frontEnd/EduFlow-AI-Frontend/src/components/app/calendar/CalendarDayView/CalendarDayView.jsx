@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import DashboardCard from '../../../common/DashboardCard/DashboardCard';
 import { ButtonComponent } from '../../../common/CommonComponents/ButtonComponent';
 import ProgressBar from '../../../common/ProgressBar/ProgressBar';
@@ -65,6 +65,9 @@ export const CalendarDayView = ({
     onReschedule,
     onAdjustSchedule
 }) => {
+    // State to toggle full timeline grid when 0 events are scheduled
+    const [showTimelineGrid, setShowTimelineGrid] = useState(false);
+
     // 1. Resolve safe date
     const activeDate = useMemo(() => parseDateSafe(selectedDate), [selectedDate]);
     const formattedDateString = useMemo(() => formatFullDate(activeDate), [activeDate]);
@@ -121,7 +124,6 @@ export const CalendarDayView = ({
                     <div className="calendar-title-info">
                         <h1>Study Calendar</h1>
                         <p className="subtitle">Daily Study Schedule</p>
-                        <p className="calendar-date-display">{formattedDateString}</p>
                     </div>
                 </div>
                 <div className="col-12 col-md-5 d-flex justify-content-md-end mt-3 mt-md-0">
@@ -191,133 +193,152 @@ export const CalendarDayView = ({
                             </div>
                         </div>
 
-                        <div className="timeline-scroll-container">
-                            {/* Render dynamic time hour markings */}
-                            {timeSlots.map((slot) => (
-                                <div key={slot} className="timeline-hour-slot">
-                                    <div className="timeline-hour-label">{slot}</div>
+                        {dayEvents.length === 0 && !showTimelineGrid ? (
+                            <div className="empty-day-hero">
+                                <div className="empty-day-hero-icon-bubble">
+                                    <i className="bi bi-calendar2-check"></i>
                                 </div>
-                            ))}
-
-                            {/* Render dynamic events positioned absolutely */}
-                            <div className="timeline-events-container">
-                                {dayEvents.map((event) => {
-                                    const isCompleted = event.status?.toLowerCase() === 'completed';
-                                    const priorityLower = event.priority?.toLowerCase() || 'low';
-                                    
-                                    const cardStyle = getEventStyle(event);
-                                    
-                                    let thematicClass = `priority-${priorityLower}`;
-                                    if (isCompleted) {
-                                        thematicClass = 'event-status-completed';
-                                    }
-
-                                    return (
-                                        <div
-                                            key={event.id}
-                                            className={`day-event-card ${thematicClass}`}
-                                            style={cardStyle}
-                                            onClick={() => onEventClick && onEventClick(event)}
-                                        >
-                                            {/* Top info row */}
-                                            <div className="event-card-header">
-                                                {!isCompleted && (
-                                                    <span className="priority-badge">
-                                                        {event.priority || 'Normal'} Priority
-                                                    </span>
-                                                )}
-                                                {isCompleted && (
-                                                    <span className="status-badge">
-                                                        Completed
-                                                    </span>
-                                                )}
-                                                <span className="time-badge">
-                                                    <i className="bi bi-clock"></i> {event.time}
-                                                </span>
-                                            </div>
-
-                                            {/* Middle content body */}
-                                            <div>
-                                                <h3 className="event-subject-title">{event.title}</h3>
-                                                {event.course && (
-                                                    <p className="event-course-name">
-                                                        <i className="bi bi-laptop"></i> @ {event.course}
-                                                    </p>
-                                                )}
-                                                <p className="event-description">{event.description}</p>
-                                            </div>
-
-                                            {/* Bottom actions row */}
-                                            <div className="event-actions-row">
-                                                {isCompleted ? (
-                                                    <>
-                                                        <ButtonComponent
-                                                            type="button"
-                                                            text="Review Notes"
-                                                            className="btn-view-goal"
-                                                            onclick={() => onViewGoal && onViewGoal(event)}
-                                                        />
-                                                        <ButtonComponent
-                                                            type="button"
-                                                            text="See Analytics"
-                                                            className="btn-reschedule"
-                                                            onclick={() => onEventClick && onEventClick(event)}
-                                                        />
-                                                        <i className="bi bi-check-circle-fill completed-check-icon"></i>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <ButtonComponent
-                                                            type="button"
-                                                            text="View Goal"
-                                                            className="btn-view-goal"
-                                                            onclick={() => onViewGoal && onViewGoal(event)}
-                                                        />
-                                                        <ButtonComponent
-                                                            type="button"
-                                                            text="Mark Complete"
-                                                            className="btn-mark-complete"
-                                                            onclick={() => onMarkComplete && onMarkComplete(event)}
-                                                        />
-                                                        {/* <ButtonComponent
-                                                            type="button"
-                                                            text="Reschedule"
-                                                            className="btn-reschedule"
-                                                            onclick={() => onReschedule && onReschedule(event)}
-                                                        /> */}
-                                                    </>
-                                                )}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-
-                                {/* Empty state if no sessions for this day */}
+                                <h3>No Study Sessions on this Day</h3>
+                                <p>
+                                    You have no planned tasks scheduled for {formattedDateString}.
+                                    Enjoy your break or let EduFlow AI generate an optimal study plan.
+                                </p>
+                                <div className="empty-day-hero-actions">
+                                    <button
+                                        type="button"
+                                        className="btn-plan-session-primary"
+                                        onClick={onAdjustSchedule}
+                                    >
+                                        <i className="bi bi-stars"></i>
+                                        <span>Plan a Session with AI →</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn-toggle-grid-secondary"
+                                        onClick={() => setShowTimelineGrid(true)}
+                                    >
+                                        <i className="bi bi-clock"></i>
+                                        <span>View Timeline Grid</span>
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="timeline-scroll-container">
                                 {dayEvents.length === 0 && (
-                                    <div className="empty-day-state-wrapper">
-                                        <div className="empty-day-icon">
-                                            <i className="bi bi-cup-hot"></i>
-                                        </div>
-                                        <h4>No Study Sessions on this Day</h4>
-                                        <p>You have no planned tasks scheduled for {formattedDateString}.</p>
-                                        <div className="empty-day-action">
-                                            <ButtonComponent
-                                                type="button"
-                                                text="Plan a Session with AI →"
-                                                onclick={onAdjustSchedule}
-                                            />
-                                        </div>
+                                    <div className="d-flex justify-content-end mb-2">
+                                        <button
+                                            type="button"
+                                            className="btn-toggle-grid-secondary"
+                                            onClick={() => setShowTimelineGrid(false)}
+                                        >
+                                            <i className="bi bi-arrow-left"></i>
+                                            <span>Back to Day Overview</span>
+                                        </button>
                                     </div>
                                 )}
+                                {/* Render dynamic time hour markings */}
+                                {timeSlots.map((slot) => (
+                                    <div key={slot} className="timeline-hour-slot">
+                                        <div className="timeline-hour-label">{slot}</div>
+                                    </div>
+                                ))}
+
+                                {/* Render dynamic events positioned absolutely */}
+                                <div className="timeline-events-container">
+                                    {dayEvents.map((event) => {
+                                        const isCompleted = event.status?.toLowerCase() === 'completed';
+                                        const priorityLower = event.priority?.toLowerCase() || 'low';
+                                        
+                                        const cardStyle = getEventStyle(event);
+                                        
+                                        let thematicClass = `priority-${priorityLower}`;
+                                        if (isCompleted) {
+                                            thematicClass = 'event-status-completed';
+                                        }
+
+                                        return (
+                                            <div
+                                                key={event.id}
+                                                className={`day-event-card ${thematicClass}`}
+                                                style={cardStyle}
+                                                onClick={() => onEventClick && onEventClick(event)}
+                                            >
+                                                {/* Top info row */}
+                                                <div className="event-card-header">
+                                                    {!isCompleted && (
+                                                        <span className="priority-badge">
+                                                            {event.priority || 'Normal'} Priority
+                                                        </span>
+                                                    )}
+                                                    {isCompleted && (
+                                                        <span className="status-badge">
+                                                            Completed
+                                                        </span>
+                                                    )}
+                                                    <span className="time-badge">
+                                                        <i className="bi bi-clock"></i> {event.time}
+                                                    </span>
+                                                </div>
+
+                                                {/* Middle content body */}
+                                                <div>
+                                                    <h3 className="event-subject-title">{event.title}</h3>
+                                                    {event.course && (
+                                                        <p className="event-course-name">
+                                                            <i className="bi bi-laptop"></i> @ {event.course}
+                                                        </p>
+                                                    )}
+                                                    <p className="event-description">{event.description}</p>
+                                                </div>
+
+                                                {/* Bottom actions row */}
+                                                <div className="event-actions-row">
+                                                    {isCompleted ? (
+                                                        <>
+                                                            <ButtonComponent
+                                                                type="button"
+                                                                text="Review Notes"
+                                                                className="btn-view-goal"
+                                                                onclick={() => onViewGoal && onViewGoal(event)}
+                                                            />
+                                                            <ButtonComponent
+                                                                type="button"
+                                                                text="See Analytics"
+                                                                className="btn-reschedule"
+                                                                onclick={() => onEventClick && onEventClick(event)}
+                                                            />
+                                                            <i className="bi bi-check-circle-fill completed-check-icon"></i>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <ButtonComponent
+                                                                type="button"
+                                                                text="View Goal"
+                                                                className="btn-view-goal"
+                                                                onclick={() => onViewGoal && onViewGoal(event)}
+                                                            />
+                                                            <ButtonComponent
+                                                                type="button"
+                                                                text="Mark Complete"
+                                                                className="btn-mark-complete"
+                                                                onclick={() => onMarkComplete && onMarkComplete(event)}
+                                                            />
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </div>
 
                 {/* Cards stack on right */}
                 <div className="calendar-sidebar-col">
                     {/* Today's Summary Card */}
-                    <DashboardCard hover={false} shadow={true} padding="24px">
+                    <DashboardCard hover={false} shadow={true} padding="18px 20px">
                         <div className="summary-card-title">
                             <i className="bi bi-file-earmark-check"></i>
                             <span>Today's Summary</span>
@@ -345,7 +366,7 @@ export const CalendarDayView = ({
                     </DashboardCard>
 
                     {/* Monthly Progress Card */}
-                    <DashboardCard hover={false} shadow={true} padding="24px" className="monthly-progress-card">
+                    <DashboardCard hover={false} shadow={true} padding="18px 20px" className="monthly-progress-card">
                         <div className="progress-card-title">Monthly Progress</div>
                         <div className="progress-hours-val">{monthlyProgress?.totalStudyHours ?? 0}h</div>
                         <div className="progress-hours-lbl">Total Study Hours ({activeMonthName})</div>
@@ -363,7 +384,7 @@ export const CalendarDayView = ({
                     </DashboardCard>
 
                     {/* AI Planner Insight Card */}
-                    <DashboardCard hover={true} shadow={true} padding="24px" className="planner-insight-card">
+                    <DashboardCard hover={true} shadow={true} padding="18px 20px" className="planner-insight-card">
                         <div className="insight-header">
                             <i className="bi bi-stars"></i>
                             <span>AI Planner Insight</span>

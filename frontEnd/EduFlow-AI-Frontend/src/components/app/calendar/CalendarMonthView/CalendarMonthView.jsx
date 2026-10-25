@@ -301,7 +301,7 @@ export const CalendarMonthView = ({
                 {/* Sidebar on right */}
                 <div className="calendar-sidebar-col">
                     {/* Today's Summary Card */}
-                    <DashboardCard hover={false} shadow={true} padding="24px" className="today-summary-card-wrapper">
+                    <DashboardCard hover={false} shadow={true} padding="18px 20px" className="today-summary-card-wrapper">
                         <div className="summary-card-title">
                             <i className="bi bi-file-earmark-check"></i>
                             <span>Today's Summary</span>
@@ -331,7 +331,7 @@ export const CalendarMonthView = ({
                     </DashboardCard>
 
                     {/* Monthly Progress Card (Gradient Background) */}
-                    <DashboardCard hover={false} shadow={true} padding="24px" className="monthly-progress-card">
+                    <DashboardCard hover={false} shadow={true} padding="18px 20px" className="monthly-progress-card">
                         <div className="progress-card-title">Monthly Progress</div>
                         <div className="progress-hours-val">{monthlyProgress?.totalStudyHours ?? 0}h</div>
                         <div className="progress-hours-lbl">Total Study Hours ({activeMonthName})</div>
@@ -349,7 +349,7 @@ export const CalendarMonthView = ({
                     </DashboardCard>
 
                     {/* Planner Insight Card (Light Cyan Background) */}
-                    <DashboardCard hover={true} shadow={true} padding="24px" className="planner-insight-card">
+                    <DashboardCard hover={true} shadow={true} padding="18px 20px" className="planner-insight-card">
                         <div className="insight-header">
                             <i className="bi bi-stars"></i>
                             <span>AI Planner Insight</span>

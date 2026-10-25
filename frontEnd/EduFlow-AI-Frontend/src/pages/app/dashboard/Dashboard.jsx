@@ -264,7 +264,7 @@ export const Dashboard = () => {
             <div className="container-fluid p-0">
                 <div className="row g-4">
                     {/* Left Column Stack */}
-                    <div className="col-12 col-lg-8 dashboard-grid-column">
+                    <div className="col-12 col-lg-12 dashboard-grid-column">
                         <TodaySchedule
                             scheduleItems={dashboardData.schedule}
                             onEditSchedule={handleEditSchedule}
@@ -281,7 +281,7 @@ export const Dashboard = () => {
                     </div>
 
                     {/* Right Column Stack */}
-                    <div className="col-12 col-lg-4 dashboard-grid-column">
+                    {/* <div className="col-12 col-lg-4 dashboard-grid-column">
                         <FocusSession
                             subject={dashboardData.focusSession.subject}
                             duration={dashboardData.focusSession.duration}
@@ -296,7 +296,7 @@ export const Dashboard = () => {
                             onViewAllTasks={handleViewAllTasks}
                             onTaskClick={handleTaskClick}
                         />
-                    </div>
+                    </div> */}
                 </div>
             </div>
 

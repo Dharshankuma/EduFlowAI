@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // Import the step feature components
@@ -21,10 +21,20 @@ const DEFAULT_PLANNER_STEPS = [
 ];
 
 import { useAppState } from '../../../../context/StateContext';
+import { useConfiguration } from '../../../../context/ConfigurationContext';
+import { createGoalWithTasks, formatDateForBackend, formatDateForInput } from '../../../../api/goals/goalApi';
 
 export const CreateGoal = () => {
     const navigate = useNavigate();
     const { addGoalWithTasks } = useAppState();
+    const {
+        getGoalTypeName,
+        getGoalTypeIdentifier,
+        getPriorityName,
+        getPriorityIdentifier,
+        getStatusIdentifier,
+        statusList = []
+    } = useConfiguration();
 
     // 1. Wizard workflow step indicator (1 to 5)
     const [currentStep, setCurrentStep] = useState(1);
@@ -35,11 +45,11 @@ export const CreateGoal = () => {
         goalDescription: '',
         goalType: '',
         targetDate: '',
-        priority: 'Medium',
-        category: 'Skill Acquisition', // Default category
-        priorityLevel: 'Medium Priority',
-        status: 'In Progress',
-        progress: 65
+        priority: '2', // Defaults to '2' (Medium Priority in master)
+        category: '',
+        priorityLevel: 'Medium',
+        status: '2', // In Progress
+        progress: 0
     });
 
     // 3. Task Creation Method state (Step 2)
@@ -53,16 +63,36 @@ export const CreateGoal = () => {
             description: '',
             estimatedHours: '',
             dueDate: '',
-            priority: 'Medium',
-            status: 'Pending'
+            priority: '2',
+            status: '1'
         }
     ]);
+
+    // Validation error states
+    const [goalErrors, setGoalErrors] = useState({});
+    const [taskErrors, setTaskErrors] = useState({});
+    const [taskGeneralError, setTaskGeneralError] = useState('');
+
+    // Submission states
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const isSubmittingRef = useRef(false);
+    const progressIntervalRef = useRef(null);
+    const [createdGoalIdentifier, setCreatedGoalIdentifier] = useState(null);
 
     // 5. Planner Loader progress states (Step 4)
     const [plannerProgress, setPlannerProgress] = useState(0);
     const [currentPlannerStep, setCurrentPlannerStep] = useState('Reading Goal Information');
     const [plannerStatus, setPlannerStatus] = useState('loading');
     const [plannerErrorMessage, setPlannerErrorMessage] = useState('');
+
+    // Cleanup progress interval on unmount
+    useEffect(() => {
+        return () => {
+            if (progressIntervalRef.current) {
+                clearInterval(progressIntervalRef.current);
+            }
+        };
+    }, []);
 
     // --- Dynamic calculations for Step 3 and 5 statistics ---
 
@@ -82,14 +112,14 @@ export const CreateGoal = () => {
     const getFormattedSummaryDate = (dateStr) => {
         if (!dateStr) return 'Dec 15';
         try {
-            const [year, month, day] = dateStr.split('-');
+            const [, month, day] = dateStr.split('-');
             const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const mIdx = Number(month) - 1;
             if (monthNames[mIdx]) {
                 return `${monthNames[mIdx]} ${Number(day)}`;
             }
             return dateStr;
-        } catch (e) {
+        } catch {
             return dateStr;
         }
     };
@@ -97,8 +127,10 @@ export const CreateGoal = () => {
     // Goal information prop structure
     const goalProp = {
         ...goal,
-        category: getGoalCategory(goal.goalType),
-        priorityLevel: `${goal.priority} Priority`,
+        type: getGoalTypeName(goal.goalType) || goal.goalType,
+        category: getGoalTypeName(goal.goalType) || getGoalCategory(goal.goalType),
+        priority: getPriorityName(goal.priority) || goal.priority,
+        priorityLevel: `${getPriorityName(goal.priority) || goal.priority} Priority`,
         progress: tasks.length > 0 ? Math.round((completedTasksCount / tasks.length) * 100) : 0
     };
 
@@ -112,7 +144,7 @@ export const CreateGoal = () => {
             { day: 'M', progress: completedTasksCount > 0 ? 30 : 0 },
             { day: 'T', progress: completedTasksCount > 0 ? 55 : 0 },
             { day: 'W', progress: completedTasksCount > 0 ? 25 : 0 },
-            { day: 'T', progress: completedTasksCount > 0 ? 85 : 0 }, // Thursday highlighted active
+            { day: 'T', progress: completedTasksCount > 0 ? 85 : 0 },
             { day: 'F', progress: completedTasksCount > 0 ? 60 : 0 },
             { day: 'S', progress: completedTasksCount > 0 ? 20 : 0 },
             { day: 'S', progress: completedTasksCount > 0 ? 12 : 0 }
@@ -136,6 +168,77 @@ export const CreateGoal = () => {
         'Calendar Updated'
     ];
 
+    // --- Validation Logic ---
+
+    // Validates mandatory goal fields: Title, Type, Priority, Target Date
+    const validateGoal = (goalData) => {
+        const errs = {};
+        if (!goalData.goalTitle || !goalData.goalTitle.trim()) {
+            errs.goalTitle = 'Goal title is required.';
+        }
+        const resolvedType = getGoalTypeIdentifier(goalData.goalType);
+        if (!goalData.goalType || (!resolvedType && resolvedType !== 0)) {
+            errs.goalType = 'Goal type is required.';
+        }
+        const resolvedPri = getPriorityIdentifier(goalData.priority);
+        if (!goalData.priority || (!resolvedPri && resolvedPri !== 0)) {
+            errs.priority = 'Priority is required.';
+        }
+        if (!goalData.targetDate || !goalData.targetDate.trim()) {
+            errs.targetDate = 'Target date is required.';
+        } else {
+            const d = new Date(goalData.targetDate);
+            if (isNaN(d.getTime())) {
+                errs.targetDate = 'Please enter a valid target date.';
+            }
+        }
+        return errs;
+    };
+
+    // Validates task fields: at least one task, name, estimatedHours > 0, dueDate <= goal targetDate
+    const validateTasks = (tasksList, targetDateStr) => {
+        const itemErrors = {};
+        let generalErr = '';
+
+        if (!tasksList || tasksList.length === 0) {
+            generalErr = 'At least one task is required.';
+            return { itemErrors, generalErr };
+        }
+
+        const normGoalDate = formatDateForInput(targetDateStr);
+
+        tasksList.forEach(t => {
+            const tErrs = {};
+            if (!t.taskName || !t.taskName.trim()) {
+                tErrs.taskName = 'Task name is required.';
+            }
+
+            const hours = Number(t.estimatedHours);
+            if (t.estimatedHours === '' || t.estimatedHours === null || t.estimatedHours === undefined) {
+                tErrs.estimatedHours = 'Estimated hours is required.';
+            } else if (isNaN(hours) || hours <= 0) {
+                tErrs.estimatedHours = 'Must be greater than 0.';
+            }
+
+            if (!t.dueDate || !t.dueDate.trim()) {
+                tErrs.dueDate = 'Due date is required.';
+            } else {
+                const normTaskDate = formatDateForInput(t.dueDate);
+                if (!normTaskDate || isNaN(new Date(t.dueDate).getTime())) {
+                    tErrs.dueDate = 'Valid date required.';
+                } else if (normGoalDate && normTaskDate > normGoalDate) {
+                    tErrs.dueDate = 'Cannot be after target date.';
+                }
+            }
+
+            if (Object.keys(tErrs).length > 0) {
+                itemErrors[t.id] = tErrs;
+            }
+        });
+
+        return { itemErrors, generalErr };
+    };
+
     // --- State Handlers ---
 
     // Handle Goal Info Fields change
@@ -145,6 +248,26 @@ export const CreateGoal = () => {
             ...prev,
             [name]: value
         }));
+
+        // Clear field error as user types
+        if (goalErrors[name]) {
+            setGoalErrors(prev => {
+                const next = { ...prev };
+                delete next[name];
+                return next;
+            });
+        }
+    };
+
+    // Validate Step 1 Goal Info before moving to Step 2
+    const handleGoalNext = () => {
+        const errs = validateGoal(goal);
+        if (Object.keys(errs).length > 0) {
+            setGoalErrors(errs);
+            return;
+        }
+        setGoalErrors({});
+        setCurrentStep(2);
     };
 
     // Handle single task field modifications
@@ -152,11 +275,31 @@ export const CreateGoal = () => {
         setTasks(prev => prev.map(task =>
             task.id === taskId ? { ...task, [fieldName]: value } : task
         ));
+
+        // Clear field error as user types
+        if (taskErrors[taskId]?.[fieldName]) {
+            setTaskErrors(prev => {
+                const next = { ...prev };
+                if (next[taskId]) {
+                    const updated = { ...next[taskId] };
+                    delete updated[fieldName];
+                    if (Object.keys(updated).length === 0) {
+                        delete next[taskId];
+                    } else {
+                        next[taskId] = updated;
+                    }
+                }
+                return next;
+            });
+        }
+        if (taskGeneralError) {
+            setTaskGeneralError('');
+        }
     };
 
     // Append an empty task row to the list
     const handleAddTask = () => {
-        const newId = tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
+        const newId = tasks.length > 0 ? Math.max(...tasks.map(t => Number(t.id) || 0)) + 1 : 1;
         setTasks(prev => [
             ...prev,
             {
@@ -165,22 +308,128 @@ export const CreateGoal = () => {
                 description: '',
                 estimatedHours: '',
                 dueDate: '',
-                priority: 'Medium',
-                status: 'Pending'
+                priority: '2',
+                status: '1'
             }
         ]);
+        if (taskGeneralError) {
+            setTaskGeneralError('');
+        }
     };
 
-    // Save Tasks action handler (logs details and notifies)
-    const handleSaveTasks = () => {
-        console.log('Goal and tasks saved successfully:', { goal: goalProp, tasks });
-        alert('Tasks saved successfully!');
-    };
+    // Save Tasks / Generate Schedule submit handler
+    const handleSaveTasks = async () => {
+        // 1. Prevent duplicate submissions
+        if (isSubmittingRef.current) return;
 
-    // Trigger Scheduler generation loading step
-    const handleGenerateSchedule = () => {
-        addGoalWithTasks(goal, tasks);
+        // 2. Validate goal fields
+        const gErrs = validateGoal(goal);
+        // 3. Validate task fields
+        const { itemErrors, generalErr } = validateTasks(tasks, goal.targetDate);
+
+        const hasGoalErrs = Object.keys(gErrs).length > 0;
+        const hasTaskErrs = Object.keys(itemErrors).length > 0 || !!generalErr;
+
+        setGoalErrors(gErrs);
+        setTaskErrors(itemErrors);
+        setTaskGeneralError(generalErr);
+
+        // If validation fails, preserve entered values and remain on the form
+        if (hasGoalErrs || hasTaskErrs) {
+            if (hasGoalErrs && !hasTaskErrs) {
+                setCurrentStep(1); // Return to goal information step to show missing fields
+            }
+            return;
+        }
+
+        // 4. Set submission state to loading
+        isSubmittingRef.current = true;
+        setIsSubmitting(true);
+
+        // 5. Navigate to Generating Schedule page (Step 4) while API is running
+        setPlannerProgress(15);
+        setCurrentPlannerStep('Reading Goal Information');
+        setPlannerStatus('loading');
+        setPlannerErrorMessage('');
         setCurrentStep(4);
+
+        // Smooth progress animation while request is pending
+        if (progressIntervalRef.current) {
+            clearInterval(progressIntervalRef.current);
+        }
+        progressIntervalRef.current = setInterval(() => {
+            setPlannerProgress(prev => {
+                if (prev >= 85) return 85;
+                const next = prev + 12;
+                if (next < 25) setCurrentPlannerStep('Reading Goal Information');
+                else if (next < 40) setCurrentPlannerStep('Organizing Tasks');
+                else if (next < 55) setCurrentPlannerStep('Checking Deadlines');
+                else if (next < 70) setCurrentPlannerStep('Reading Study Availability');
+                else if (next < 85) setCurrentPlannerStep('Calculating Priorities');
+                return next;
+            });
+        }, 350);
+
+        // 6. Build the request DTO
+        const payload = {
+            goalTitle: goal.goalTitle.trim(),
+            goalDescription: goal.goalDescription?.trim() || null,
+            goalTypeIdentifier: String(getGoalTypeIdentifier(goal.goalType) || goal.goalType),
+            goalTypeId: null,
+            priorityIdentifier: String(getPriorityIdentifier(goal.priority) || goal.priority),
+            priorityId: null,
+            targetDate: formatDateForBackend(goal.targetDate),
+            tasks: tasks.map(t => ({
+                taskName: t.taskName.trim(),
+                description: t.description?.trim() || null,
+                estimatedHours: Number(t.estimatedHours),
+                dueDate: formatDateForBackend(t.dueDate),
+                statusIdentifier: String(getStatusIdentifier(t.status) || t.status || (statusList[0]?.identifier ?? '1'))
+            }))
+        };
+
+        // 7. Execute create goal with tasks API call
+        try {
+            const responseData = await createGoalWithTasks(payload);
+
+            if (progressIntervalRef.current) {
+                clearInterval(progressIntervalRef.current);
+            }
+
+            setPlannerProgress(100);
+            setCurrentPlannerStep('Creating Weekly Schedule...');
+            setPlannerStatus('completed');
+
+            // Extract created goal identifier if returned
+            const createdId = responseData?.goalIdentifier ?? responseData?.GoalIdentifier ?? responseData?.identifier ?? responseData?.id ?? (typeof responseData === 'string' ? responseData : null);
+            setCreatedGoalIdentifier(createdId);
+
+            // Update in-memory app state for dashboard and calendar
+            if (addGoalWithTasks) {
+                addGoalWithTasks(
+                    { ...goal, goalIdentifier: createdId, id: createdId },
+                    tasks
+                );
+            }
+
+            // 8. Progress to Success Page (Step 5) only after successful response
+            setTimeout(() => {
+                setCurrentStep(5);
+                setIsSubmitting(false);
+                isSubmittingRef.current = false;
+            }, 600);
+
+        } catch (error) {
+            if (progressIntervalRef.current) {
+                clearInterval(progressIntervalRef.current);
+            }
+            console.error('Failed to create goal with tasks:', error);
+            setPlannerStatus('error');
+            const message = error.message || (Array.isArray(error.errors) ? error.errors.join(', ') : error.errors) || 'An unexpected error occurred while creating the goal.';
+            setPlannerErrorMessage(message);
+            setIsSubmitting(false);
+            isSubmittingRef.current = false;
+        }
     };
 
     // Navigation redirects
@@ -196,51 +445,13 @@ export const CreateGoal = () => {
         navigate('/calendar');
     };
 
-    // --- Step 4 Progress Bar Generation Simulation ---
-    useEffect(() => {
-        if (currentStep === 4) {
-            setPlannerProgress(0);
-            setPlannerStatus('loading');
-
-            const interval = setInterval(() => {
-                setPlannerProgress(prev => {
-                    if (prev >= 100) {
-                        clearInterval(interval);
-
-                        // Automatically progress to Step 5 Success page
-                        setTimeout(() => {
-                            setCurrentStep(5);
-                        }, 600);
-
-                        return 100;
-                    }
-
-                    const nextProgress = prev + 10;
-
-                    // Cycle Checklist labels dynamically based on percentage
-                    if (nextProgress < 20) {
-                        setCurrentPlannerStep('Reading Goal Information');
-                    } else if (nextProgress < 35) {
-                        setCurrentPlannerStep('Organizing Tasks');
-                    } else if (nextProgress < 50) {
-                        setCurrentPlannerStep('Checking Deadlines');
-                    } else if (nextProgress < 65) {
-                        setCurrentPlannerStep('Reading Study Availability');
-                    } else if (nextProgress < 80) {
-                        setCurrentPlannerStep('Calculating Priorities');
-                    } else if (nextProgress < 95) {
-                        setCurrentPlannerStep('Distributing Study Hours');
-                    } else {
-                        setCurrentPlannerStep('Creating Weekly Schedule...');
-                    }
-
-                    return nextProgress;
-                });
-            }, 300); // Progress updates every 300ms
-
-            return () => clearInterval(interval);
+    const handleViewGoal = () => {
+        if (createdGoalIdentifier) {
+            navigate(`/goals/${encodeURIComponent(createdGoalIdentifier)}`);
+        } else {
+            navigate('/goals');
         }
-    }, [currentStep]);
+    };
 
     // Render active step component
     const renderActiveStep = () => {
@@ -253,8 +464,9 @@ export const CreateGoal = () => {
                         goalType={goal.goalType}
                         targetDate={goal.targetDate}
                         priority={goal.priority}
+                        errors={goalErrors}
                         onChange={handleGoalChange}
-                        onNext={() => setCurrentStep(2)}
+                        onNext={handleGoalNext}
                         onCancel={handleBackToGoals}
                     />
                 );
@@ -274,9 +486,14 @@ export const CreateGoal = () => {
                         goal={goalProp}
                         tasks={tasks}
                         statistics={statisticsProp}
+                        taskErrors={taskErrors}
+                        goalErrors={goalErrors}
+                        generalError={taskGeneralError}
+                        isSubmitting={isSubmitting}
                         onBack={() => setCurrentStep(2)}
+                        onCancel={handleBackToGoals}
                         onSaveTasks={handleSaveTasks}
-                        onGenerateSchedule={handleGenerateSchedule}
+                        onGenerateSchedule={handleSaveTasks}
                         onAddTask={handleAddTask}
                         onTaskChange={handleTaskChange}
                     />
@@ -290,7 +507,12 @@ export const CreateGoal = () => {
                         status={plannerStatus}
                         errorMessage={plannerErrorMessage}
                         goal={goalProp}
-                        onBack={() => setCurrentStep(3)} // Return to tasks edit on error retry
+                        onBack={() => {
+                            setCurrentStep(3); // Return to task creation with form data preserved
+                            setPlannerStatus('loading');
+                            setPlannerErrorMessage('');
+                            setPlannerProgress(0);
+                        }}
                     />
                 );
             case 5:
@@ -298,6 +520,8 @@ export const CreateGoal = () => {
                     <PlannerSuccess
                         summaryCards={successSummaryCards}
                         checklist={successChecklist}
+                        goalIdentifier={createdGoalIdentifier}
+                        onViewGoal={handleViewGoal}
                         onViewDashboard={handleViewDashboard}
                         onViewCalendar={handleViewCalendar}
                     />
@@ -310,8 +534,9 @@ export const CreateGoal = () => {
                         goalType={goal.goalType}
                         targetDate={goal.targetDate}
                         priority={goal.priority}
+                        errors={goalErrors}
                         onChange={handleGoalChange}
-                        onNext={() => setCurrentStep(2)}
+                        onNext={handleGoalNext}
                         onCancel={handleBackToGoals}
                     />
                 );
@@ -337,3 +562,4 @@ export const CreateGoal = () => {
 };
 
 export default CreateGoal;
+

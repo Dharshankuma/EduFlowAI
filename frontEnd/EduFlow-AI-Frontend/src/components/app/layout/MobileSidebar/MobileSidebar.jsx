@@ -15,7 +15,7 @@ export const MobileSidebar = ({ isOpen, onClose }) => {
         { path: '/goals', label: 'Goals', icon: 'bi-bullseye' },
         { path: '/calendar', label: 'Calendar', icon: 'bi-calendar3' },
         // { path: '/ai-planner', label: 'AI Planner', icon: 'bi-stars' },
-        { path: '/analytics', label: 'Analytics', icon: 'bi-bar-chart-line-fill' },
+        // { path: '/analytics', label: 'Analytics', icon: 'bi-bar-chart-line-fill' },
     ];
 
     const bottomNavItems = [
@@ -93,7 +93,7 @@ export const MobileSidebar = ({ isOpen, onClose }) => {
                 </nav>
 
                 <div className="mobile-sidebar-user-card">
-                    <div className="user-avatar-wrapper">
+                    {/* <div className="user-avatar-wrapper">
                         {currentUser.profileImage ? (
                             <img src={currentUser.profileImage} alt={currentUser.userName} className="user-avatar-img" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
                         ) : (
@@ -101,7 +101,7 @@ export const MobileSidebar = ({ isOpen, onClose }) => {
                                 <span>{(currentUser.firstName || currentUser.userName || 'U')[0].toUpperCase()}</span>
                             </div>
                         )}
-                    </div>
+                    </div> */}
                     <div className="user-info">
                         <span className="user-name">{currentUser.userName || currentUser.firstName || 'User'}</span>
                     </div>

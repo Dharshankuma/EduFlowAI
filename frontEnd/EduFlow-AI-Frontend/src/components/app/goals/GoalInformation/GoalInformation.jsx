@@ -4,6 +4,7 @@ import { InputComponent } from '../../../common/CommonComponents/InputComponent'
 import { SelectComponent } from '../../../common/CommonComponents/SelectComponent';
 import { TextAreaComponent } from '../../../common/CommonComponents/TextAreaComponent';
 import { ButtonComponent } from '../../../common/CommonComponents/ButtonComponent';
+import { useConfiguration } from '../../../../context/ConfigurationContext';
 import './GoalInformation.css';
 
 const TYPE_OPTIONS = [
@@ -21,10 +22,27 @@ export const GoalInformation = ({
     goalType = '',
     targetDate = '',
     priority = '',
+    errors = {},
     onChange,
     onNext,
     onCancel
 }) => {
+    const { 
+        goalTypeSelectOptions, 
+        prioritySelectOptions, 
+        getGoalTypeIdentifier,
+        getPriorityIdentifier
+    } = useConfiguration();
+
+    const effectiveGoalTypeOptions = goalTypeSelectOptions || TYPE_OPTIONS;
+    const effectivePriorityOptions = prioritySelectOptions;
+
+    const resolvedGoalType = getGoalTypeIdentifier(goalType);
+    const selectedGoalTypeValue = resolvedGoalType !== '' ? String(resolvedGoalType) : String(goalType || '');
+
+    const resolvedPriority = getPriorityIdentifier(priority);
+    const selectedPriorityValue = resolvedPriority !== '' ? String(resolvedPriority) : String(priority || '');
+
     // Label for Description showing optional tag
     const descriptionLabel = (
         <span className="d-flex justify-content-between align-items-center w-100">
@@ -53,87 +71,85 @@ export const GoalInformation = ({
             {/* 2. Goal Information Form */}
             <div className="goal-information-form-body">
                 <div className="row g-4">
-                    {/* Left Column: Title, Type/Date, Priority */}
+                    {/* Left Column: Title, Type/Priority, Date */}
                     <div className="col-12 col-md-6 text-start">
                         {/* Goal Title */}
-                        <InputComponent
-                            label="Goal Title"
-                            required={true}
-                            name="goalTitle"
-                            placeholder="e.g. Master Full-Stack Web Development"
-                            value={goalTitle}
-                            onChange={onChange}
-                        />
+                        <div className="mb-3">
+                            <InputComponent
+                                label="Goal Title"
+                                required={true}
+                                name="goalTitle"
+                                placeholder="e.g. Master Full-Stack Web Development"
+                                value={goalTitle}
+                                onChange={onChange}
+                                error={errors?.goalTitle ? 'true' : ''}
+                            />
+                            {errors?.goalTitle && (
+                                <div className="form-field-error-message mt-1 text-danger small">
+                                    {errors.goalTitle}
+                                </div>
+                            )}
+                        </div>
 
-                        {/* Goal Type & Target Date (Side-by-side) */}
+                        {/* Goal Type & Priority (Side-by-side dropdowns) */}
                         <div className="row g-3">
                             <div className="col-12 col-sm-6">
-                                <SelectComponent
-                                    label="Goal Type"
-                                    required={true}
-                                    name="goalType"
-                                    value={goalType}
-                                    onChange={onChange}
-                                    options={TYPE_OPTIONS}
-                                />
+                                <div className="mb-3">
+                                    <SelectComponent
+                                        label="Goal Type"
+                                        required={true}
+                                        name="goalType"
+                                        value={selectedGoalTypeValue}
+                                        onChange={onChange}
+                                        options={effectiveGoalTypeOptions}
+                                        error={errors?.goalType ? 'true' : ''}
+                                    />
+                                    {errors?.goalType && (
+                                        <div className="form-field-error-message mt-1 text-danger small">
+                                            {errors.goalType}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                             <div className="col-12 col-sm-6">
-                                <InputComponent
-                                    label="Target Date"
-                                    required={true}
-                                    type="date"
-                                    name="targetDate"
-                                    value={targetDate}
-                                    onChange={onChange}
-                                />
+                                <div className="mb-3">
+                                    <SelectComponent
+                                        label="Priority"
+                                        required={true}
+                                        name="priority"
+                                        value={selectedPriorityValue}
+                                        onChange={onChange}
+                                        options={effectivePriorityOptions}
+                                        error={errors?.priority ? 'true' : ''}
+                                    />
+                                    {errors?.priority && (
+                                        <div className="form-field-error-message mt-1 text-danger small">
+                                            {errors.priority}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
-                        {/* Priority Level (Segmented Control) */}
-                        <div className="priority-segmented-wrapper mt-3">
-                            <label className="form-label font-semibold mb-2">
-                                Priority Level
-                                <span className="mandatory_text_color">*</span>
-                            </label>
-                            <div className="priority-segmented-control">
-                                <input
-                                    type="radio"
-                                    className="btn-check"
-                                    name="priority"
-                                    id="priority-low"
-                                    value="Low"
-                                    checked={priority === 'Low'}
-                                    onChange={onChange}
-                                />
-                                <label className="priority-segment-btn" htmlFor="priority-low">
-                                    Low
-                                </label>
-
-                                <input
-                                    type="radio"
-                                    className="btn-check"
-                                    name="priority"
-                                    id="priority-medium"
-                                    value="Medium"
-                                    checked={priority === 'Medium'}
-                                    onChange={onChange}
-                                />
-                                <label className="priority-segment-btn" htmlFor="priority-medium">
-                                    Medium
-                                </label>
-
-                                <input
-                                    type="radio"
-                                    className="btn-check"
-                                    name="priority"
-                                    id="priority-high"
-                                    value="High"
-                                    checked={priority === 'High'}
-                                    onChange={onChange}
-                                />
-                                <label className="priority-segment-btn" htmlFor="priority-high">
-                                    High
-                                </label>
+                        {/* Target Date */}
+                        <div className="row g-3">
+                            <div className="col-12">
+                                <div className="mb-3">
+                                    <InputComponent
+                                        label="Target Date"
+                                        required={true}
+                                        type="date"
+                                        name="targetDate"
+                                        value={targetDate}
+                                        onChange={onChange}
+                                        error={errors?.targetDate ? 'true' : ''}
+                                    />
+                                    {errors?.targetDate && (
+                                        <div className="form-field-error-message mt-1 text-danger small">
+                                            {errors.targetDate}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -154,7 +170,7 @@ export const GoalInformation = ({
                         </div>
 
                         {/* AI Assistant Ready Info Card */}
-                        <DashboardCard className="ai-assistant-card" hover={false} shadow={false}>
+                        {/* <DashboardCard className="ai-assistant-card" hover={false} shadow={false}>
                             <div className="ai-assistant-card-content">
                                 <div className="ai-assistant-icon-container">
                                     <i className="bi bi-stars"></i>
@@ -166,7 +182,7 @@ export const GoalInformation = ({
                                     </p>
                                 </div>
                             </div>
-                        </DashboardCard>
+                        </DashboardCard> */}
                     </div>
                 </div>
             </div>

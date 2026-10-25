@@ -36,7 +36,7 @@ export const TaskCreationMethod = ({
             <div className="task-creation-options-body mb-5">
                 <div className="row g-4">
                     {/* Option 1: Create Tasks Manually */}
-                    <div className="col-12 col-md-6">
+                    <div className="col-12 col-md-12">
                         <DashboardCard
                             className={`method-option-card manual-option ${selectedMethod === 'manual' ? 'selected' : ''}`}
                             hover={true}
@@ -72,7 +72,7 @@ export const TaskCreationMethod = ({
                     </div>
 
                     {/* Option 2: AI Task Generation */}
-                    <div className="col-12 col-md-6">
+                    {/* <div className="col-12 col-md-6">
                         <DashboardCard
                             className="method-option-card ai-option disabled-card"
                             hover={false}
@@ -103,7 +103,7 @@ export const TaskCreationMethod = ({
                                 />
                             </div>
                         </DashboardCard>
-                    </div>
+                    </div> */}
                 </div>
             </div>
 

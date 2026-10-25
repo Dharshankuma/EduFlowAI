@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { MOCK_USER } from '../mock/users';
 import { useAuth } from './AuthContext';
+import { useConfiguration } from './ConfigurationContext';
 import { MOCK_GOALS } from '../mock/goals';
 import { MOCK_TASKS_BY_GOAL, DEFAULT_TASKS } from '../mock/tasks';
 import { MOCK_EVENTS } from '../mock/calendar';
@@ -12,6 +13,7 @@ const AppStateContext = createContext(null);
 
 export const StateProvider = ({ children }) => {
     const { user } = useAuth();
+    const { configuration, statusList, priorityList, goalTypeList } = useConfiguration();
     const [currentUser, setCurrentUser] = useState(MOCK_USER);
 
     // Sync currentUser with authenticated user from AuthContext
@@ -214,7 +216,11 @@ export const StateProvider = ({ children }) => {
             updateGoalWithTasks,
             deleteGoal,
             markNotificationAsRead,
-            clearNotifications
+            clearNotifications,
+            configuration,
+            statusList,
+            priorityList,
+            goalTypeList
         }}>
             {children}
         </AppStateContext.Provider>

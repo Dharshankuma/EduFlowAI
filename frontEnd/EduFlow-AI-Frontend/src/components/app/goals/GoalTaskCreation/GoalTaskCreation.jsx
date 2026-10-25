@@ -3,6 +3,8 @@ import DashboardCard from '../../../common/DashboardCard/DashboardCard';
 import { ButtonComponent } from '../../../common/CommonComponents/ButtonComponent';
 import { InputComponent } from '../../../common/CommonComponents/InputComponent';
 import { SelectComponent } from '../../../common/CommonComponents/SelectComponent';
+import { TextAreaComponent } from '../../../common/CommonComponents/TextAreaComponent';
+import { useConfiguration } from '../../../../context/ConfigurationContext';
 import './GoalTaskCreation.css';
 
 // Default mock values matching the Figma screen exactly
@@ -113,12 +115,33 @@ export const GoalTaskCreation = ({
     goal = DEFAULT_GOAL,
     tasks = DEFAULT_TASKS,
     statistics = DEFAULT_STATISTICS,
+    taskErrors = {},
+    goalErrors = {},
+    generalError = '',
+    isSubmitting = false,
     onBack,
+    onCancel,
     onSaveTasks,
     onGenerateSchedule,
     onAddTask,
-    onTaskChange
+    onTaskChange,
+    onGoalChange
 }) => {
+    const {
+        goalTypeSelectOptions,
+        prioritySelectOptions,
+        statusSelectOptions,
+        getGoalTypeName,
+        getGoalTypeIdentifier,
+        getPriorityName,
+        getPriorityIdentifier,
+        getStatusName,
+        getStatusIdentifier
+    } = useConfiguration();
+    const effectiveGoalTypeOptions = goalTypeSelectOptions;
+    const effectivePriorityOptions = prioritySelectOptions || PRIORITY_OPTIONS;
+    const effectiveStatusOptions = statusSelectOptions || STATUS_OPTIONS;
+
     // Helper to format due dates nicely in read-only cells
     const formatDate = (dateStr) => {
         if (!dateStr) return '';
@@ -136,7 +159,7 @@ export const GoalTaskCreation = ({
     return (
         <div className={`goal-task-creation-feature mode-${mode}`}>
             {/* Section 1: Goal Overview */}
-            
+
             {/* Back Navigation Link */}
             <div className="back-navigation text-start mb-3">
                 <button className="back-link-btn" onClick={onBack}>
@@ -149,13 +172,13 @@ export const GoalTaskCreation = ({
                 <div className="header-left text-start">
                     <div className="goal-badges-row d-flex flex-wrap gap-2 mb-3">
                         <span className="badge-item category-badge">
-                            {(goal.category || 'Goal').toUpperCase()}
+                            {(getGoalTypeName(goal.category || goal.goalType || goal.type) || 'Goal').toUpperCase()}
                         </span>
                         <span className="badge-item priority-badge">
-                            {(goal.priorityLevel || goal.priority || 'High').toUpperCase()}
+                            {(getPriorityName(goal.priority || goal.priorityLevel) || 'Medium').toUpperCase()}
                         </span>
                         <span className="badge-item status-badge">
-                            {(goal.status || 'Active').toUpperCase()}
+                            {(getStatusName(goal.status) || 'Active').toUpperCase()}
                         </span>
                     </div>
                     <h1 className="goal-title mb-2">{goal.title || 'New Goal Title'}</h1>
@@ -174,39 +197,107 @@ export const GoalTaskCreation = ({
                 <div className="col-12 col-lg-8 text-start">
                     <DashboardCard className="goal-info-card" hover={false} shadow={true} padding="32px">
                         <span className="card-section-label">GOAL INFORMATION</span>
-                        <h4 className="info-section-title mt-2 mb-3">Description</h4>
-                        <p className="goal-info-description mb-4">{goal.description || 'No description provided.'}</p>
-                        
-                        <div className="row g-3 pt-2 border-top">
-                            <div className="col-6 col-md-4">
-                                <span className="meta-info-label d-block">Type</span>
-                                <span className="meta-info-val">{goal.type}</span>
-                            </div>
-                            <div className="col-6 col-md-4">
-                                <span className="meta-info-val-wrapper">
-                                    <span className="meta-info-label d-block">Priority</span>
-                                    <span className="meta-info-val">{goal.priority}</span>
-                                </span>
-                            </div>
-                            <div className="col-6 col-md-4">
-                                <span className="meta-info-val-wrapper">
-                                    <span className="meta-info-label d-block">Target Date</span>
-                                    <span className="meta-info-val">{formatDate(goal.targetDate)}</span>
-                                </span>
-                            </div>
-                            {goal.createdDate && (
-                                <div className="col-6 col-md-4 mt-md-3">
-                                    <span className="meta-info-label d-block">Created Date</span>
-                                    <span className="meta-info-val">{goal.createdDate}</span>
+                        <h4 className="info-section-title mt-2 mb-3">{mode === 'edit' ? 'Edit Goal Information' : 'Description'}</h4>
+
+                        {mode === 'edit' ? (
+                            <div className="goal-edit-fields-container">
+                                <div className="mb-3">
+                                    <InputComponent
+                                        label="Goal Title"
+                                        required={true}
+                                        name="goalTitle"
+                                        value={goal.title || goal.goalTitle || ''}
+                                        onChange={(e) => onGoalChange && onGoalChange('title', e.target.value)}
+                                        placeholder="Goal Title"
+                                    />
                                 </div>
-                            )}
-                            {goal.lastUpdated && (
-                                <div className="col-6 col-md-4 mt-md-3">
-                                    <span className="meta-info-label d-block">Last Updated</span>
-                                    <span className="meta-info-val">{goal.lastUpdated}</span>
+                                <div className="mb-3">
+                                    <TextAreaComponent
+                                        label="Goal Description"
+                                        name="goalDescription"
+                                        value={goal.description || goal.goalDescription || ''}
+                                        onChange={(e) => onGoalChange && onGoalChange('description', e.target.value)}
+                                        placeholder="Describe what success looks like for this goal..."
+                                        rows={3}
+                                    />
                                 </div>
-                            )}
-                        </div>
+                                <div className="row g-3">
+                                    <div className="col-12 col-sm-6">
+                                        <SelectComponent
+                                            label="Goal Type"
+                                            required={true}
+                                            name="goalType"
+                                            value={String(getGoalTypeIdentifier(goal.type || goal.goalType || goal.category) || '')}
+                                            onChange={(e) => onGoalChange && onGoalChange('goalType', e.target.value)}
+                                            options={effectiveGoalTypeOptions}
+                                        />
+                                    </div>
+                                    <div className="col-12 col-sm-6">
+                                        <SelectComponent
+                                            label="Priority"
+                                            required={true}
+                                            name="priority"
+                                            value={String(getPriorityIdentifier(goal.priority || goal.priorityLevel) || '')}
+                                            onChange={(e) => onGoalChange && onGoalChange('priority', e.target.value)}
+                                            options={effectivePriorityOptions}
+                                        />
+                                    </div>
+                                    <div className="col-12 col-sm-6">
+                                        <InputComponent
+                                            label="Target Date"
+                                            required={true}
+                                            type="date"
+                                            name="targetDate"
+                                            value={goal.targetDate || ''}
+                                            onChange={(e) => onGoalChange && onGoalChange('targetDate', e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="col-12 col-sm-6">
+                                        <SelectComponent
+                                            label="Status"
+                                            name="status"
+                                            value={String(getStatusIdentifier(goal.status) || '')}
+                                            onChange={(e) => onGoalChange && onGoalChange('status', e.target.value)}
+                                            options={effectiveStatusOptions}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <p className="goal-info-description mb-4">{goal.description || 'No description provided.'}</p>
+                                <div className="row g-3 pt-2 border-top">
+                                    <div className="col-6 col-md-4">
+                                        <span className="meta-info-label d-block">Type</span>
+                                        <span className="meta-info-val">{getGoalTypeName(goal.type || goal.goalType || goal.category) || '-'}</span>
+                                    </div>
+                                    <div className="col-6 col-md-4">
+                                        <span className="meta-info-val-wrapper">
+                                            <span className="meta-info-label d-block">Priority</span>
+                                            <span className="meta-info-val">{getPriorityName(goal.priority || goal.priorityLevel) || '-'}</span>
+                                        </span>
+                                    </div>
+                                    <div className="col-6 col-md-4">
+                                        <span className="meta-info-val-wrapper">
+                                            <span className="meta-info-label d-block">Target Date</span>
+                                            <span className="meta-info-val">{formatDate(goal.targetDate)}</span>
+                                        </span>
+                                    </div>
+                                    {goal.createdDate && (
+                                        <div className="col-6 col-md-4 mt-md-3">
+                                            <span className="meta-info-label d-block">Created Date</span>
+                                            <span className="meta-info-val">{goal.createdDate}</span>
+                                        </div>
+                                    )}
+                                    {goal.lastUpdated && (
+                                        <div className="col-6 col-md-4 mt-md-3">
+                                            <span className="meta-info-label d-block">Last Updated</span>
+                                            <span className="meta-info-val">{goal.lastUpdated}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </>
+                        )}
                     </DashboardCard>
                 </div>
 
@@ -214,7 +305,7 @@ export const GoalTaskCreation = ({
                 <div className="col-12 col-lg-4 text-start">
                     <DashboardCard className="goal-statistics-card" hover={false} shadow={true} padding="32px">
                         <span className="card-section-label">STATISTICS</span>
-                        
+
                         <div className="row g-2 mt-2 mb-4">
                             <div className="col-6">
                                 <div className="stat-value-box">
@@ -240,8 +331,8 @@ export const GoalTaskCreation = ({
                             <div className="chart-bar-container d-flex justify-content-between align-items-end">
                                 {(statistics.weeklyProgress || []).map((item, idx) => (
                                     <div key={idx} className="chart-bar-wrapper d-flex flex-column align-items-center">
-                                        <div 
-                                            className="chart-bar-fill" 
+                                        <div
+                                            className="chart-bar-fill"
                                             style={{ height: `${item.progress}px` }}
                                             title={`${item.progress}% progress`}
                                         ></div>
@@ -258,24 +349,47 @@ export const GoalTaskCreation = ({
             <DashboardCard className="task-management-card mb-4" hover={false} shadow={true} padding="32px">
                 <div className="task-card-header d-flex justify-content-between align-items-center mb-4">
                     <h2 className="task-card-title m-0 text-start">Tasks</h2>
-                    
+
                     {/* Action buttons (hidden in View mode) */}
                     {mode !== 'view' && (
                         <div className="task-card-actions d-flex gap-2">
                             <ButtonComponent
                                 type="button"
                                 className="task-action-btn-cancel"
+                                onclick={onCancel || onBack}
+                                disabled={isSubmitting}
                                 text="Cancel"
                             />
                             <ButtonComponent
                                 type="button"
                                 className="task-action-btn-save type_1_btn"
                                 onclick={onSaveTasks}
-                                text="Save Tasks"
+                                disabled={isSubmitting}
+                                text={isSubmitting ? "Saving Tasks..." : "Save Tasks"}
                             />
                         </div>
                     )}
                 </div>
+
+                {/* General validation error or Goal-level alert */}
+                {generalError && (
+                    <div className="alert alert-danger py-2 px-3 mb-3 text-start small d-flex align-items-center gap-2">
+                        <i className="bi bi-exclamation-triangle-fill"></i>
+                        <span>{generalError}</span>
+                    </div>
+                )}
+
+                {Object.keys(goalErrors || {}).length > 0 && (
+                    <div className="alert alert-warning py-2 px-3 mb-3 text-start small d-flex justify-content-between align-items-center">
+                        <span>
+                            <i className="bi bi-exclamation-circle-fill me-2"></i>
+                            Please review goal details: {Object.values(goalErrors).join(', ')}
+                        </span>
+                        <button type="button" className="btn btn-sm btn-outline-dark" onClick={onBack}>
+                            Edit Goal Info
+                        </button>
+                    </div>
+                )}
 
                 <div className="table-responsive">
                     <table className="table task-table align-middle">
@@ -292,7 +406,8 @@ export const GoalTaskCreation = ({
                         <tbody>
                             {(tasks || []).map((task) => {
                                 const isView = mode === 'view';
-                                
+                                const taskErr = taskErrors[task.id] || {};
+
                                 return (
                                     <tr key={task.id}>
                                         {/* Task Name */}
@@ -302,15 +417,24 @@ export const GoalTaskCreation = ({
                                                     {task.taskName}
                                                 </span>
                                             ) : (
-                                                <InputComponent
-                                                    name="taskName"
-                                                    value={task.taskName || ''}
-                                                    onChange={(e) => onTaskChange && onTaskChange(task.id, 'taskName', e.target.value)}
-                                                    placeholder="Task Name"
-                                                />
+                                                <div>
+                                                    <InputComponent
+                                                        name={`taskName-${task.id}`}
+                                                        value={task.taskName || ''}
+                                                        onChange={(e) => onTaskChange && onTaskChange(task.id, 'taskName', e.target.value)}
+                                                        placeholder="Task Name"
+                                                        error={taskErr.taskName ? 'true' : ''}
+                                                        disabled={isSubmitting}
+                                                    />
+                                                    {taskErr.taskName && (
+                                                        <div className="form-field-error-message mt-1 text-danger small text-start">
+                                                            {taskErr.taskName}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             )}
                                         </td>
-                                        
+
                                         {/* Description */}
                                         <td className="task-table-field-cell">
                                             {isView ? (
@@ -319,14 +443,15 @@ export const GoalTaskCreation = ({
                                                 </span>
                                             ) : (
                                                 <InputComponent
-                                                    name="description"
+                                                    name={`description-${task.id}`}
                                                     value={task.description || ''}
                                                     onChange={(e) => onTaskChange && onTaskChange(task.id, 'description', e.target.value)}
                                                     placeholder="Description"
+                                                    disabled={isSubmitting}
                                                 />
                                             )}
                                         </td>
-                                        
+
                                         {/* Estimated Hours */}
                                         <td className="task-table-field-cell hours-cell">
                                             {isView ? (
@@ -334,16 +459,27 @@ export const GoalTaskCreation = ({
                                                     {task.estimatedHours || 0} hrs
                                                 </span>
                                             ) : (
-                                                <InputComponent
-                                                    type="number"
-                                                    name="estimatedHours"
-                                                    value={task.estimatedHours || ''}
-                                                    onChange={(e) => onTaskChange && onTaskChange(task.id, 'estimatedHours', e.target.value)}
-                                                    placeholder="0"
-                                                />
+                                                <div>
+                                                    <InputComponent
+                                                        type="number"
+                                                        name={`estimatedHours-${task.id}`}
+                                                        value={task.estimatedHours || ''}
+                                                        onChange={(e) => onTaskChange && onTaskChange(task.id, 'estimatedHours', e.target.value)}
+                                                        placeholder="0"
+                                                        error={taskErr.estimatedHours ? 'true' : ''}
+                                                        disabled={isSubmitting}
+                                                        min="0.5"
+                                                        step="0.5"
+                                                    />
+                                                    {taskErr.estimatedHours && (
+                                                        <div className="form-field-error-message mt-1 text-danger small text-center">
+                                                            {taskErr.estimatedHours}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             )}
                                         </td>
-                                        
+
                                         {/* Due Date */}
                                         <td className="task-table-field-cell date-cell">
                                             {isView ? (
@@ -351,43 +487,54 @@ export const GoalTaskCreation = ({
                                                     {formatDate(task.dueDate)}
                                                 </span>
                                             ) : (
-                                                <InputComponent
-                                                    type="date"
-                                                    name="dueDate"
-                                                    value={task.dueDate || ''}
-                                                    onChange={(e) => onTaskChange && onTaskChange(task.id, 'dueDate', e.target.value)}
-                                                />
+                                                <div>
+                                                    <InputComponent
+                                                        type="date"
+                                                        name={`dueDate-${task.id}`}
+                                                        value={task.dueDate || ''}
+                                                        onChange={(e) => onTaskChange && onTaskChange(task.id, 'dueDate', e.target.value)}
+                                                        error={taskErr.dueDate ? 'true' : ''}
+                                                        disabled={isSubmitting}
+                                                    />
+                                                    {taskErr.dueDate && (
+                                                        <div className="form-field-error-message mt-1 text-danger small text-start">
+                                                            {taskErr.dueDate}
+                                                        </div>
+                                                    )}
+                                                </div>
                                             )}
                                         </td>
-                                        
+
                                         {/* Priority */}
                                         <td className="task-table-field-cell priority-cell">
                                             {isView ? (
-                                                <span className={`priority-text priority-${(task.priority || '').toLowerCase()} d-block py-2`}>
-                                                    {task.priority || 'Low'}
+                                                <span className={`priority-text priority-${(getPriorityName(task.priority) || task.priority || '').toLowerCase()} d-block py-2`}>
+                                                    {getPriorityName(task.priority) || 'Medium'}
                                                 </span>
                                             ) : (
                                                 <SelectComponent
-                                                    name="priority"
-                                                    value={task.priority || ''}
+                                                    name={`task-priority-${task.id}`}
+                                                    value={getPriorityIdentifier(task.priority) !== '' ? String(getPriorityIdentifier(task.priority)) : String(task.priority || '')}
                                                     onChange={(e) => onTaskChange && onTaskChange(task.id, 'priority', e.target.value)}
-                                                    options={PRIORITY_OPTIONS}
+                                                    options={effectivePriorityOptions}
+                                                    disabled={isSubmitting}
                                                 />
                                             )}
                                         </td>
-                                        
+
                                         {/* Status */}
                                         <td className="task-table-field-cell status-cell">
                                             {isView ? (
-                                                <span className={`status-badge-inline status-${(task.status || '').toLowerCase().replace(' ', '-')}`}>
-                                                    {(task.status || 'Pending').toUpperCase()}
+                                                <span className={`status-badge-inline status-${(getStatusName(task.status) || task.status || '').toLowerCase().replace(' ', '-')}`}>
+                                                    {(getStatusName(task.status) || 'Pending').toUpperCase()}
                                                 </span>
                                             ) : (
                                                 <SelectComponent
-                                                    name="status"
-                                                    value={task.status || ''}
+                                                    name={`task-status-${task.id}`}
+                                                    value={getStatusIdentifier(task.status) !== '' ? String(getStatusIdentifier(task.status)) : String(task.status || '')}
                                                     onChange={(e) => onTaskChange && onTaskChange(task.id, 'status', e.target.value)}
-                                                    options={STATUS_OPTIONS}
+                                                    options={effectiveStatusOptions}
+                                                    disabled={isSubmitting}
                                                 />
                                             )}
                                         </td>
@@ -401,7 +548,7 @@ export const GoalTaskCreation = ({
                 {/* Add Row Action (hidden in View mode) */}
                 {mode !== 'view' && (
                     <div className="add-row-action text-start mt-3">
-                        <button className="add-row-btn" onClick={onAddTask}>
+                        <button className="add-row-btn" onClick={onAddTask} disabled={isSubmitting}>
                             <i className="bi bi-plus"></i> Add Row
                         </button>
                     </div>
@@ -459,9 +606,10 @@ export const GoalTaskCreation = ({
                                     type="button"
                                     className="generate-btn type_1_btn mb-2"
                                     onclick={onGenerateSchedule}
+                                    disabled={isSubmitting}
                                     text={
                                         <span className="d-flex align-items-center gap-2">
-                                            <i className="bi bi-stars"></i> Generate Study Schedule
+                                            <i className="bi bi-stars"></i> {isSubmitting ? "Generating Schedule..." : "Generate Study Schedule"}
                                         </span>
                                     }
                                 />

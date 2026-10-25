@@ -162,14 +162,14 @@ export const ForgotPasswordSuccess = ({
                     </div>
 
                     {/* Simulation Link */}
-                    <div className="w-100 mb-3">
+                    {/* <div className="w-100 mb-3">
                         <ButtonComponent
                             type="button"
                             text="Simulate Clicking Reset Link in Email"
                             className="w-100 btn btn-outline-primary"
                             onclick={() => navigate('/reset-password?token=mocktoken')}
                         />
-                    </div>
+                    </div> */}
 
                     {/* Resend Link */}
                     <div className="resend-prompt-wrapper">

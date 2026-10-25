@@ -108,6 +108,8 @@ export const PlannerSuccess = ({
     summaryCards = DEFAULT_SUMMARY_CARDS,
     checklist = DEFAULT_CHECKLIST,
     illustration,
+    goalIdentifier = null,
+    onViewGoal,
     onViewDashboard,
     onViewCalendar
 }) => {
@@ -214,6 +216,18 @@ export const PlannerSuccess = ({
                             />
                         </div>
                     </div>
+                    {onViewGoal && (
+                        <div className="text-center mt-3 pt-2">
+                            <button
+                                type="button"
+                                className="btn btn-link text-decoration-none fw-semibold"
+                                onClick={onViewGoal}
+                            >
+                                <i className="bi bi-box-arrow-up-right me-2"></i>
+                                View Goal Details
+                            </button>
+                        </div>
+                    )}
                 </div>
             </DashboardCard>
         </div>

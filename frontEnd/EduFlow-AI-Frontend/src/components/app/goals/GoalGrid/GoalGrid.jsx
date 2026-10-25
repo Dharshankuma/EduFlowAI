@@ -11,8 +11,8 @@ export const GoalGrid = ({
     return (
         <div className="goal-grid-container container-fluid p-0">
             <div className="row g-4">
-                {goals.map((goal) => (
-                    <div key={goal.id} className="col-12 col-md-6 col-lg-4">
+                {goals.map((goal, index) => (
+                    <div key={goal.goalIdentifier ?? goal.id ?? goal.goalId ?? index} className="col-12 col-md-6 col-lg-4">
                         <GoalCard
                             goal={goal}
                             onView={onView}

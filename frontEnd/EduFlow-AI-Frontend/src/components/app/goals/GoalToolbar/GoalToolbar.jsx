@@ -3,6 +3,7 @@ import DashboardCard from '../../../common/DashboardCard/DashboardCard';
 import { InputComponent } from '../../../common/CommonComponents/InputComponent';
 import { SelectComponent } from '../../../common/CommonComponents/SelectComponent';
 import { ButtonComponent } from '../../../common/CommonComponents/ButtonComponent';
+import { useConfiguration } from '../../../../context/ConfigurationContext';
 import './GoalToolbar.css';
 
 const STATUS_OPTIONS = [
@@ -26,7 +27,7 @@ const SORT_OPTIONS = [
     { value: 'newest', label: 'Newest First' },
     { value: 'oldest', label: 'Oldest First' },
     { value: 'progress', label: 'Progress' },
-    { value: 'due-date', label: 'Due Date' },
+    { value: 'duedate', label: 'Due Date' },
     { value: 'priority', label: 'Priority' }
 ];
 
@@ -41,6 +42,18 @@ export const GoalToolbar = ({
     onSortChange,
     onCreateGoal
 }) => {
+    const { 
+        statusFilterOptions, 
+        goalTypeFilterOptions,
+        getStatusIdentifier,
+        getGoalTypeIdentifier
+    } = useConfiguration();
+    const effectiveStatusOptions = statusFilterOptions || STATUS_OPTIONS;
+    const effectiveTypeOptions = goalTypeFilterOptions || TYPE_OPTIONS;
+
+    const resolvedStatusValue = getStatusIdentifier(selectedStatus) || selectedStatus;
+    const resolvedTypeValue = getGoalTypeIdentifier(selectedGoalType) || selectedGoalType;
+
     return (
         <DashboardCard className="goal-toolbar-card" hover={false} shadow={true} padding="16px 24px">
             <div className="goal-toolbar-container d-flex flex-column flex-md-row justify-content-between align-items-stretch align-items-md-center gap-3">
@@ -62,9 +75,9 @@ export const GoalToolbar = ({
                         <SelectComponent
                             name="statusFilter"
                             className="goal-filter-select"
-                            value={selectedStatus}
+                            value={resolvedStatusValue}
                             onChange={onStatusChange}
-                            options={STATUS_OPTIONS}
+                            options={effectiveStatusOptions}
                         />
                     </div>
 
@@ -73,9 +86,9 @@ export const GoalToolbar = ({
                         <SelectComponent
                             name="typeFilter"
                             className="goal-filter-select"
-                            value={selectedGoalType}
+                            value={resolvedTypeValue}
                             onChange={onGoalTypeChange}
-                            options={TYPE_OPTIONS}
+                            options={effectiveTypeOptions}
                         />
                     </div>
 

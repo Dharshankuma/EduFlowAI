@@ -128,7 +128,7 @@ export const responseErrorInterceptor = async (error) => {
                     throw new Error('axiosClientRef is not registered in interceptors');
                 }
 
-                // Call refresh-token endpoint with skipAuth and skipLoader
+                // Call refresh-token endl̥point with skipAuth and skipLoader
                 refreshPromise = axiosClientRef.post(
                     '/Authentication/refresh-token',
                     null,

@@ -7,8 +7,8 @@ import {
     setAxiosClientRef
 } from './interceptors';
 
-// Fallback URL if env is not defined
-const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7192/api/';
+const rawBaseURL = (import.meta.env.VITE_API_BASE_URL || 'https://localhost:7192/api/').trim();
+const baseURL = rawBaseURL.endsWith('/') ? rawBaseURL : `${rawBaseURL}/`;
 
 const axiosClient = axios.create({
     baseURL,

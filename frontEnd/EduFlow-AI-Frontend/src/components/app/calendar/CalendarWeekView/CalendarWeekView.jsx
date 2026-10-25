@@ -5,7 +5,6 @@ import ProgressBar from '../../../common/ProgressBar/ProgressBar';
 import {
     MONTH_NAMES,
     isSameDay,
-    parseDateSafe,
     getWeeksInMonth
 } from '../../../../utils/calendarUtils';
 import './CalendarWeekView.css';
@@ -118,13 +117,29 @@ export const CalendarWeekView = ({
         return weekDays.findIndex(day => isSameDay(day.date, eventDateStr));
     };
 
+    // Helper to extract hour number from an ISO string, Date object, or time string
+    const getHoursFromIsoOrDate = (val) => {
+        if (!val) return null;
+        const d = new Date(val);
+        if (isNaN(d.getTime())) return null;
+        return d.getHours() + (d.getMinutes() / 60);
+    };
+
     // 9. Calculate layout positioning metrics for event cards
     const getEventStyles = (event, dayIndex) => {
-        const { start, end } = parseTimeRange(event.time);
+        let start = getHoursFromIsoOrDate(event.start);
+        let end = getHoursFromIsoOrDate(event.end);
+
+        if (start === null || end === null) {
+            const parsed = parseTimeRange(event.time);
+            if (start === null) start = parsed.start;
+            if (end === null) end = parsed.end || (start + (Number(event.plannedHours) || 1));
+        }
+
         const slotHeight = 100; // height of each hour slot in pixels
-        
-        const top = (start - timelineStartHour) * slotHeight;
-        const height = Math.max((end - start) * slotHeight, 38);
+        const duration = Math.max(end - start, 0.5);
+        const top = Math.max(0, (start - timelineStartHour) * slotHeight);
+        const height = Math.max(duration * slotHeight, 38);
         
         const left = `calc(${dayIndex} * (100% / 7) + 5px)`;
         const width = `calc((100% / 7) - 10px)`;
@@ -421,12 +436,12 @@ export const CalendarWeekView = ({
                                                                 className="btn-mark-complete"
                                                                 onclick={() => onMarkComplete && onMarkComplete(activeEvent)}
                                                             />
-                                                            <ButtonComponent
+                                                            {/* <ButtonComponent
                                                                 type="button"
                                                                 text="Reschedule"
                                                                 className="btn-reschedule"
                                                                 onclick={() => onReschedule && onReschedule(activeEvent)}
-                                                            />
+                                                            /> */}
                                                         </>
                                                     )}
                                                 </div>
@@ -450,7 +465,7 @@ export const CalendarWeekView = ({
 
                         <div className="study-goal-section mb-3">
                             <ProgressBar
-                                value={todaySummary?.studyGoal || 85}
+                                value={todaySummary?.studyGoalReachedPercentage ?? todaySummary?.studyGoal ?? 0}
                                 max={100}
                                 label="Study Goal Reached"
                                 height="8px"
@@ -461,23 +476,27 @@ export const CalendarWeekView = ({
 
                         <div className="summary-stat-box">
                             <span className="summary-stat-label">Concentration Score</span>
-                            <span className="summary-stat-value">{todaySummary?.concentrationScore || 92}</span>
+                            <span className="summary-stat-value">
+                                {todaySummary?.concentrationScore !== null && todaySummary?.concentrationScore !== undefined
+                                    ? `${todaySummary.concentrationScore}%`
+                                    : '--'}
+                            </span>
                         </div>
                     </DashboardCard>
 
                     {/* Monthly Progress Card */}
                     <DashboardCard hover={false} shadow={true} padding="24px" className="monthly-progress-card">
                         <div className="progress-card-title">Monthly Progress</div>
-                        <div className="progress-hours-val">{monthlyProgress?.totalStudyHours || 124}h</div>
+                        <div className="progress-hours-val">{monthlyProgress?.totalStudyHours ?? 0}h</div>
                         <div className="progress-hours-lbl">Total Study Hours ({activeMonthName})</div>
 
                         <div className="progress-stats-row">
                             <div className="progress-stat-item">
-                                <span className="progress-stat-num">{monthlyProgress?.completedSessions || 42}</span>
+                                <span className="progress-stat-num">{monthlyProgress?.completedSessions ?? 0}</span>
                                 <span className="progress-stat-desc">Completed</span>
                             </div>
                             <div className="progress-stat-item">
-                                <span className="progress-stat-num">{monthlyProgress?.upcomingSessions || 18}</span>
+                                <span className="progress-stat-num">{monthlyProgress?.upcomingSessions ?? 0}</span>
                                 <span className="progress-stat-desc">Upcoming</span>
                             </div>
                         </div>

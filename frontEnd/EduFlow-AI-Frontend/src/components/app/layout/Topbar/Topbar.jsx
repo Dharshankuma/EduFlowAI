@@ -61,7 +61,7 @@ export const Topbar = ({ onToggleSidebar }) => {
                     />
                 </div> */}
 
-                {isDashboard && (
+                {/* {isDashboard && (
                     <button
                         className="topbar-study-now-btn"
                         onClick={handleStudyNowClick}
@@ -71,10 +71,10 @@ export const Topbar = ({ onToggleSidebar }) => {
                         <i className="bi bi-book-half"></i>
                         <span>Study Now</span>
                     </button>
-                )}
+                )} */}
 
                 <div className="topbar-buttons">
-                    <button
+                    {/* <button
                         className="topbar-action-btn notification-btn"
                         onClick={handleNotificationClick}
                         aria-label="View notifications"
@@ -84,7 +84,7 @@ export const Topbar = ({ onToggleSidebar }) => {
                         {unreadCount > 0 && (
                             <span className="notification-badge">{unreadCount}</span>
                         )}
-                    </button>
+                    </button> */}
 
                     <button
                         className="topbar-action-btn theme-toggle-btn"

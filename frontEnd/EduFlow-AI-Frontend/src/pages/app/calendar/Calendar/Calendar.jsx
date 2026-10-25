@@ -1,21 +1,35 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CalendarMonthView from '../../../../components/app/calendar/CalendarMonthView/CalendarMonthView';
 import CalendarWeekView from '../../../../components/app/calendar/CalendarWeekView/CalendarWeekView';
 import CalendarDayView from '../../../../components/app/calendar/CalendarDayView/CalendarDayView';
 import { useAppState } from '../../../../context/StateContext';
 import {
+    getCalendarEvents,
+    getCalendarDay,
+    getCalendarTodaySummary,
+    getCalendarMonthlyProgress
+} from '../../../../api/calendar/calendarApi';
+import {
     getRealToday,
     isSameDay,
-    isCurrentMonthNow,
     getWeeksInMonth,
-    findWeekIndexForDate
+    findWeekIndexForDate,
+    generateMonthGrid
 } from '../../../../utils/calendarUtils';
 import './Calendar.css';
 
 export const Calendar = () => {
+    const navigate = useNavigate();
+
     // 1. Controller view switcher state ("Month", "Week", "Day")
     const [activeView, setActiveView] = useState("Month");
-    const { calendarEvents, setCalendarEvents } = useAppState();
+    const { setCalendarEvents } = useAppState();
+
+    // Calendar events state (real data from API)
+    const [events, setEvents] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     // 2. Real System Date Initialization (No hardcoded mock anchor)
     const [selectedDate, setSelectedDate] = useState(() => getRealToday());
@@ -34,21 +48,116 @@ export const Calendar = () => {
         return Math.max(0, Math.min(currentWeekIndex, weeks.length - 1));
     }, [weeks, currentWeekIndex]);
 
-    // Widget summaries and progress
-    const [todaySummary] = useState({
-        studyGoal: 85,
-        concentrationScore: 92
-    });
+    // Widget summaries and progress loaded from backend
+    const [todaySummary, setTodaySummary] = useState(null);
+    const [monthlyProgress, setMonthlyProgress] = useState(null);
 
-    const [monthlyProgress] = useState({
-        totalStudyHours: 124,
-        completedSessions: 42,
-        upcomingSessions: 18
-    });
-
+    // AI Planner Insight UI
     const [plannerInsight, setPlannerInsight] = useState({
         recommendation: "Your workload is concentrated on Oct 24-25. Would you like to distribute some tasks to the 26th for better retention?"
     });
+
+    // Guard against outdated requests overwriting newer state
+    const activeRequestIdRef = useRef(0);
+
+    // Fetch events for current view and date parameters
+    const fetchEvents = useCallback(async () => {
+        const requestId = ++activeRequestIdRef.current;
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            let fetchedEvents = [];
+            const viewType = activeView.toLowerCase();
+
+            if (viewType === 'day') {
+                fetchedEvents = await getCalendarDay(selectedDate);
+            } else if (viewType === 'week') {
+                if (weeks[safeWeekIndex] && weeks[safeWeekIndex].days.length > 0) {
+                    const firstDay = weeks[safeWeekIndex].days[0].date;
+                    const lastDay = weeks[safeWeekIndex].days[weeks[safeWeekIndex].days.length - 1].date;
+                    const fromDate = new Date(firstDay.getFullYear(), firstDay.getMonth(), firstDay.getDate(), 0, 0, 0);
+                    const toDate = new Date(lastDay.getFullYear(), lastDay.getMonth(), lastDay.getDate(), 23, 59, 59);
+                    fetchedEvents = await getCalendarEvents(fromDate, toDate);
+                }
+            } else {
+                // Month view - fetch full visible grid bounds
+                const grid = generateMonthGrid(currentYear, currentMonth);
+                if (grid.length > 0) {
+                    const firstDay = grid[0].date;
+                    const lastDay = grid[grid.length - 1].date;
+                    const fromDate = new Date(firstDay.getFullYear(), firstDay.getMonth(), firstDay.getDate(), 0, 0, 0);
+                    const toDate = new Date(lastDay.getFullYear(), lastDay.getMonth(), lastDay.getDate(), 23, 59, 59);
+                    fetchedEvents = await getCalendarEvents(fromDate, toDate);
+                }
+            }
+
+            if (requestId === activeRequestIdRef.current) {
+                setEvents(fetchedEvents);
+                if (setCalendarEvents) {
+                    setCalendarEvents(fetchedEvents);
+                }
+            }
+        } catch (err) {
+            if (requestId === activeRequestIdRef.current) {
+                console.error("Error fetching calendar events:", err);
+                setError("Unable to load calendar events. Please check your network and try again.");
+            }
+        } finally {
+            if (requestId === activeRequestIdRef.current) {
+                setIsLoading(false);
+            }
+        }
+    }, [activeView, selectedDate, weeks, safeWeekIndex, currentYear, currentMonth, setCalendarEvents]);
+
+    useEffect(() => {
+        fetchEvents();
+    }, [fetchEvents]);
+
+    // Fetch Monthly Progress whenever year or month changes
+    useEffect(() => {
+        let isCancelled = false;
+        const fetchProgress = async () => {
+            try {
+                // Backend expects 1-based month (1 to 12)
+                const data = await getCalendarMonthlyProgress(currentYear, currentMonth + 1);
+                if (!isCancelled && data) {
+                    setMonthlyProgress(data);
+                }
+            } catch (err) {
+                if (!isCancelled) {
+                    console.error("Error fetching monthly progress:", err);
+                }
+            }
+        };
+
+        fetchProgress();
+        return () => {
+            isCancelled = true;
+        };
+    }, [currentYear, currentMonth]);
+
+    // Fetch Today's Summary whenever selectedDate changes
+    useEffect(() => {
+        let isCancelled = false;
+        const fetchSummary = async () => {
+            try {
+                const data = await getCalendarTodaySummary(selectedDate);
+                if (!isCancelled && data) {
+                    setTodaySummary(data);
+                }
+            } catch (err) {
+                if (!isCancelled) {
+                    console.error("Error fetching daily summary:", err);
+                }
+            }
+        };
+
+        fetchSummary();
+        return () => {
+            isCancelled = true;
+        };
+    }, [selectedDate]);
 
     // 3. View Switcher handler
     const handleViewChange = (newView) => {
@@ -78,16 +187,13 @@ export const Calendar = () => {
     };
 
     // 5. Month View Navigation Handlers
-    // Requirement: When navigating or clicking the current month, automatically focus on the current date!
     const handleSelectMonth = (monthIdx) => {
         setCurrentMonth(monthIdx);
         const today = getRealToday();
         if (monthIdx === today.getMonth() && currentYear === today.getFullYear()) {
-            // It's the current month: automatically focus on current date!
             setSelectedDate(today);
             setCurrentWeekIndex(findWeekIndexForDate(today));
         } else {
-            // Different month: focus on the 1st day of that month
             setSelectedDate(new Date(currentYear, monthIdx, 1));
             setCurrentWeekIndex(0);
         }
@@ -158,7 +264,6 @@ export const Calendar = () => {
     const handleSelectWeek = (weekIdx) => {
         setCurrentWeekIndex(weekIdx);
         if (weeks[weekIdx]) {
-            // If the selected week contains today, focus on today
             const today = getRealToday();
             const containsToday = weeks[weekIdx].days.some(d => isSameDay(d.date, today));
             if (containsToday) {
@@ -179,7 +284,6 @@ export const Calendar = () => {
                 setSelectedDate(containsToday ? today : weeks[newIdx].startDate);
             }
         } else {
-            // Reached before Week 1 of current month: automatically jump to previous month's last week
             let prevM = currentMonth - 1;
             let prevY = currentYear;
             if (prevM < 0) {
@@ -207,7 +311,6 @@ export const Calendar = () => {
                 setSelectedDate(containsToday ? today : weeks[newIdx].startDate);
             }
         } else {
-            // Reached the end of weeks for this month: automatically change to next month's Week 1
             let nextM = currentMonth + 1;
             let nextY = currentYear;
             if (nextM > 11) {
@@ -255,28 +358,25 @@ export const Calendar = () => {
     };
 
     const handleViewGoal = (event) => {
-        alert(`Navigating to study goal tracker for course: ${event.course || 'Core Study'}`);
-    };
-
-    const handleMarkComplete = (event) => {
-        setCalendarEvents(prevEvents =>
-            prevEvents.map(e =>
-                e.id === event.id
-                    ? { ...e, status: "Completed", completed: true }
-                    : e
-            )
-        );
-    };
-
-    const handleReschedule = (event) => {
-        const confirmChange = window.confirm(`Reschedule requested for "${event.title}". Would you like the AI Planner Engine to recommend alternative slots?`);
-        if (confirmChange) {
-            alert(`Rescheduled successfully! The new schedule has been updated.`);
+        const goalIdentifier = event?.goalIdentifier || event?.goalId;
+        if (goalIdentifier) {
+            navigate(`/goals/${encodeURIComponent(goalIdentifier)}`);
+        } else {
+            navigate('/goals');
         }
     };
 
+    const handleMarkComplete = () => {
+        // Backend does not expose an endpoint to mark calendar schedules complete
+        alert(`Schedule completion status cannot be updated: no backend endpoint is available for this action.`);
+    };
+
+    const handleReschedule = () => {
+        // Rescheduling is explicitly excluded from implementation
+    };
+
     const handleAdjustSchedule = () => {
-        alert("AI Planner: Optimization in progress... Adjusting session distributions dynamically.");
+        navigate('/ai-planner');
     };
 
     // 9. Active View Assembly
@@ -284,7 +384,7 @@ export const Calendar = () => {
         const viewType = activeView.toLowerCase();
         
         const commonProps = {
-            events: calendarEvents,
+            events,
             todaySummary,
             monthlyProgress,
             plannerInsight,
@@ -342,6 +442,29 @@ export const Calendar = () => {
 
     return (
         <div className="calendar-page-wrapper">
+            {error && (
+                <div className="calendar-error-banner" role="alert">
+                    <div className="d-flex align-items-center gap-2">
+                        <i className="bi bi-exclamation-triangle-fill"></i>
+                        <span>{error}</span>
+                    </div>
+                    <button
+                        type="button"
+                        className="calendar-retry-btn"
+                        onClick={fetchEvents}
+                    >
+                        Retry
+                    </button>
+                </div>
+            )}
+            {isLoading && (
+                <div className="calendar-status-bar">
+                    <div className="calendar-loading-badge">
+                        <span className="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
+                        <span>Loading calendar data...</span>
+                    </div>
+                </div>
+            )}
             {renderActiveCalendarView()}
         </div>
     );

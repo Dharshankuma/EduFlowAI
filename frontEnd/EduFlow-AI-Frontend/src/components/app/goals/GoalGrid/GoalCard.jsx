@@ -1,6 +1,7 @@
 import React from 'react';
 import DashboardCard from '../../../common/DashboardCard/DashboardCard';
 import ProgressBar from '../../../common/ProgressBar/ProgressBar';
+import { useConfiguration } from '../../../../context/ConfigurationContext';
 import './GoalCard.css';
 
 export const GoalCard = ({
@@ -9,8 +10,11 @@ export const GoalCard = ({
     onEdit,
     onDelete
 }) => {
+    const { getGoalTypeName, getPriorityName, getStatusName } = useConfiguration();
+
     const {
         id,
+        goalIdentifier,
         title = '',
         category = '',
         priority = '',
@@ -22,6 +26,12 @@ export const GoalCard = ({
         nextSession = '',
         status = ''
     } = goal;
+
+    const targetIdentifier = goalIdentifier ?? goal.GoalIdentifier ?? id;
+
+    const resolvedCategory = getGoalTypeName(category) || category;
+    const resolvedPriority = getPriorityName(priority) || priority;
+    const resolvedStatus = getStatusName(status) || status;
 
     // Get priority prefix icon/symbol
     const getPriorityLabel = (pri) => {
@@ -56,11 +66,11 @@ export const GoalCard = ({
         <DashboardCard className="goal-card-wrapper h-100" hover={true} shadow={true} padding="24px">
             {/* Top Badge Section */}
             <div className="d-flex justify-content-between align-items-center mb-3">
-                <span className={`goal-badge category-badge ${getCategoryClass(category)}`}>
-                    {category.toUpperCase()}
+                <span className={`goal-badge category-badge ${getCategoryClass(resolvedCategory)}`}>
+                    {resolvedCategory.toUpperCase()}
                 </span>
-                <span className={`goal-badge priority-badge ${getPriorityClass(priority)}`}>
-                    {getPriorityLabel(priority)}
+                <span className={`goal-badge priority-badge ${getPriorityClass(resolvedPriority)}`}>
+                    {getPriorityLabel(resolvedPriority)}
                 </span>
             </div>
 
@@ -120,27 +130,27 @@ export const GoalCard = ({
             {/* Footer / Actions Section */}
             <div className="goal-card-footer d-flex justify-content-between align-items-center pt-3 mt-auto">
                 <div className="goal-status-indicator d-flex align-items-center gap-2">
-                    <span className={`status-dot ${getStatusDotClass(status)}`}></span>
-                    <span className="status-label">{status}</span>
+                    <span className={`status-dot ${getStatusDotClass(resolvedStatus)}`}></span>
+                    <span className="status-label">{resolvedStatus}</span>
                 </div>
                 <div className="goal-action-buttons d-flex gap-2">
                     <button 
                         className="goal-action-btn btn-view" 
-                        onClick={() => onView && onView(id)}
+                        onClick={() => onView && onView(targetIdentifier)}
                         aria-label="View goal"
                     >
                         <i className="bi bi-box-arrow-up-right"></i>
                     </button>
                     <button 
                         className="goal-action-btn btn-edit" 
-                        onClick={() => onEdit && onEdit(id)}
+                        onClick={() => onEdit && onEdit(targetIdentifier)}
                         aria-label="Edit goal"
                     >
                         <i className="bi bi-pencil"></i>
                     </button>
                     <button 
                         className="goal-action-btn btn-delete" 
-                        onClick={() => onDelete && onDelete(id)}
+                        onClick={() => onDelete && onDelete(targetIdentifier)}
                         aria-label="Delete goal"
                     >
                         <i className="bi bi-trash"></i>

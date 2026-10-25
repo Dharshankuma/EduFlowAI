@@ -310,7 +310,7 @@ export const CalendarMonthView = ({
                         {/* Study Goal Reached bar */}
                         <div className="study-goal-section mb-3">
                             <ProgressBar
-                                value={todaySummary?.studyGoal || 85}
+                                value={todaySummary?.studyGoalReachedPercentage ?? todaySummary?.studyGoal ?? 0}
                                 max={100}
                                 label="Study Goal Reached"
                                 height="8px"
@@ -322,23 +322,27 @@ export const CalendarMonthView = ({
                         {/* Concentration Score display */}
                         <div className="summary-stat-box">
                             <span className="summary-stat-label">Concentration Score</span>
-                            <span className="summary-stat-value">{todaySummary?.concentrationScore || 92}</span>
+                            <span className="summary-stat-value">
+                                {todaySummary?.concentrationScore !== null && todaySummary?.concentrationScore !== undefined
+                                    ? `${todaySummary.concentrationScore}%`
+                                    : '--'}
+                            </span>
                         </div>
                     </DashboardCard>
 
                     {/* Monthly Progress Card (Gradient Background) */}
                     <DashboardCard hover={false} shadow={true} padding="24px" className="monthly-progress-card">
                         <div className="progress-card-title">Monthly Progress</div>
-                        <div className="progress-hours-val">{monthlyProgress?.totalStudyHours || 124}h</div>
+                        <div className="progress-hours-val">{monthlyProgress?.totalStudyHours ?? 0}h</div>
                         <div className="progress-hours-lbl">Total Study Hours ({activeMonthName})</div>
 
                         <div className="progress-stats-row">
                             <div className="progress-stat-item">
-                                <span className="progress-stat-num">{monthlyProgress?.completedSessions || 42}</span>
+                                <span className="progress-stat-num">{monthlyProgress?.completedSessions ?? 0}</span>
                                 <span className="progress-stat-desc">Completed</span>
                             </div>
                             <div className="progress-stat-item">
-                                <span className="progress-stat-num">{monthlyProgress?.upcomingSessions || 18}</span>
+                                <span className="progress-stat-num">{monthlyProgress?.upcomingSessions ?? 0}</span>
                                 <span className="progress-stat-desc">Upcoming</span>
                             </div>
                         </div>

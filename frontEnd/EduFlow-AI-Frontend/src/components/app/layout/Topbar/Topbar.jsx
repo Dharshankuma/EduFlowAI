@@ -1,14 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppState } from '../../../../context/StateContext';
 import { InputComponent } from '../../../common/CommonComponents/InputComponent';
 import './Topbar.css';
+
+// Calculate appropriate greeting based on local time
+const getTimeGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 4 && hour < 12) {
+        return 'Good Morning';
+    }
+    if (hour >= 12 && hour < 16) {
+        return 'Good Afternoon';
+    }
+    if (hour >= 16 && hour < 20) {
+        return 'Good Evening';
+    }
+    return 'Good Night';
+};
 
 export const Topbar = ({ onToggleSidebar }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { currentUser, notifications, theme, toggleTheme } = useAppState();
     const [searchQuery, setSearchQuery] = useState('');
+    const [greeting, setGreeting] = useState(() => getTimeGreeting());
+
+    // Update greeting periodically so it updates automatically across time transitions
+    useEffect(() => {
+        const updateGreeting = () => {
+            setGreeting(getTimeGreeting());
+        };
+
+        const intervalId = setInterval(updateGreeting, 60000);
+        return () => clearInterval(intervalId);
+    }, []);
 
     const unreadCount = notifications.filter(n => n.unread).length;
     const isDashboard = location.pathname === '/dashboard';
@@ -40,7 +66,7 @@ export const Topbar = ({ onToggleSidebar }) => {
 
             {/* Left side: Greeting */}
             <div className="topbar-greeting">
-                <h2 className="greeting-title">Good Morning, {currentUser.userName || currentUser.firstName || 'Dharshan'} 👋</h2>
+                <h2 className="greeting-title">{greeting}, {currentUser.userName || currentUser.firstName || 'Dharshan'} 👋</h2>
                 <p className="greeting-subtitle">Ready to achieve today's study goals?</p>
             </div>
 

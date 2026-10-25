@@ -25,7 +25,7 @@ export const CalendarDay = ({
         <button
             className={dayClasses}
             onClick={onClick}
-            disabled={isDisabled || isDisabled}
+            disabled={isDisabled}
             type="button"
             aria-label={`${date ? date : `Day ${day}`}`}
         >

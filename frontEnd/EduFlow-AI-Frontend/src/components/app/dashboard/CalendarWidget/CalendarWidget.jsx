@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import DashboardCard from '../../../common/DashboardCard/DashboardCard';
 import CalendarHeader from './CalendarHeader';
 import CalendarGrid from './CalendarGrid';
@@ -26,19 +26,30 @@ const monthNames = [
     "July", "August", "September", "October", "November", "December"
 ];
 
-export const CalendarWidget = ({ onDaySelect }) => {
+export const CalendarWidget = ({ onDaySelect, miniCalendar, selectedDate: externalSelectedDate }) => {
     // 1. Core calendar states
     const today = useMemo(() => new Date(), []);
-    const [currentDate, setCurrentDate] = useState(new Date()); // anchoring month/year
-    const [selectedDate, setSelectedDate] = useState(new Date()); // tracks active cell selection
+    const [currentDate, setCurrentDate] = useState(() => {
+        if (miniCalendar?.year && miniCalendar?.month) {
+            return new Date(miniCalendar.year, miniCalendar.month - 1, 1);
+        }
+        return new Date();
+    });
+    const [internalSelectedDate, setInternalSelectedDate] = useState(() => externalSelectedDate || new Date());
 
-    // 2. Mock task date list (to be replaced with API response in future integration)
-    const taskDates = useMemo(() => [
-        "2026-07-02",
-        "2026-07-10",
-        "2026-07-18",
-        "2026-07-25"
-    ], []);
+    // Sync active selection with external selected date if passed
+    useEffect(() => {
+        if (externalSelectedDate) {
+            setInternalSelectedDate(externalSelectedDate);
+        }
+    }, [externalSelectedDate]);
+
+    // Sync month/year when backend miniCalendar provides new year/month
+    useEffect(() => {
+        if (miniCalendar?.year && miniCalendar?.month) {
+            setCurrentDate(new Date(miniCalendar.year, miniCalendar.month - 1, 1));
+        }
+    }, [miniCalendar?.year, miniCalendar?.month]);
 
     const activeYear = currentDate.getFullYear();
     const activeMonth = currentDate.getMonth();
@@ -49,19 +60,37 @@ export const CalendarWidget = ({ onDaySelect }) => {
         const daysInCurrentMonth = new Date(activeYear, activeMonth + 1, 0).getDate();
         const lastDayPrevMonth = new Date(activeYear, activeMonth, 0).getDate();
 
+        // Check if day has study sessions using backend miniCalendar.daysWithSessions
+        const checkHasSession = (dayNum, dateObj) => {
+            const sessions = miniCalendar?.daysWithSessions;
+            if (!sessions || !Array.isArray(sessions)) return false;
+
+            return sessions.some(item => {
+                if (typeof item === 'number') {
+                    return item === dayNum;
+                }
+                if (typeof item === 'string') {
+                    if (item.includes('-')) {
+                        return item.split('T')[0] === formatDateString(dateObj);
+                    }
+                    return Number(item) === dayNum;
+                }
+                return false;
+            });
+        };
+
         const days = [];
 
         // Trailing days from previous month
         for (let i = firstDayIndex - 1; i >= 0; i--) {
             const dayNum = lastDayPrevMonth - i;
             const prevMonthDate = new Date(activeMonth === 0 ? activeYear - 1 : activeYear, activeMonth === 0 ? 11 : activeMonth - 1, dayNum);
-            const dateStr = formatDateString(prevMonthDate);
             days.push({
                 day: dayNum,
                 date: prevMonthDate,
                 isToday: isSameDay(prevMonthDate, today),
-                isSelected: isSameDay(prevMonthDate, selectedDate),
-                hasTask: taskDates.includes(dateStr),
+                isSelected: isSameDay(prevMonthDate, internalSelectedDate),
+                hasTask: false,
                 isCurrentMonth: false
             });
         }
@@ -69,13 +98,12 @@ export const CalendarWidget = ({ onDaySelect }) => {
         // Days in the current month
         for (let dayNum = 1; dayNum <= daysInCurrentMonth; dayNum++) {
             const currentMonthDate = new Date(activeYear, activeMonth, dayNum);
-            const dateStr = formatDateString(currentMonthDate);
             days.push({
                 day: dayNum,
                 date: currentMonthDate,
                 isToday: isSameDay(currentMonthDate, today),
-                isSelected: isSameDay(currentMonthDate, selectedDate),
-                hasTask: taskDates.includes(dateStr),
+                isSelected: isSameDay(currentMonthDate, internalSelectedDate),
+                hasTask: checkHasSession(dayNum, currentMonthDate),
                 isCurrentMonth: true
             });
         }
@@ -84,19 +112,18 @@ export const CalendarWidget = ({ onDaySelect }) => {
         const remainingSlots = 42 - days.length;
         for (let dayNum = 1; dayNum <= remainingSlots; dayNum++) {
             const nextMonthDate = new Date(activeMonth === 11 ? activeYear + 1 : activeYear, activeMonth === 11 ? 0 : activeMonth + 1, dayNum);
-            const dateStr = formatDateString(nextMonthDate);
             days.push({
                 day: dayNum,
                 date: nextMonthDate,
                 isToday: isSameDay(nextMonthDate, today),
-                isSelected: isSameDay(nextMonthDate, selectedDate),
-                hasTask: taskDates.includes(dateStr),
+                isSelected: isSameDay(nextMonthDate, internalSelectedDate),
+                hasTask: false,
                 isCurrentMonth: false
             });
         }
 
         return days;
-    }, [activeYear, activeMonth, selectedDate, taskDates, today]);
+    }, [activeYear, activeMonth, internalSelectedDate, miniCalendar, today]);
 
     // Format current month string
     const headerTitle = `${monthNames[activeMonth]} ${activeYear}`;
@@ -111,7 +138,7 @@ export const CalendarWidget = ({ onDaySelect }) => {
     };
 
     const handleDayClick = (dayData) => {
-        setSelectedDate(dayData.date);
+        setInternalSelectedDate(dayData.date);
         if (onDaySelect) {
             onDaySelect(dayData.date);
         }

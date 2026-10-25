@@ -8,6 +8,7 @@ import './FocusSession.css';
 export const FocusSession = ({
     subject = 'Data Structures',
     duration = 1500, // default 25 minutes
+    isTrackingSupported = false,
     onPlay,
     onPause,
     onPrevious,
@@ -79,7 +80,14 @@ export const FocusSession = ({
             <CardHeader
                 title="Focus Session"
                 rightContent={
-                    <i className="bi bi-clock-history text-primary" style={{ fontSize: '1.25rem' }}></i>
+                    <div className="d-flex align-items-center gap-2">
+                        {!isTrackingSupported && (
+                            <span className="badge bg-light text-muted" style={{ fontSize: '0.7rem', fontWeight: 500 }} title="Local focus timer only - backend tracking not supported">
+                                Local Timer
+                            </span>
+                        )}
+                        <i className="bi bi-clock-history text-primary" style={{ fontSize: '1.25rem' }}></i>
+                    </div>
                 }
             />
             

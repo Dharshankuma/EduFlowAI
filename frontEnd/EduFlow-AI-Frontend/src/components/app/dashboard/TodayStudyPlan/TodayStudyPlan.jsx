@@ -1,6 +1,5 @@
 import React from 'react';
 import DashboardCard from '../../../common/DashboardCard/DashboardCard';
-import SectionTitle from '../../../common/SectionTitle/SectionTitle';
 import ProgressBar from '../../../common/ProgressBar/ProgressBar';
 import { ButtonComponent } from '../../../common/CommonComponents/ButtonComponent';
 import SummaryCard from './SummaryCard';
@@ -8,6 +7,7 @@ import illustrationImg from '../../../../assets/images/login_image.png';
 import './TodayStudyPlan.css';
 
 export const TodayStudyPlan = ({
+    userName = '',
     studyHours = '0h 00m',
     activeGoals = '0',
     nextTask = 'None',
@@ -37,7 +37,7 @@ export const TodayStudyPlan = ({
                         </div>
 
                         <p className="plan-description mb-4">
-                            Your AI Study Coach has analyzed your upcoming deadlines, active goals,
+                            {userName ? `Welcome back, ${userName}! ` : ''}Your AI Study Coach has analyzed your upcoming deadlines, active goals,
                             and study schedule to create today's personalized learning plan.
                         </p>
 
